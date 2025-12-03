@@ -1,13 +1,14 @@
-package com.ssafy.user.dto;
+package com.ssafy.user.entity;
 
 import lombok.Data;
 
 @Data
-public class SignUpRequestDto {
+public class User {
+	private String id;
 	private String email;
 	private String password;
-	private String passwordCheck; // 비밀번호 재확인용
 	private String name;
 	private Integer age;
 	private String job;
+	private String created_at;
 }

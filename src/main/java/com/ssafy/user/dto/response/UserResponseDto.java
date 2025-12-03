@@ -1,4 +1,4 @@
-package com.ssafy.user.dto;
+package com.ssafy.user.dto.response;
 
 import lombok.Data;
 

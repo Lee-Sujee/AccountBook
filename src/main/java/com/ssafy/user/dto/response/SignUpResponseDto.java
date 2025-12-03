@@ -1,9 +1,10 @@
-package com.ssafy.user.dto;
+package com.ssafy.user.dto.response;
 
 import lombok.Data;
 
 @Data
-public class LoginResponseDto {
+public class SignUpResponseDto {
 	private String email;
 	private String name;
+	
 }

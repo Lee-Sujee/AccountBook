@@ -1,0 +1,19 @@
+package com.ssafy.user.repository;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.ssafy.user.dto.request.SignUpRequestDto;
+import com.ssafy.user.dto.request.UserUpdateRequestDto;
+import com.ssafy.user.entity.User;
+
+@Mapper
+public interface UserRepository {
+	int insertUser(SignUpRequestDto user);
+	
+	User selectUserByEmail(String email);
+	
+	String selectHashedPasswordByEmail(String email);
+	
+	int updateUserInfo(UserUpdateRequestDto user);
+
+}
