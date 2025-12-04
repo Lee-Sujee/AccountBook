@@ -59,16 +59,30 @@ public class UserServiceImpl implements UserService{
 	//사용자 정보 수정
 	@Override
 	@Transactional
-	public UserResponseDto update(UserUpdateRequestDto userUpdateRequestDto) {
-		//email이 DTO에 저장되어 있어야 수정이 가능
-		//없으면? 회원가입도 안 되어 있는데 어떻게 수정해!
-//		int existEmail = userDao.updateUserInfo(userUpdateRequestDto);
-//		
-//		if(existEmail > 0) {
-//			//만약 있다면 (값이 무조건 0 이상이겠지? 이렇게 하는 거 맞겠지?)
-//			return new UserResponseDto(); //응답 DTO 반환
-//		}
-//		return null; //업데이트 안 되면 null 반환
+	public UserResponseDto update(String email, UserUpdateRequestDto userUpdateRequestDto) {
+		
+		//Id 가져와서 사용자 정보 조회부터
+		User user = userRepository.selectUserByEmail(email);
+		
+		//해당 이메일에 해당하는 user가 없음
+		if(user == null) {
+			return null;
+		}
+		
+		user.setName(userUpdateRequestDto.getName());
+		user.setAge(userUpdateRequestDto.getAge());
+		user.setJob(userUpdateRequestDto.getJob());
+		
+		int updateUser = userRepository.updateUserInfo(user);
+		
+		if(updateUser > 0) {
+			UserResponseDto userResponseDto = new UserResponseDto();
+			userResponseDto.setEmail(user.getEmail());
+			userResponseDto.setName(user.getName());
+			userResponseDto.setAge(user.getAge());
+			userResponseDto.setJob(user.getJob());
+			return userResponseDto;
+		}
 		return null;
 	}
 
@@ -77,9 +91,34 @@ public class UserServiceImpl implements UserService{
 	@Override
 	@Transactional
 	public boolean changePassword(String email, PasswordChangeRequestDto passwordChangeRequestDto) {
-		return false;
+		//새 비밀번호 == 새 비밀번호 확인 일치하는지 확인
+		//일치하지 않으면 false..
+		if(!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getNewPasswordCheck())) {
+			return false;
+		}
+		
+		//이메일로 일단 사용자 조회
+		User user = userRepository.selectUserByEmail(email);
+		if(user == null) {
+			return false;
+		}
+		
+		//입력한 현재 비밀번호화 db 비밀번호 일치하는지 확인 
+		//일치하지 않으면 false
+		if(!passwordChangeRequestDto.getCurrentPassword().equals(user.getPassword())) {
+			return false;
+		}
+		
+		//새 비밀번호로 업데이트
+		user.setPassword(passwordChangeRequestDto.getNewPassword());
+		
+		int updatePass = userRepository.updatePassword(user);
+		
+		return updatePass > 0;
 		
 	}
+
+
 
 	
 

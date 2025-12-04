@@ -14,6 +14,8 @@ public interface UserRepository {
 	
 	String selectHashedPasswordByEmail(String email);
 	
-	int updateUserInfo(UserUpdateRequestDto user);
+	int updateUserInfo(User user);
+	
+	int updatePassword(User user);
 
 }
