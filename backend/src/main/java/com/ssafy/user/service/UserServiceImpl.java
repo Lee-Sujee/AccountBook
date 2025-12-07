@@ -53,9 +53,13 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 		User user = userRepository.selectUserByEmail(loginRequestDto.getEmail());
-		if(!loginRequestDto.getPassword().equals(user.getPassword())) return null;
+//		if(!loginRequestDto.getPassword().equals(user.getPassword())) return null;
 		
 		if(user == null) return null;
+		
+		boolean isMatch = passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword());
+		
+		if(!isMatch) return null;
 		
 		LoginResponseDto loginResponseDto = new LoginResponseDto();
 		loginResponseDto.setEmail(user.getEmail());
@@ -113,12 +117,13 @@ public class UserServiceImpl implements UserService{
 		
 		//입력한 현재 비밀번호화 db 비밀번호 일치하는지 확인 
 		//일치하지 않으면 false
-		if(!passwordChangeRequestDto.getCurrentPassword().equals(user.getPassword())) {
+		if(!passwordEncoder.matches(passwordChangeRequestDto.getCurrentPassword(), user.getPassword())) {
 			return false;
 		}
 		
 		//새 비밀번호로 업데이트
-		user.setPassword(passwordChangeRequestDto.getNewPassword());
+		String newHashedPw = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
+		user.setPassword(newHashedPw);
 		
 		int updatePass = userRepository.updatePassword(user);
 		

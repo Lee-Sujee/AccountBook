@@ -6,27 +6,27 @@
     <form @submit.prevent class="signup-form">
       <div class="form-group">
         <label for="email">이메일</label>
-        <input id="email" type="email" />
+        <input id="email" type="email" v-model="user.email" />
       </div>
 
       <div class="form-group">
         <label for="password">비밀번호</label>
-        <input id="password" type="password" />
+        <input id="password" type="password" v-model="user.password" />
       </div>
 
       <div class="form-group">
         <label for="name">이름</label>
-        <input id="name" type="text" />
+        <input id="name" type="text" v-model="user.name"/>
       </div>
 
       <div class="form-group">
         <label for="age">나이</label>
-        <input id="age" type="number" />
+        <input id="age" type="number" v-model.number="user.age"/>
       </div>
 
       <div class="form-group">
         <label for="job">직업</label>
-        <input id="job" type="text" />
+        <input id="job" type="text" v-model="user.job"/>
       </div>
 
       <button type="submit" class="submit-btn" @click="insertUser" >회원가입</button>
@@ -37,22 +37,45 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
 const store = useAuthStore()
 
+//우리가 userRequestDto에 id랑 passwordCheck 객체가 있어서 일단 이거도 저장하고 사용자한테는 안 보이도록 설정할게요.^^>>
 const user = ref({
+  id: "",               
   email: "",
   password: "",
+  passwordCheck: '', 
   name: "",
   age : 0,
   job: "",
 })
 
+// 이메일 변경 시 id 자동 생성
+watch(() => user.value.email, (newEmail) => {
+  if (newEmail.includes("@")) {
+    user.value.id = newEmail.split("@")[0]
+  }
+})
+
+// passwordCheck 자동 설정
+watch(() => user.value.password, (newPw) => {
+  user.value.passwordCheck = newPw
+})
+
 const insertUser = function(){
-  store.insertUser(user.value)
-  
+  const userData = {
+    id: user.value.id,                   
+    email: user.value.email,
+    password: user.value.password,
+    passwordCheck: user.value.passwordCheck,  
+    name: user.value.name,
+    age: user.value.age,
+    job: user.value.job,
+  };
+  store.insertUser(userData)
 }
 
 </script>

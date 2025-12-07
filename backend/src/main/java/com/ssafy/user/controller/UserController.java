@@ -33,8 +33,8 @@ public class UserController {
 	public ResponseEntity<?> regist(@RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
 		SignUpResponseDto signUpResponseDto = userService.signUp(signUpRequestDto);
 		if(signUpResponseDto == null)
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-		return ResponseEntity.ok(signUpResponseDto);
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		return ResponseEntity.ok(signUpResponseDto); //200 ok
 	}
 	
 	// 로그인 POST /user
