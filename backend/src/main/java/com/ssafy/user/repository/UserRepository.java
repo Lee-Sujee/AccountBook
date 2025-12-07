@@ -10,6 +10,7 @@ import com.ssafy.user.entity.User;
 public interface UserRepository {
 	int insertUser(SignUpRequestDto user);
 	
+	User selectUserById(String id);
 	User selectUserByEmail(String email);
 	
 	String selectHashedPasswordByEmail(String email);

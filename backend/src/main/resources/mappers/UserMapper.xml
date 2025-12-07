@@ -9,6 +9,11 @@
 		VALUES(#{id}, #{email}, #{password}, #{name}, #{age}, #{job})
 	</insert>
 	
+	<select id="selectUserById" parameterType="String" resultType="User">
+		SELECT *
+		FROM users
+		WHERE id = #{id}
+	</select>
 	<select id="selectUserByEmail" parameterType="String" resultType="User">
 		SELECT *
 		FROM users

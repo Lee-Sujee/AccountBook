@@ -3,6 +3,7 @@ package com.ssafy.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.security.CustomUserDetails;
 import com.ssafy.user.dto.request.LoginRequestDto;
 import com.ssafy.user.dto.request.PasswordChangeRequestDto;
 import com.ssafy.user.dto.request.SignUpRequestDto;
@@ -33,12 +35,12 @@ public class UserController {
 	public ResponseEntity<?> regist(@RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
 		SignUpResponseDto signUpResponseDto = userService.signUp(signUpRequestDto);
 		if(signUpResponseDto == null)
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		return ResponseEntity.ok(signUpResponseDto);
 	}
 	
 	// 로그인 POST /user
-	@PostMapping("")
+	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
 		LoginResponseDto loginResponseDto = userService.login(loginRequestDto);
 		if(loginResponseDto == null)
@@ -46,19 +48,25 @@ public class UserController {
 		return ResponseEntity.ok(loginResponseDto);
 	}
 	
-	
-	@PutMapping("/{email}")
-	public ResponseEntity<?> update(@PathVariable String email, @RequestBody UserUpdateRequestDto userUpdateRequestDto) throws Exception {
-		UserResponseDto updatedUser = userService.update(email, userUpdateRequestDto);
-		
-		if(updatedUser != null) {
-			return ResponseEntity.ok(updatedUser);
-		}
-		
-		return new ResponseEntity<>("사용자 정보 수정 실패: 일치하는 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+	// 회원정보 수정
+	@PutMapping("/myPage")
+	public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails userDetails,
+	                                @RequestBody UserUpdateRequestDto dto) throws Exception {
+
+	    String userId = userDetails.getUserId(); 
+	    UserResponseDto updatedUser = userService.update(userId, dto);
+
+	    if (updatedUser != null) {
+	        return ResponseEntity.ok(updatedUser);
+	    }
+
+	    return ResponseEntity
+	            .status(HttpStatus.NOT_FOUND)
+	            .body("사용자 정보 수정 실패: 일치하는 사용자를 찾을 수 없습니다.");
 	}
 	
-	@PutMapping("/password/{email}")
+	// 비밀번호 수정
+	@PutMapping("/password")
 	public ResponseEntity<?> changePassword(@PathVariable String email, @RequestBody PasswordChangeRequestDto passwordChangeRequestDto) throws Exception {
 		boolean isChanged = userService.changePassword(email, passwordChangeRequestDto);
 		

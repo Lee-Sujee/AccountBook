@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.security.JwtUtil;
 import com.ssafy.user.dto.request.LoginRequestDto;
 import com.ssafy.user.dto.request.PasswordChangeRequestDto;
 import com.ssafy.user.dto.request.SignUpRequestDto;
@@ -25,6 +26,8 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	//회원가입 처리 (마지막에 insert로 회원가입 정보 보내기)
 	@Override
@@ -53,13 +56,19 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 		User user = userRepository.selectUserByEmail(loginRequestDto.getEmail());
-		if(!loginRequestDto.getPassword().equals(user.getPassword())) return null;
-		
+
 		if(user == null) return null;
 		
+		boolean isMatch = passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword());
+	    if (!isMatch) return null;
+		
+	    String token = jwtUtil.generateToken(user.getId());
+	    
 		LoginResponseDto loginResponseDto = new LoginResponseDto();
+		loginResponseDto.setId(user.getId());
 		loginResponseDto.setEmail(user.getEmail());
 		loginResponseDto.setName(user.getName());
+		loginResponseDto.setToken(token); 
 		return loginResponseDto;
 	}
 
@@ -67,32 +76,36 @@ public class UserServiceImpl implements UserService{
 	//사용자 정보 수정
 	@Override
 	@Transactional
-	public UserResponseDto update(String email, UserUpdateRequestDto userUpdateRequestDto) {
-		
-		//Id 가져와서 사용자 정보 조회부터
-		User user = userRepository.selectUserByEmail(email);
-		
-		//해당 이메일에 해당하는 user가 없음
-		if(user == null) {
-			return null;
-		}
-		
-		user.setName(userUpdateRequestDto.getName());
-		user.setAge(userUpdateRequestDto.getAge());
-		user.setJob(userUpdateRequestDto.getJob());
-		
-		int updateUser = userRepository.updateUserInfo(user);
-		
-		if(updateUser > 0) {
-			UserResponseDto userResponseDto = new UserResponseDto();
-			userResponseDto.setEmail(user.getEmail());
-			userResponseDto.setName(user.getName());
-			userResponseDto.setAge(user.getAge());
-			userResponseDto.setJob(user.getJob());
-			return userResponseDto;
-		}
-		return null;
+	public UserResponseDto update(String userId, UserUpdateRequestDto dto) {
+
+	    // userId 기반으로 유저 조회
+	    User user = userRepository.selectUserById(userId);
+
+	    if (user == null) {
+	        return null;
+	    }
+
+	    // 수정 값 반영
+	    user.setName(dto.getName());
+	    user.setAge(dto.getAge());
+	    user.setJob(dto.getJob());
+
+	    // DB 업데이트
+	    int updated = userRepository.updateUserInfo(user);
+
+	    // 성공 시 응답 DTO 반환
+	    if (updated > 0) {
+	        UserResponseDto response = new UserResponseDto();
+	        response.setEmail(user.getEmail());
+	        response.setName(user.getName());
+	        response.setAge(user.getAge());
+	        response.setJob(user.getJob());
+	        return response;
+	    }
+
+	    return null;
 	}
+
 
 	
 	//비밀번호 수정	
