@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService{
 		
 	    String token = jwtUtil.generateToken(user.getId());
 	    
+
 		LoginResponseDto loginResponseDto = new LoginResponseDto();
 		loginResponseDto.setId(user.getId());
 		loginResponseDto.setEmail(user.getEmail());
@@ -126,12 +127,13 @@ public class UserServiceImpl implements UserService{
 		
 		//입력한 현재 비밀번호화 db 비밀번호 일치하는지 확인 
 		//일치하지 않으면 false
-		if(!passwordChangeRequestDto.getCurrentPassword().equals(user.getPassword())) {
+		if(!passwordEncoder.matches(passwordChangeRequestDto.getCurrentPassword(), user.getPassword())) {
 			return false;
 		}
 		
 		//새 비밀번호로 업데이트
-		user.setPassword(passwordChangeRequestDto.getNewPassword());
+		String newHashedPw = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
+		user.setPassword(newHashedPw);
 		
 		int updatePass = userRepository.updatePassword(user);
 		

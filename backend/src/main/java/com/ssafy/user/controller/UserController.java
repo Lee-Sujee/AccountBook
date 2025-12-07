@@ -36,7 +36,11 @@ public class UserController {
 		SignUpResponseDto signUpResponseDto = userService.signUp(signUpRequestDto);
 		if(signUpResponseDto == null)
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+<<<<<<< HEAD
 		return ResponseEntity.ok(signUpResponseDto);
+=======
+		return ResponseEntity.ok(signUpResponseDto); //200 ok
+>>>>>>> 1a0f97e882cd95bf1e4897f8f7179ae521de26d1
 	}
 	
 	// 로그인 POST /user
