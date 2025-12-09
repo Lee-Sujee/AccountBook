@@ -13,4 +13,5 @@ public interface UserService {
 	LoginResponseDto login(LoginRequestDto loginRequestDto); //로그인 가즈아~!!
 	UserResponseDto update(String id, UserUpdateRequestDto userUpdateRequestDto); //user 수정
 	boolean changePassword(String email, PasswordChangeRequestDto passwordChangeRequestDto);
+	UserResponseDto getMyPage(String userId);
 }

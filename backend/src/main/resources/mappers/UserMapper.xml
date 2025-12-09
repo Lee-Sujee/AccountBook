@@ -31,6 +31,6 @@
 	<update id="updatePassword" parameterType="User">
 		UPDATE users
 		SET password = #{password}
-		WHERE email = #{email}
+		WHERE id = #{id}
 	</update>
 </mapper>

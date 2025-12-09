@@ -22,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
     }
 
-    // 🔥 가장 중요: PK를 직접 꺼내기 위한 메서드
+    // PK를 직접 꺼내기 위한 메서드
     public String getUserId() {
         return userId;
     }

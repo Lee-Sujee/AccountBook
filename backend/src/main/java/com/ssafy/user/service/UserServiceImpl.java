@@ -112,15 +112,15 @@ public class UserServiceImpl implements UserService{
 	//비밀번호 수정	
 	@Override
 	@Transactional
-	public boolean changePassword(String email, PasswordChangeRequestDto passwordChangeRequestDto) {
+	public boolean changePassword(String userId, PasswordChangeRequestDto passwordChangeRequestDto) {
 		//새 비밀번호 == 새 비밀번호 확인 일치하는지 확인
 		//일치하지 않으면 false..
 		if(!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getNewPasswordCheck())) {
 			return false;
 		}
 		
-		//이메일로 일단 사용자 조회
-		User user = userRepository.selectUserByEmail(email);
+		//id로 일단 사용자 조회
+		User user = userRepository.selectUserById(userId);
 		if(user == null) {
 			return false;
 		}
@@ -139,6 +139,24 @@ public class UserServiceImpl implements UserService{
 		
 		return updatePass > 0;
 		
+	}
+
+
+	@Override
+	public UserResponseDto getMyPage(String userId) {
+		User user = userRepository.selectUserById(userId);
+
+	    if (user == null) {
+	        return null;
+	    }
+
+	    UserResponseDto userResponseDto = new UserResponseDto();
+	    userResponseDto.setEmail(user.getEmail());
+	    userResponseDto.setName(user.getName());
+	    userResponseDto.setAge(user.getAge());
+	    userResponseDto.setJob(user.getJob());
+
+	    return userResponseDto;
 	}
 
 
