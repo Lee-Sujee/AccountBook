@@ -38,9 +38,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7); // "Bearer " 제거
+        if (token == null || token.trim().isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // userId 꺼내기
-        String userId = jwtUtil.getUserId(token);
+        String userId = null;
+
+        try {
+            userId = jwtUtil.getUserId(token);
+        } catch (Exception e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 이미 인증이 되어있지 않은 경우에만 처리
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {

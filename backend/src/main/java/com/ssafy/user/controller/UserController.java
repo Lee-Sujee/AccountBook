@@ -22,6 +22,8 @@ import com.ssafy.user.dto.response.SignUpResponseDto;
 import com.ssafy.user.dto.response.UserResponseDto;
 import com.ssafy.user.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "*")
@@ -32,7 +34,7 @@ public class UserController {
 
 	// 회원가입 POST /user
 	@PostMapping("/signUp")
-	public ResponseEntity<?> regist(@RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
+	public ResponseEntity<?> regist(@Valid @RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
 		SignUpResponseDto signUpResponseDto = userService.signUp(signUpRequestDto);
 		if (signUpResponseDto == null)
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
