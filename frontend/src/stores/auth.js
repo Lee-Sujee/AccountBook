@@ -10,7 +10,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const user = ref({})
   const userList = ref([])
-  const loginUser = ref(null) //loginUser 선언 
+
+  //새로 시작할 때 로그인 정보 복원
+  const savedUser = localStorage.getItem("loginUser")
+  const loginUser = ref(savedUser ? JSON.parse(savedUser) : null)
 
   //회원가입
   const insertUser = function(userData){
@@ -34,7 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
   //로그인
   const login = function(loginData){
     axios({
-      url: `${REST_API_URL}`,
+      url: `${REST_API_URL}/login`,
       method: "POST",
       data: loginData
     })
@@ -42,6 +45,8 @@ export const useAuthStore = defineStore('auth', () => {
       console.log("로그인 성공: ", res.data)
 
       loginUser.value = res.data //로그인 정보 여기다 저장
+
+      localStorage.setItem("loginUser", JSON.stringify(res.data))
 
       router.push({name: 'home'})
     })
@@ -54,6 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
   //로그아웃
   const logout = function(){
     loginUser.value = null
+    localStorage.removeItem("loginUser") //localStorage 삭제
     router.push({name: 'login'})
   }
   return { insertUser, user, userList, loginUser, login, logout}

@@ -15,6 +15,11 @@
       </div>
 
       <div class="form-group">
+        <label for="passwordCheck">비밀번호 확인</label>
+        <input id="passwordCheck" type="password" v-model="user.passwordCheck" />
+      </div>
+
+      <div class="form-group">
         <label for="name">이름</label>
         <input id="name" type="text" v-model="user.name"/>
       </div>
@@ -44,7 +49,7 @@ const store = useAuthStore()
 
 //우리가 userRequestDto에 id랑 passwordCheck 객체가 있어서 일단 이거도 저장하고 사용자한테는 안 보이도록 설정할게요.^^>>
 const user = ref({
-  id: "",               
+  // id: "",               
   email: "",
   password: "",
   passwordCheck: '', 
@@ -53,19 +58,11 @@ const user = ref({
   job: "",
 })
 
-// 이메일 변경 시 id 자동 생성
-watch(() => user.value.email, (newEmail) => {
-  if (newEmail.includes("@")) {
-    user.value.id = newEmail.split("@")[0]
-  }
-})
-
-// passwordCheck 자동 설정
-watch(() => user.value.password, (newPw) => {
-  user.value.passwordCheck = newPw
-})
-
 const insertUser = function(){
+  if(user.value.password !== user.value.passwordCheck) {
+    alert("비밀번호가 일치하지 않습니다.")
+    return;
+  }
   const userData = {
     id: user.value.id,                   
     email: user.value.email,

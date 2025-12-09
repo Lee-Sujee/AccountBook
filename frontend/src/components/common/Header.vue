@@ -9,6 +9,7 @@
         <!--로그인 성공적으로 됐을 경우-->
         <template v-if="store.loginUser">
           <span class="welcome">{{ store.loginUser.name }}님 안녕하세요!</span>
+          <router-link :to="{name: 'myPage'}" class="nav-link">마이페이지</router-link>
           <button class="logout-btn" @click="store.logout">로그아웃</button>
         </template>
 
