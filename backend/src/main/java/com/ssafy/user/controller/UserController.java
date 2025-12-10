@@ -48,7 +48,7 @@ public class UserController {
 	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
 		LoginResponseDto loginResponseDto = userService.login(loginRequestDto);
 		if (loginResponseDto == null)
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return ResponseEntity.ok(loginResponseDto);
 	}
 

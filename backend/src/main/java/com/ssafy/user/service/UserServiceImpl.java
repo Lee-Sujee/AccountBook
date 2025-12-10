@@ -70,6 +70,9 @@ public class UserServiceImpl implements UserService{
 		loginResponseDto.setEmail(user.getEmail());
 		loginResponseDto.setName(user.getName());
 		loginResponseDto.setToken(token); 
+		System.out.println("email = " + loginRequestDto.getEmail());
+		System.out.println("password = " + loginRequestDto.getPassword());
+
 		return loginResponseDto;
 	}
 

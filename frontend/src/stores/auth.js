@@ -35,9 +35,8 @@ export const useAuthStore = defineStore('auth', () => {
     loginUser(loginData)
       .then((res) => {
         console.log("로그인 성공:", res);
-
+        console.log(res)
         const data = res.data; 
-
         accessToken.value = data.token; 
 
         loginUserInfo.value = {
