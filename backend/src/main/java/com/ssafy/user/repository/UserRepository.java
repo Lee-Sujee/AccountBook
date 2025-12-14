@@ -3,7 +3,6 @@ package com.ssafy.user.repository;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.user.dto.request.SignUpRequestDto;
-import com.ssafy.user.dto.request.UserUpdateRequestDto;
 import com.ssafy.user.entity.User;
 
 @Mapper
