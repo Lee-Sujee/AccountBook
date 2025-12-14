@@ -10,5 +10,5 @@ public class User {
 	private String name;
 	private Integer age;
 	private String job;
-	private String created_at;
+	private String createdAt;
 }

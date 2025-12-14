@@ -73,7 +73,6 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-/* 👉 원래 SignUpView에 있던 form 관련 스타일만 이곳에 배치해도 됩니다 */
 .signup-form {
   margin-top: 20px;
 }

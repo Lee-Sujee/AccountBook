@@ -14,6 +14,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: {requiresAuth: true} 
     },
     {
       path: '/login',
@@ -46,7 +47,7 @@ router.beforeEach((to, from, next) => {
 
   //마이페이지 접근 시 로그인 체크 
   if (to.meta.requiresAuth && !store.loginUserInfo) {
-    alert("로그인이 필요한 페이지입니다.")
+    // alert("로그인이 필요한 페이지입니다.")
     return next({name: 'login'})
   }
 
