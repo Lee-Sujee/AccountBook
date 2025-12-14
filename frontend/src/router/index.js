@@ -5,6 +5,9 @@ import UserPasswordView from '@/views/user/UserPasswordView.vue'
 import UserProfileView from '@/views/user/UserProfileView.vue'
 import UserSignUpView from '@/views/user/UserSignUpView.vue'
 import { useAuthStore } from '@/stores/auth'
+import CommunityListView from '@/views/community/CommunityListView.vue'
+import CommunityWriteView from '@/views/community/CommunityWriteView.vue'
+import CommunityDetailView from '@/views/community/CommunityDetailView.vue'
 
 
 const router = createRouter({
@@ -16,26 +19,48 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/login',
+      path: '/user/login',
       name: 'login',
       component: UserLoginView,
     },
     {
-      path: '/signUp',
+      path: '/user/signUp',
       name: 'signUp',
       component: UserSignUpView,
     },
     {
-      path: '/myPage',
+      path: '/user/myPage',
       name: 'myPage',
       component: UserProfileView,
-      meta: {requiresAuth: true} //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } //로그인 해야만 접근 가능
     },
     {
-      path: '/password',
+      path: '/user/password',
       name: 'password',
       component: UserPasswordView,
-      meta: {requiresAuth: true} //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+    },
+    {
+      path: "/community",
+      name: "CommunityList",
+      component: CommunityListView,
+    },
+    {
+      path: "/community/write",
+      name: "CommunityWrite",
+      component: CommunityWriteView,
+      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+    },
+    {
+      path: "/community/:id",
+      name: "CommunityDetail",
+      component: CommunityDetailView,
+    },
+    {
+      path: "/community/:id/edit",
+      name: "CommunityEditView",
+      component: () => import("@/views/community/CommunityEditView.vue"),
+      meta: { requiresAuth: true } //로그인 해야만 접근 가능
     },
   ],
 })
@@ -47,7 +72,7 @@ router.beforeEach((to, from, next) => {
   //마이페이지 접근 시 로그인 체크 
   if (to.meta.requiresAuth && !store.loginUserInfo) {
     alert("로그인이 필요한 페이지입니다.")
-    return next({name: 'login'})
+    return next({ name: 'login' })
   }
 
   next()

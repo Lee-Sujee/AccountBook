@@ -31,6 +31,7 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/user/login",
                             "/user/signUp",
+                            "/community",
                             "/error"
                     ).permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
