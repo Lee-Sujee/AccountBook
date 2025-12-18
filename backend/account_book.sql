@@ -41,6 +41,16 @@ CREATE TABLE `board` (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
+CREATE TABLE `board_like` (
+    `id`            BIGINT AUTO_INCREMENT,
+    `board_id`      INT NOT NULL,
+    `user_id`       CHAR(36) NOT NULL,
+    `created_at`    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_board_user (board_id, user_id),
+    FOREIGN KEY (board_id) REFERENCES board(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 CREATE TABLE `comment` (
 	`id`					INT AUTO_INCREMENT,   
@@ -80,3 +90,5 @@ CREATE TABLE `stats` (
 
 
 select * from users;
+select * from board;
+

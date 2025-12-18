@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.community.repository.CommunityRepository">
+
+	<select id="selectCommunityList" resultType="CommunityResponseDto">
+		SELECT b.id, b.title, b.content, b.likes, b.views, b.created_at AS createdAt, u.name AS writerName
+		FROM board b
+		LEFT JOIN users u ON b.user_id = u.id
+		ORDER BY b.created_at DESC
+	</select>
+
+	<insert id="insertCommunity" parameterType="Community" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO board (user_id, title, content)
+		VALUES (#{userId}, #{title}, #{content})
+	</insert>
+
+	<select id="selectCommunityDetail">
+		SELECT b.id, b.title, b.content, b.likes, b.views, b.created_at, u.name AS writerName, u.id AS writerId
+		FROM board b
+		LEFT JOIN users u ON b.user_id = u.id
+		WHERE b.id = #{id}
+	</select>
+	<update id="increaseViews" parameterType="int">
+  		UPDATE board
+  		SET views = views + 1
+  		WHERE id = #{id}
+	</update>
+	
+	<update id="updateCommunity">
+  		UPDATE board
+  		SET title = #{dto.title}, content = #{dto.content}
+  		WHERE id = #{id}
+	</update>
+	
+	<delete id="deleteCommunity">
+		DELETE FROM board
+		WHERE id = #{id}
+	</delete>
+	
+	<!-- 좋아요 기능!! -->
+	<select id="existsBoardLike" resultType="boolean">
+		SELECT EXISTS (SELECT 1 FROM board_like WHERE board_id = #{boardId}
+		AND user_id = #{userId})
+	</select>
+	
+	<insert id="insertBoardLike">
+		INSERT INTO board_like (board_id, user_id)
+		VALUES(#{boardId}, #{userId})
+	</insert>
+	
+	<delete id="deleteBoardLike">
+		DELETE FROM board_like
+		WHERE board_id = #{boardId}
+			AND user_id = #{userId}
+	</delete>
+	
+	<update id="increaseBoardLikeCount">
+		UPDATE board
+		SET likes = likes + 1
+		WHERE id = #{boardId}
+	</update>
+	
+	<update id="decreaseBoardLikeCount">
+		UPDATE board
+		SET likes = likes - 1
+		WHERE id = #{boardId} AND likes > 0
+	</update>
+	
+	<select id="selectBoardLikeCount" resultType = "int">
+		SELECT likes
+		FROM board
+		WHERE id = #{boardId}
+	</select>
+</mapper>
+
+<!-- CREATE TABLE `board` (
+	`id`					INT AUTO_INCREMENT,    
+    `user_id`				CHAR(36),
+    `title`					VARCHAR(200) NOT NULL,   
+    `content`				TEXT NOT NULL,          
+    `likes`					INT DEFAULT(0),            
+    `views`					INT DEFAULT(0),           
+    `created_at`			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+); -->

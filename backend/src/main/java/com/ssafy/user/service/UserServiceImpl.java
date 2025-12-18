@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService{
 
 
 	@Override
+	@Transactional
 	public UserResponseDto getMyPage(String userId) {
 		User user = userRepository.selectUserById(userId);
 

@@ -3,6 +3,7 @@
     <header class="navbar">
       <div class="logo">
         <router-link :to="{ name: 'home' }" class="logo-text">지출연구소</router-link>
+        <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
       </div>
 
       <nav class="nav-right">

@@ -17,7 +17,7 @@
 import { useAuthStore } from "@/stores/auth";
 import { computed } from "vue";
 
-const emit = defineEmits(["edit"]);   // ★★★ 여기가 핵심
+const emit = defineEmits(["edit"]); 
 
 const store = useAuthStore();
 const user = computed(() => store.myPageInfo);
