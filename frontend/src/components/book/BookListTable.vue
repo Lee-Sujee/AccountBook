@@ -42,7 +42,7 @@
         
         <!--결과 화면-->
         <tr v-if="openedEntryId === entry.id">
-          <td colspan="7">
+          <td colspan="7" style="text-align: right; padding-right: 15px;">
             <div class="comparison-card">
               <div class="card-header">
                 <strong>가격비교 결과</strong>
@@ -205,23 +205,13 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
 .book-table td {
   padding: 10px 8px;
   border-bottom: 1px solid #eee;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .entry-row:hover {
   background-color: #f9f9f9;
-}
-
-/* 정렬 */
-.type-col,
-.type-col-header,
-.category-col,
-.category-col-header,
-.content-col,
-.content-col-header,
-.memo-col,
-.memo-col-header,
-.compare-col {
-  text-align: center;
+  cursor: pointer;
 }
 
 .amount-col {
@@ -270,18 +260,26 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
 }
 
 .comparison-card {
-  margin:  10px 0;
-  padding: 12px;
+  margin:  10px 0 10px auto;
+  display: inline-block;
+  padding: 15px 20px;
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: fit-content;
+  min-width: 250px;
+
+  text-align: left;
+
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  gap: 20px;
 }
 
 .close-btn {
@@ -294,6 +292,10 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
 .result-text {
   margin-top: 8px;
   font-weight: bold;
+}
+
+.card-body p {
+  margin: 5px 0;
 }
 
 </style>
