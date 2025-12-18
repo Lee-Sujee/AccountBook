@@ -1,5 +1,5 @@
 <<template>
-    <div v-if="isVisible" class="modal-overlay" @click.self="$emit('closeModal')">
+    <div v-if="isVisible" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">{{ isEditMode ? '가계부 항목 수정' : '새 항목 등록' }}</h3>
@@ -31,7 +31,7 @@
                 
                 <div class="form-group">
                     <label for="content">내용</label>
-                    <input type="text" id="content" v-model="form.content">
+                    <input type="text" id="content" v-model="form.content" required>
                 </div>
 
                 <div class="form-group">
@@ -41,7 +41,7 @@
 
                 <div class="form-group">
                     <label for="memo">메모</label>
-                    <textarea id="memo" v-model="form.memo" rows="3" required></textarea>
+                    <textarea id="memo" v-model="form.memo" rows="3"></textarea>
                 </div>
 
                 <div class="modal-footer">
@@ -101,7 +101,10 @@ const handleSubmit = async () => {
         } else {
             //아니면 createEntry 호출 (생성폼)
             await bookStore.createEntry(dataToSend);
+
+            form.value = {...initialFormState};
         }
+        emit('closeModal');
     }
      catch (error) {
         console.error("폼 제출 실패:", error)

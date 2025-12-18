@@ -31,7 +31,9 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/user/login",
                             "/user/signUp",
-                            "/error"
+                            "/error",
+                            "/admin/product-price/init",
+                            "/api/v1/comparison/**"
                     ).permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .anyRequest().authenticated()

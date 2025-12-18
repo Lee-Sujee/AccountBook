@@ -3,106 +3,192 @@
     <table class="book-table">
       <thead>
         <tr>
-          <th>날짜</th>
-          <th>구분</th>
-          <th>카테고리</th>
-          <th>내용</th>
-          <th>메모</th>
+          <th class="date-col-header">날짜</th>
+          <th class="type-col-header">구분</th>
+          <th class="category-col-header">카테고리</th>
+          <th class="content-col-header">내용</th>
+          <th class="memo-col-header">메모</th>
           <th class="amount-col">금액 (원)</th>
+          <th></th>
         </tr>
       </thead>
+
       <tbody>
-        <tr 
-          v-for="entry in entries" 
-          :key="entry.id" 
-          @click="selectEntry(entry)" 
-          class="entry-row"
-        >
-          <td>{{ formatDate(entry.createdAt) }}</td>
-          
-          <td :class="entry.type === 'income' ? 'text-income' : 'text-expense'">
+        <template v-for="entry in entries" :key="entry.id">
+          <!--기본 행-->
+          <tr class="entry-row" @click="selectEntry(entry)">
+            <td>{{ formatDate(entry.createdAt) }}</td>
+            <td
+            :class="entry.type === 'income' ? 'text-income' : 'text-expense'"
+          >
             {{ entry.type === 'income' ? '수입' : '지출' }}
           </td>
-          
+
           <td>{{ entry.category }}</td>
           <td>{{ entry.content }}</td>
           <td>{{ entry.memo }}</td>
           <td class="amount-col">{{ formatAmount(entry.amount) }}</td>
+
+          <td class="compare-col">
+            <button
+              v-if="entry.type === 'expense'"
+              class="btn-compare"
+              @click.stop="openPriceComparison(entry)"
+            >
+              평균계산기
+            </button>
+          </td>
         </tr>
         
-        <tr v-if="entries.length === 0">
-          <td colspan="6" class="no-data">등록된 가계부 항목이 없습니다. 새 항목을 등록해주세요.</td>
+        <!--결과 화면-->
+        <tr v-if="openedEntryId === entry.id">
+          <td colspan="7">
+            <div class="comparison-card">
+              <div class="card-header">
+                <strong>가격비교 결과</strong>
+                <button class="close-btn" @click="openedEntryId = null">x</button>
+              </div>
+
+              <p>
+                <strong>상품명:</strong> {{ comparisonResult.productName }}
+              </p>
+              <p>
+                <strong>내가 쓴 금액:</strong>
+                {{ formatAmount(comparisonResult.userPrice) }}원
+              </p>
+              <p>
+                <strong>평균 가격:</strong>
+                {{ formatAmount(comparisonResult.averagePrice) }}원
+              </p>
+
+              <p class="result-text" :class="comparisonResult.isCheaper 
+              ? 'text-income' : 'text-expense'">
+              {{ comparisonResult.result }}</p>
+            </div>
+          </td>
         </tr>
-      </tbody>
-    </table>
+  </template>
+
+  <tr v-if="entries.length === 0">
+    <td colspan="7" class="no-data">
+      등록된 가계부 항목이 없습니다.
+    </td>
+  </tr>
+</tbody>
+</table>
 
     <!--합계-->
     <div class="total-box">
-      <div><span>총 수입:</span> <span class="text-income">{{ formatAmount(totalIncome) }}원</span></div>
-      <div><span>총 지출:</span> <span class="text-expense">{{ formatAmount(totalExpense) }}원</span></div>
-      <div><span>잔액:</span>
+      <div>
+        <span>총 수입:</span>
+        <span class="text-income">{{ formatAmount(totalIncome) }}원</span>
+      </div>
+      <div>
+        <span>총 지출:</span>
+        <span class="text-expense">{{ formatAmount(totalExpense) }}원</span>
+      </div>
+      <div>
+        <span>잔액:</span>
         <span :class="balance >= 0 ? 'text-income' : 'text-expense'">
           {{ formatAmount(balance) }}원
-        </span></div>
+        </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from 'vue';
+import { defineProps, defineEmits, computed, ref } from 'vue'
+import instance from '@/api/axiosInstance'
 
 const props = defineProps({
   entries: {
     type: Array,
     required: true,
     default: () => [],
-  }
-});
+  },
+})
 
-const emit = defineEmits(['selectEntry']);
-const selectEntry = (entry) => emit('selectEntry', entry);
+const emit = defineEmits(['selectEntry'])
+const selectEntry = (entry) => emit('selectEntry', entry)
 
-// 금액 포맷 함수
-const formatAmount = (amount) => {
-  return amount ? amount.toLocaleString('ko-KR') : '0';
-};
+//평균계산기 상태
+const openedEntryId = ref(null)
+const comparisonResult = ref({
+  productName: '',
+  userPrice: 0,
+  averagePrice: 0,
+  result: '',
+  isCheaper: false,
+})
 
-// 날짜 포맷 함수 (진짜 모르겠는데 gpt가 알려준대로 일단 적었음..)
+// 포맷 함수
+const formatAmount = (amount) =>
+  amount ? amount.toLocaleString('ko-KR') : '0'
+
 const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false // 24시간 형식
-  }).replace(/\. /g, '.').replace('.', '-').replace('.', '-').replace(' ', ' ');
-};
+  if (!dateString) return ''
+  const d = new Date(dateString)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+    d.getDate()
+  ).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(
+    d.getMinutes()
+  ).padStart(2, '0')}`
+}
 
-//합계 계산
-const totalIncome = computed(()=>{
-  return props.entries
-  .filter(e => e.type === 'income')
-  .reduce((sum, e) => sum + Number(e.amount), 0);
-});
+// 평균계산기
+const openPriceComparison = async (entry) => {
+  const productName = entry.content
+  const userPrice = entry.amount
 
-const totalExpense = computed(()=>{
-  return props.entries
-  .filter(e => e.type === 'expense')
-  .reduce((sum, e) => sum + Number(e.amount), 0);
-});
+  if (!productName || userPrice <= 0) {
+    alert('상품명과 유효한 금액이 필요합니다!')
+    return
+  }
 
-const balance = computed(() => {
-  return totalIncome.value - totalExpense.value;
-});
+  try {
+    const response = await instance.get('/api/v1/comparison/price', {
+      params: {
+        productName,
+        userPrice,
+      },
+    })
 
+    comparisonResult.value = {
+      productName,
+      userPrice,
+      averagePrice: response.data.averagePrice,
+      result: response.data.result,
+      isCheaper: userPrice <= response.data.averagePrice,
+    }
+
+    //버튼 누르면 닫히게
+    openedEntryId.value = openedEntryId.value === entry.id? null : entry.id
+  } catch (e) {
+    console.error(e)
+    alert('가격 비교에 실패했습니다!')
+  }
+}
+
+// 합계 계산
+const totalIncome = computed(() =>
+  props.entries
+    .filter((e) => e.type === 'income')
+    .reduce((sum, e) => sum + Number(e.amount), 0)
+)
+
+const totalExpense = computed(() =>
+  props.entries
+    .filter((e) => e.type === 'expense')
+    .reduce((sum, e) => sum + Number(e.amount), 0)
+)
+
+const balance = computed(() => totalIncome.value - totalExpense.value)
 </script>
 
 <style scoped>
 .book-list-container {
-  overflow-x: auto; 
+  overflow-x: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: white;
@@ -111,53 +197,59 @@ const balance = computed(() => {
 .book-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  table-layout: fixed;
   font-size: 14px;
 }
 
-.book-table th {
-  background-color: #f0f4f7;
-  color: #333;
-  padding: 12px 15px;
-  font-weight: 600;
-  border-bottom: 2px solid #ddd;
-  text-transform: uppercase;
-}
-
+.book-table th,
 .book-table td {
-  padding: 10px 15px;
+  padding: 10px 8px;
   border-bottom: 1px solid #eee;
-  color: #555;
-}
-
-.entry-row {
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
 .entry-row:hover {
   background-color: #f9f9f9;
 }
 
+/* 정렬 */
+.type-col,
+.type-col-header,
+.category-col,
+.category-col-header,
+.content-col,
+.content-col-header,
+.memo-col,
+.memo-col-header,
+.compare-col {
+  text-align: center;
+}
+
 .amount-col {
   text-align: right;
   font-weight: bold;
 }
-.content-col {
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 .text-income {
-  color: #1F8A4C;
-  font-weight: 500;
+  color: #1f8a4c;
 }
 
 .text-expense {
   color: #d9534f;
-  font-weight: 500;
+}
+
+.btn-compare {
+  background-color: #f0f7ff;
+  color: #007bff;
+  border: 1px solid #b3d4ff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-compare:hover {
+  background-color: #007bff;
+  color: white;
 }
 
 .no-data {
@@ -170,8 +262,38 @@ const balance = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  text-align: right;
   margin-top: 10px;
+  padding: 0 15px 15px 0;
   gap: 4px;
   font-weight: 600;
 }
+
+.comparison-card {
+  margin:  10px 0;
+  padding: 12px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.result-text {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
 </style>
