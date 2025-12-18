@@ -9,7 +9,6 @@ import CommunityListView from '@/views/community/CommunityListView.vue'
 import CommunityWriteView from '@/views/community/CommunityWriteView.vue'
 import CommunityDetailView from '@/views/community/CommunityDetailView.vue'
 
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -17,7 +16,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: {requiresAuth: true} 
+      meta: { requiresAuth: true }
     },
     {
       path: '/user/login',
@@ -33,13 +32,13 @@ const router = createRouter({
       path: '/user/myPage',
       name: 'myPage',
       component: UserProfileView,
-      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } // 로그인 해야만 접근 가능
     },
     {
       path: '/user/password',
       name: 'password',
       component: UserPasswordView,
-      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } // 로그인 해야만 접근 가능
     },
     {
       path: "/community",
@@ -50,7 +49,7 @@ const router = createRouter({
       path: "/community/write",
       name: "CommunityWrite",
       component: CommunityWriteView,
-      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } // 로그인 해야만 접근 가능
     },
     {
       path: "/community/:id",
@@ -61,27 +60,21 @@ const router = createRouter({
       path: "/community/:id/edit",
       name: "CommunityEditView",
       component: () => import("@/views/community/CommunityEditView.vue"),
-      meta: { requiresAuth: true } //로그인 해야만 접근 가능
+      meta: { requiresAuth: true } // 로그인 해야만 접근 가능
     },
   ],
 })
 
-//토큰 사용해서 로그인 안 한 사용자 -> 마이페이지 접근 못하게 막기
+// 토큰 사용해서 로그인 안 한 사용자 -> 마이페이지 접근 제한
 router.beforeEach((to, from, next) => {
-  const store = useAuthStore()
+  const store = useAuthStore();
 
-  //마이페이지 접근 시 로그인 체크 
   if (to.meta.requiresAuth && !store.loginUserInfo) {
-<<<<<<< HEAD
-    alert("로그인이 필요한 페이지입니다.")
-    return next({ name: 'login' })
-=======
-    // alert("로그인이 필요한 페이지입니다.")
-    return next({name: 'login'})
->>>>>>> 4dc210cf13e77fab7974674fce106b8fe9a33c16
+    alert("로그인이 필요한 페이지입니다.");
+    return next({ name: "login" });
   }
 
-  next()
+  next();
 })
 
-export default router
+export default router;
