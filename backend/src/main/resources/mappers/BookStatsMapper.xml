@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.book.mapper.BookStatsMapper">
+
+    <select id="selectCategorySummary"
+            resultType="com.ssafy.book.dto.response.CategorySummaryDto">
+        SELECT
+            category,
+            SUM(amount) AS total
+        FROM book
+        WHERE user_id = #{userId}
+          AND type = #{type}
+          AND created_at BETWEEN #{start} AND #{end}
+        GROUP BY category
+    </select>
+
+</mapper>

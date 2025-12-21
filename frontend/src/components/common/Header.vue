@@ -6,6 +6,7 @@
         <router-link :to="{ name: 'home' }" class="nav-link">가계부</router-link>
         <router-link :to="{ name: 'ChallengeList' }" class="nav-link">챌린지</router-link>
         <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
+        <router-link :to="{name: 'AverageCalculator'}" class="nav-link">평균계산기</router-link>
       </div>
 
       <nav class="nav-right">
@@ -27,6 +28,7 @@
 </template>
 
 <script setup>
+import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();

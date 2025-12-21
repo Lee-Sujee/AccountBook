@@ -31,8 +31,16 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/user/login",
                             "/user/signUp",
+
+                            // 공통
+                            "/error",
+
+                            // 팀원: 커뮤니티
                             "/community",
-                            "/error"
+
+                            // 너: 가격 비교 / 초기 데이터
+                            "/admin/product-price/init",
+                            "/api/v1/comparison/**"
                     ).permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .anyRequest().authenticated()
@@ -42,7 +50,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();

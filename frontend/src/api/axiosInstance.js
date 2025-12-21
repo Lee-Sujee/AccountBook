@@ -2,8 +2,9 @@ import axios from "axios";
 
 // axios 인스턴스 생성
 const instance = axios.create({
-    baseURL: "http://localhost:8080",
-    withCredentials: true,
+
+  baseURL: "http://localhost:8080",
+  withCredentials: true,
 });
 
 // 모든 요청에 JWT 토큰 자동 추가
