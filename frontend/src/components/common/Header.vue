@@ -4,6 +4,7 @@
       <div class="logo">
         <router-link :to="{ name: 'home' }" class="logo-text">지출연구소</router-link>
         <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
+        <router-link :to="{name: 'AverageCalculator'}" class="nav-link">평균계산기</router-link>
       </div>
 
       <nav class="nav-right">
@@ -25,6 +26,7 @@
 </template>
 
 <script setup>
+import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();

@@ -9,7 +9,6 @@
           <th class="content-col-header">내용</th>
           <th class="memo-col-header">메모</th>
           <th class="amount-col">금액 (원)</th>
-          <th></th>
         </tr>
       </thead>
 
@@ -29,48 +28,11 @@
           <td>{{ entry.memo }}</td>
           <td class="amount-col">{{ formatAmount(entry.amount) }}</td>
 
-          <td class="compare-col">
-            <button
-              v-if="entry.type === 'expense'"
-              class="btn-compare"
-              @click.stop="openPriceComparison(entry)"
-            >
-              평균계산기
-            </button>
-          </td>
-        </tr>
-        
-        <!--결과 화면-->
-        <tr v-if="openedEntryId === entry.id">
-          <td colspan="7" style="text-align: right; padding-right: 15px;">
-            <div class="comparison-card">
-              <div class="card-header">
-                <strong>가격비교 결과</strong>
-                <button class="close-btn" @click="openedEntryId = null">x</button>
-              </div>
-
-              <p>
-                <strong>상품명:</strong> {{ comparisonResult.productName }}
-              </p>
-              <p>
-                <strong>내가 쓴 금액:</strong>
-                {{ formatAmount(comparisonResult.userPrice) }}원
-              </p>
-              <p>
-                <strong>평균 가격:</strong>
-                {{ formatAmount(comparisonResult.averagePrice) }}원
-              </p>
-
-              <p class="result-text" :class="comparisonResult.isCheaper 
-              ? 'text-income' : 'text-expense'">
-              {{ comparisonResult.result }}</p>
-            </div>
-          </td>
         </tr>
   </template>
 
   <tr v-if="entries.length === 0">
-    <td colspan="7" class="no-data">
+    <td colspan="6" class="no-data">
       등록된 가계부 항목이 없습니다.
     </td>
   </tr>
@@ -112,16 +74,6 @@ const props = defineProps({
 const emit = defineEmits(['selectEntry'])
 const selectEntry = (entry) => emit('selectEntry', entry)
 
-//평균계산기 상태
-const openedEntryId = ref(null)
-const comparisonResult = ref({
-  productName: '',
-  userPrice: 0,
-  averagePrice: 0,
-  result: '',
-  isCheaper: false,
-})
-
 // 포맷 함수
 const formatAmount = (amount) =>
   amount ? amount.toLocaleString('ko-KR') : '0'
@@ -134,40 +86,6 @@ const formatDate = (dateString) => {
   ).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(
     d.getMinutes()
   ).padStart(2, '0')}`
-}
-
-// 평균계산기
-const openPriceComparison = async (entry) => {
-  const productName = entry.content
-  const userPrice = entry.amount
-
-  if (!productName || userPrice <= 0) {
-    alert('상품명과 유효한 금액이 필요합니다!')
-    return
-  }
-
-  try {
-    const response = await instance.get('/api/v1/comparison/price', {
-      params: {
-        productName,
-        userPrice,
-      },
-    })
-
-    comparisonResult.value = {
-      productName,
-      userPrice,
-      averagePrice: response.data.averagePrice,
-      result: response.data.result,
-      isCheaper: userPrice <= response.data.averagePrice,
-    }
-
-    //버튼 누르면 닫히게
-    openedEntryId.value = openedEntryId.value === entry.id? null : entry.id
-  } catch (e) {
-    console.error(e)
-    alert('가격 비교에 실패했습니다!')
-  }
 }
 
 // 합계 계산
@@ -257,21 +175,6 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
   padding: 0 15px 15px 0;
   gap: 4px;
   font-weight: 600;
-}
-
-.comparison-card {
-  margin:  10px 0 10px auto;
-  display: inline-block;
-  padding: 15px 20px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: fit-content;
-  min-width: 250px;
-
-  text-align: left;
-
 }
 
 .card-header {

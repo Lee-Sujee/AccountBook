@@ -4,45 +4,46 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.book.repository.BookRepository">
 
-	<!--로그인한 USER 모든 가계부 조회-->
-	<select id="selectAll" parameterType="String" resultType="Book">
-		SELECT *
-		FROM book
-		WHERE user_id = #{userId}
-		ORDER BY created_at DESC
-	</select>
-	
-	<!--단일 항목별 상세조회-->
-	<select id="select" parameterType="map" resultType="Book">
-		SELECT *
-		FROM book
-		WHERE id = #{id}
-		AND user_id = #{userId}
-	</select>
-	
-	<!--추가-->
-	<insert id="insert" parameterType="Book">
-		INSERT INTO book (user_id, category, content, type, amount, memo)
-		VALUES (#{userId}, #{category}, #{content}, #{type}, #{amount}, #{memo})
-	</insert>
-	
-	<!--수정-->
-	<update id="update" parameterType="Book">
-		UPDATE book
-		SET category = #{category},
-			content = #{content},
-			type = #{type},
-			amount = #{amount},
-			memo = #{memo}
-		WHERE id = #{id}
-		AND user_id = #{userId}
-	</update>
-	
-	<!--삭제-->
-	<delete id="delete" parameterType="map">
-		DELETE FROM book
-		WHERE id = #{id}
-		AND user_id = #{userId}
-	</delete>
-	
+  <!-- 로그인한 USER 모든 가계부 조회 -->
+  <select id="selectAll" parameterType="String" resultType="Book">
+    SELECT *
+    FROM book
+    WHERE user_id = #{userId}
+    ORDER BY created_at DESC
+  </select>
+
+  <!-- 단일 항목별 상세조회 -->
+  <select id="select" parameterType="map" resultType="Book">
+    SELECT *
+    FROM book
+    WHERE id = #{id}
+      AND user_id = #{userId}
+  </select>
+
+  <!-- ✅ 추가: created_at 포함 -->
+  <insert id="insert" parameterType="Book">
+    INSERT INTO book (user_id, category, content, type, amount, memo, created_at)
+    VALUES (#{userId}, #{category}, #{content}, #{type}, #{amount}, #{memo}, #{createdAt})
+  </insert>
+
+  <!-- ✅ 수정: created_at 포함 -->
+  <update id="update" parameterType="Book">
+    UPDATE book
+    SET category   = #{category},
+        content    = #{content},
+        type       = #{type},
+        amount     = #{amount},
+        memo       = #{memo},
+        created_at = #{createdAt}
+    WHERE id = #{id}
+      AND user_id = #{userId}
+  </update>
+
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="map">
+    DELETE FROM book
+    WHERE id = #{id}
+      AND user_id = #{userId}
+  </delete>
+
 </mapper>

@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import CommunityListView from '@/views/community/CommunityListView.vue'
 import CommunityWriteView from '@/views/community/CommunityWriteView.vue'
 import CommunityDetailView from '@/views/community/CommunityDetailView.vue'
+import AverageCalculatorView from '@/views/AverageCalculatorView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -61,6 +62,11 @@ const router = createRouter({
       name: "CommunityEditView",
       component: () => import("@/views/community/CommunityEditView.vue"),
       meta: { requiresAuth: true } // 로그인 해야만 접근 가능
+    },
+    {
+      path: '/average',
+      name: 'AverageCalculator',
+      component: AverageCalculatorView
     },
   ],
 })
