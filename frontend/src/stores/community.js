@@ -10,6 +10,8 @@ import {
   toggleBoardLikeApi,
 } from "@/api/communityApi";
 
+import{getCommentListApi, createCommentApi, updateCommentApi, deleteCommentApi,} from "@/api/commentApi"
+// # 게시판 #
 export const useCommunityStore = defineStore("community", () => {
   const router = useRouter();
 
@@ -105,16 +107,69 @@ export const useCommunityStore = defineStore("community", () => {
       });
   };
 
+  // # 댓글 #
+  // 전체 댓글 조회
+  const commentList = ref([])
+  const getCommentList = (boardId) => {
+    return getCommentListApi(boardId)
+    .then((res) => {
+      commentList.value = res.data;
+    })
+    .catch((err) => {
+      console.error("댓글 조회 실패: ", err);
+    })
+  }
+
+  // 댓글 작성
+  const createComment = (boardId, writeData) => {
+    return createCommentApi(boardId, writeData)
+    .then(() => {
+      alert("댓글이 등록되었습니다.");
+      return getCommentList(boardId)
+    })
+    .catch((err) => {
+      console.error("댓글 등록 실패: ", err);
+    })
+  }
+
+  // 댓글 수정
+  const updateComment = (boardId, commentId, writeData) => {
+    return updateCommentApi(commentId, writeData)
+    .then(() => {
+      alert("댓글이 수정되었습니다.");
+      return getCommentList(boardId);
+    })
+    .catch((err) => {
+      console.error("댓글 수정 실패: ", err);
+    })
+  }
+
+  // 댓글 삭제
+  const deleteComment = (boardId, commentId) => {
+    return deleteCommentApi(commentId)
+    .then(() => {
+      alert("해당 댓글이 삭제되었습니다.")
+      return getCommentList(boardId);
+    })
+    .catch((err) => {
+      console.error("댓글 삭제 실패: ", err);
+    })
+  }
   return {
     communityList,
     communityDetail,
     liked,
     likes,
+    commentList,
     fetchCommunityList,
     createCommunity,
     fetchCommunityDetail,
     updateCommunity,
     deleteCommunity,
     toggleLike,
+    getCommentList,
+    createComment,
+    updateComment,
+    deleteComment,
   };
 });

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.ssafy.challenge.repository.ChallengeRepository">
+	<insert id="createChallenge" parameterType="ChallengeEntity">
+		INSERT INTO
+		challenge(user_id, start_date, end_date, target, description, status)
+		VALUES(#{userId}, #{startDate}, #{endDate},
+		#{target}, #{description}, #{status})
+	</insert>
+
+	<select id="getChallengeList" parameterType="String"
+		resultType="ChallengeResponseDto">
+		SELECT *
+		FROM challenge
+		WHERE user_id = #{userId}
+		ORDER BY created_at DESC
+	</select>
+
+	<select id="getOneChallenge" parameterType="int"
+		resultType="ChallengeResponseDto">
+		SELECT *
+		FROM challenge
+		WHERE id = #{challengeId}
+	</select>
+
+	<update id="updateChallenge" parameterType="ChallengeResponseDto">
+		UPDATE challenge
+		SET
+		start_date = #{startDate}, end_date = #{endDate}, target = #{target},
+		description = #{description}, status = #{status}
+		WHERE id = #{id} and
+		user_id = #{userId}
+	</update>
+
+	<delete id="deleteChallenge" parameterType="ChallengeResponseDto">
+		DELETE FROM challenge
+		WHERE id = #{id} and user_id = #{userId}
+	</delete>
+
+	<update id="updateStatusToOngoing">
+		UPDATE challenge
+		SET status = 'ONGOING'
+		WHERE status = 'READY'
+			AND start_date &lt;= #{today}
+	</update>
+
+	<update id="updateStatusToSuccess">
+		UPDATE challenge
+		SET status = 'SUCCESS'
+		WHERE status = 'ONGOING'
+			AND id = #{challengeId}
+	</update>
+	<!-- <update id="updateStatusToEnd">
+		UPDATE challenge
+		
+	</update> -->
+
+</mapper>

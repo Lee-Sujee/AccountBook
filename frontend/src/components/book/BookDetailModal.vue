@@ -11,10 +11,12 @@
                     <tr><th>구분</th><td :class="entry.type === 'income' ? 'text-income' : 'text-expense'">
                         {{ entry.type === 'income' ? '수입' : '지출' }}
                     </td></tr>
-                    <tr><th>카테고리</th><td>{{ entry.category }}</td></tr>
-                    <tr><th>내용</th><td>{{ entry.content }}</td></tr>
-                    <tr><th>금액</th><td>{{ formatAmount(entry.amount) }}원</td></tr>
-                    <tr><th>메모</th><td>{{ entry.memo }}</td></tr>
+                    <tbody>
+                        <tr><th>카테고리</th><td>{{ entry.category }}</td></tr>
+                        <tr><th>내용</th><td>{{ entry.content }}</td></tr>
+                        <tr><th>금액</th><td>{{ formatAmount(entry.amount) }}원</td></tr>
+                        <tr><th>메모</th><td>{{ entry.memo }}</td></tr>
+                    </tbody>
                 </table>
             </div>
 

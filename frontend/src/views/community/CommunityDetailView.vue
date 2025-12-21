@@ -12,6 +12,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useRoute } from 'vue-router';
 import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import CommentList from '../../components/comment/CommentList.vue';
 
 const route = useRoute();
 const postId = Number(route.params.id);

@@ -2,7 +2,9 @@
   <div class="home-container">
     <header class="navbar">
       <div class="logo">
-        <router-link :to="{ name: 'home' }" class="logo-text">지출연구소</router-link>
+        <router-link :to="{ name: 'home' }" class="logo-text"><img class="logo-img" src="@/assets/img/logo.png"></router-link>
+        <router-link :to="{ name: 'home' }" class="nav-link">가계부</router-link>
+        <router-link :to="{ name: 'ChallengeList' }" class="nav-link">챌린지</router-link>
         <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
       </div>
 
@@ -31,62 +33,67 @@ const store = useAuthStore();
 </script>
 
 <style scoped>
+/* 전체 navbar */
 .navbar {
   width: 100%;
-  padding: 20px 40px;
-  background-color: #ffffff;
+  padding: 14px 32px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #eef1f7;
+  align-items: center;          
   box-sizing: border-box;
 }
 
-.logo-text {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1C2A3A;
-  text-decoration: none;
-}
-
-.nav-right {
+/* 왼쪽 로고 + 메뉴 */
+.logo {
+  font-size: 14px;
+  font-weight: 700; 
   display: flex;
-  gap: 28px;
+  align-items: center;          /* 🔑 로고/텍스트 같은 줄 */
+  gap: 20px;                    /* 메뉴 사이 간격 */
+  
+  
 }
 
+/* 로고 이미지 */
+.logo-img {
+  width: 180px;
+  height: auto;
+  vertical-align: middle;       /* 🔑 이미지 baseline 보정 */
+}
+
+/* 공통 네비 링크 */
 .nav-link {
   text-decoration: none;
-  color: #5a6a85;
-  font-size: 16px;
-  font-weight: 500;
-  transition: 0.2s ease;
-  padding: 6px 8px;
-  border-radius: 6px;
+  line-height: 1;  
+  color: #0063f8;            /* 🔑 세로 흔들림 제거 */
 }
 
-.nav-link:hover {
-  color: #1F8A4C;
-  background-color: rgba(31, 138, 76, 0.1);
+/* 오른쪽 영역 */
+.nav-right {
+  font-size: 12px;
+  display: flex;
+  align-items: center;          /* 🔑 텍스트/버튼 중앙 */
+  gap: 18px;
 }
 
+/* 환영 문구 */
 .welcome {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1C2A3A;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0063f8;
+  white-space: nowrap;
 }
 
+/* 로그아웃 버튼 */
 .logout-btn {
-  padding: 6px 12px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
   border: none;
-  background-color: #1F8A4C;
-  color: #ffffff;
   border-radius: 6px;
+  background-color: #0063f8;
+  color: #ffffff;
   cursor: pointer;
-  transition: .2s ease;
-  font-size: 15px;
 }
 
-.logout-btn:hover {
-  background-color: #187342;
-}
 </style>

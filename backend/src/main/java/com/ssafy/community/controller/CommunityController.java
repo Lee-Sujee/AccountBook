@@ -36,9 +36,9 @@ public class CommunityController {
 	@GetMapping("")
 	public ResponseEntity<List<CommunityResponseDto>> getCommunityList(){
 		List communityList = communityService.getCommunityList();
-//		if(communityList.isEmpty()) {
-//			return new ResponseEntity(HttpStatus.NO_CONTENT);
-//		}
+		if(communityList.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
 		return ResponseEntity.ok(communityList);
 	}
 	

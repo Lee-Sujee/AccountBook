@@ -22,6 +22,8 @@
       <button class="edit-btn" @click="goEdit">수정</button>
       <button class="delete-btn" @click="deletePost">삭제</button>
     </div>
+
+    <CommentList :boardId="communityDetail.id"/>
   </div>
 </template>
 
@@ -33,6 +35,8 @@ import { storeToRefs } from "pinia";
 import { useCommunityStore } from "@/stores/community";
 import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
+import CommentList from "../comment/CommentList.vue";
+import CommentForm from "../comment/CommentForm.vue";
 defineProps({
   liked: {
     type: Boolean,

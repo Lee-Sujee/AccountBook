@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.challenge.repository.ChallengeDepositRepository">
+
+<insert id="createDeposit">
+	INSERT INTO challenge_deposit(challenge_id, amount)
+	VALUES (#{challengeId}, #{amount})
+</insert>
+
+<select id="getDepositList" resultType="ChallengeDepositResponseDto">
+	SELECT id, amount, created_at AS createdAt
+	FROM challenge_deposit
+	WHERE challenge_id = #{challengeId}
+	ORDER BY created_at DESC, id DESC
+</select>
+
+<select id="getDepositSummary" resultType="ChallengeDepositSummaryResponseDto">
+	SELECT COALESCE(SUM(amount), 0) AS totalAmount,
+			COUNT(*) AS depositCount
+	FROM challenge_deposit
+	WHERE challenge_id = #{challengeId}
+</select>
+
+</mapper>
+
+<!-- 	int createDeposit(int challengeId, int amount);
+
+	List<ChallengeDepositResponseDto> getDepositList(int challengeId);
+
+	ChallengeDepositSummaryResponseDto getDepositSummary(int challengeId); -->
