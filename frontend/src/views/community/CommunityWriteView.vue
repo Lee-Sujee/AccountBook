@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>커뮤니티 작성폼</h2>
     <CommunityForm @submit="createPost" />
   </div>
 </template>

@@ -20,6 +20,9 @@ public class BookServiceImpl implements BookService{
 	@Autowired
 	private BookStatsMapper bookStatsMapper;
 	
+	@Autowired
+	private OpenAIService openAIService;
+	
 	@Override
 	public List<Book> selectAll(String userId) {
 		return bookRepository.selectAll(userId);
@@ -56,6 +59,11 @@ public class BookServiceImpl implements BookService{
 				.withHour(23).withMinute(59).withSecond(59);
 		
 		return bookStatsMapper.selectCategorySummary(userId, type, start, end);
+	}
+
+	@Override
+	public String analyzeFinances(String userId, int income, int expense) {
+		return openAIService.analyzeFinances(income, expense);
 	}
 	
 	

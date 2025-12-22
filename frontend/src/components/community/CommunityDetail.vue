@@ -2,22 +2,24 @@
   <div v-if="communityDetail" class="detail-wrapper">
     <article class="post-card">
       <h1 class="post-title">{{ communityDetail.title }}</h1>
-
+      
       <div class="post-meta">
-        <span>작성자 · {{ communityDetail.writerName }}</span>
-        <span>작성일 · {{ communityDetail.createdAt }}</span>
+        <div class="write-info">
+          <span>{{ communityDetail.writerName }}</span>
+          <span>{{ communityDetail.createdAt }}</span>
+        </div>
+        <div class="post-stats">
+          <span>조회 {{ communityDetail.views }}</span>
+          <button class="like-btn" :class="{ active: liked }" @click="$emit('toggle-like')" > 💕 {{ communityDetail.likes }} </button>
+        </div>
       </div>
-
+      
       <div class="post-content">
         {{ communityDetail.content }}
       </div>
     </article>
-
-    <div class="post-stats">
-      <span>👀 조회수 {{ communityDetail.views }}</span>
-      <button class="like-btn" :class="{ active: liked }" @click="$emit('toggle-like')" > ❤️ {{ communityDetail.likes }} </button>
-    </div>
-
+    
+    
     <div v-if="isAuthor" class="post-actions">
       <button class="edit-btn" @click="goEdit">수정</button>
       <button class="delete-btn" @click="deletePost">삭제</button>
@@ -36,7 +38,6 @@ import { useCommunityStore } from "@/stores/community";
 import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
 import CommentList from "../comment/CommentList.vue";
-import CommentForm from "../comment/CommentForm.vue";
 defineProps({
   liked: {
     type: Boolean,
@@ -110,10 +111,8 @@ watch(
 }
 
 .post-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
   padding: 24px;
-  background-color: #fff;
+  background-color: #EDEDED;
 }
 
 .post-title {
@@ -122,14 +121,27 @@ watch(
   margin-bottom: 12px;
 }
 
-.post-meta {
+.post-meta{
   display: flex;
   justify-content: space-between;
+  width: 100%;
   font-size: 14px;
-  color: #666;
+  padding: 10px;
   margin-bottom: 24px;
+  border: none;
+  border-top: 1.5px solid #0063f8;
+  border-bottom: 1.5px solid #0063f8;
 }
 
+.write-info {
+  display: inline-flex;
+  flex-direction: column; /* 세로로 배치 */
+}
+
+.post-stats {
+  margin-left: auto;
+  display: flex;
+}
 .post-content {
   font-size: 16px;
   line-height: 1.6;
@@ -142,7 +154,6 @@ watch(
   gap: 16px;
   margin-top: 16px;
   font-size: 14px;
-  color: #555;
 }
 
 .post-actions {
@@ -154,29 +165,17 @@ watch(
 
 .post-actions button {
   padding: 8px 14px;
-  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  border: none;
+  background-color: #ededed;
+  border: 1.5px solid #0063f8 !important;
+  border-radius: 20px;
 }
 
-.edit-btn {
-  background-color: #4f7cff;
-  color: white;
+.like-btn {
+  width: 50px;
 }
 
-.edit-btn:hover {
-  background-color: #3f68d8;
-}
-
-.delete-btn {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.delete-btn:hover {
-  background-color: #c0392b;
-}
 
 
 </style>

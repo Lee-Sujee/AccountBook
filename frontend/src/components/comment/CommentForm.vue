@@ -63,9 +63,8 @@ watch(
 .form-wrapper {
   margin-top: 16px;
   padding: 12px;
-  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  background-color: #fafafa;
+  background-color: #EDEDED;
 }
 
 .comment-form {

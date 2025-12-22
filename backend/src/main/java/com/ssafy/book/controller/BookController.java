@@ -131,4 +131,14 @@ public class BookController {
         }
         return LocalDateTime.parse(s); // datetime-local 포맷과 호환
     }
+    
+    // AI -> 수입/지출 분석
+    @GetMapping("/analyze-finances")
+    public ResponseEntity<String> analyzeFinances(@AuthenticationPrincipal CustomUserDetails user,
+    			@RequestParam int income, @RequestParam int expense) {
+    	String userId = user.getUserId();
+    	String analysis = bookService.analyzeFinances(userId, income, expense);
+    	
+    	return ResponseEntity.ok(analysis);
+    }
 }

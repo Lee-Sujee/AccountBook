@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>챌린지 작성 뷰</h2>
         <ChallengeForm @submit="createChallenge" />
     </div>
 </template>

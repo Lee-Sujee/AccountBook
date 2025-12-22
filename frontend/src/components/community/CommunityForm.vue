@@ -85,16 +85,15 @@ const submit = () => {
   max-width: 800px;
   margin: 40px auto;
   padding: 24px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: #EDEDED;
 }
 
 .form-title {
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 24px;
-  text-align: center;
+  margin-bottom: 40px;
+  text-align: left;
+  color: #0063f8;
 }
 
 .post-form {
@@ -108,10 +107,10 @@ const submit = () => {
 
 .form-group label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
   margin-bottom: 6px;
-  color: #333;
+  color: #0063f8;
 }
 
 .form-group input,
@@ -119,18 +118,20 @@ const submit = () => {
   width: 100%;
   padding: 10px 12px;
   font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
+  border-top: 1.5px solid #0063f8; 
+  border-bottom: 1.5px solid #0063f8; 
+  background-color: #EDEDED;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #4f7cff;
+  border-color: #0063f8;
 }
 
 .form-group textarea {
-  min-height: 160px;
+  min-height: 300px;
   resize: vertical;
 }
 
@@ -141,17 +142,17 @@ const submit = () => {
 }
 
 .submit-btn {
-  padding: 10px 18px;
-  background-color: #4f7cff;
+  padding: 8px 30px;
+  background-color: #0063f8;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
 }
 
 .submit-btn:hover {
-  background-color: #3f68d8;
+  background-color: #0063f8;
 }
 
 .submit-btn:disabled {

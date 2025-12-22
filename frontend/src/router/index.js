@@ -8,10 +8,12 @@ import { useAuthStore } from '@/stores/auth'
 import CommunityListView from '@/views/community/CommunityListView.vue'
 import CommunityWriteView from '@/views/community/CommunityWriteView.vue'
 import CommunityDetailView from '@/views/community/CommunityDetailView.vue'
+import CommunityEditView from '@/views/community/CommunityEditView.vue'
 import ChallengeListView from '@/views/challenge/ChallengeListView.vue'
 import ChallengeCreateView from '@/views/challenge/ChallengeCreateView.vue'
 import ChallengeEditView from '@/views/challenge/ChallengeEditView.vue'
 import AverageCalculatorView from '@/views/AverageCalculatorView.vue'
+import BookSummaryView from '@/views/book/BookSummaryView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -63,7 +65,7 @@ const router = createRouter({
     {
       path: "/community/:id/edit",
       name: "CommunityEditView",
-      component: () => import("@/views/community/CommunityEditView.vue"),
+      component: CommunityEditView,
       meta: { requiresAuth: true } // 로그인 해야만 접근 가능
     },
     {
@@ -88,7 +90,13 @@ const router = createRouter({
       name: "ChallengeEdit",
       component: ChallengeEditView,
       meta: { requiresAuth: true }
-    }
+    },
+    {
+      path: "/book/summary",
+      name: "BookSummary",
+      component: BookSummaryView,
+      meta: { requiresAuth: true }
+    },
 
   ],
 })

@@ -7,10 +7,12 @@
 
             <div v-if="entry" class="detail-body-only-table">
                 <table class="detail-table">
-                    <tr><th>날짜</th><td>{{ formatDate(entry.createdAt) }}</td></tr>
-                    <tr><th>구분</th><td :class="entry.type === 'income' ? 'text-income' : 'text-expense'">
-                        {{ entry.type === 'income' ? '수입' : '지출' }}
-                    </td></tr>
+                    <thead>
+                        <tr><th>날짜</th><td>{{ formatDate(entry.createdAt) }}</td></tr>
+                        <tr><th>구분</th><td :class="entry.type === 'income' ? 'text-income' : 'text-expense'">
+                            {{ entry.type === 'income' ? '수입' : '지출' }}
+                        </td></tr>
+                    </thead>
                     <tbody>
                         <tr><th>카테고리</th><td>{{ entry.category }}</td></tr>
                         <tr><th>내용</th><td>{{ entry.content }}</td></tr>

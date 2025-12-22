@@ -14,3 +14,12 @@ export const updateBookEntry = (bookId, bookData) => instance.put(`/book/${bookI
 
 // DELETE /book/{id}
 export const deleteBookEntry = (bookId) => instance.delete(`/book/${bookId}`);
+
+// 재정관리
+export const analyzeFinancesApi = (income, expense) => instance.get(`/book/analyze-finances`, 
+    { params: 
+        {income,
+        expense,
+        }
+    }
+);

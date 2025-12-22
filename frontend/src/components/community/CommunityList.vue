@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="list-header">
-      <h2>COMMUNITY</h2>
+      <h2>게시판</h2>
       <button class="write-btn" @click="router.push({ name: 'CommunityWrite' })">
         새 글 작성
       </button>
@@ -21,11 +21,11 @@
 
       <tbody>
         <tr
-          v-for="post in communityList"
+          v-for="(post, index) in communityList"c
           :key="post.id"
           class="table-row"
         >
-          <td>{{ post.id }}</td>
+          <td>{{ index + 1 }}</td>
 
           <td class="title-cell">
             <router-link

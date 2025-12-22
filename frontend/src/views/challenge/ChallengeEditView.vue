@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>챌린지 수정하기</h2>
         <ChallengeForm v-if="challenge" :initial-data="challenge"
             @submit="editChallenge"/>
     </div>

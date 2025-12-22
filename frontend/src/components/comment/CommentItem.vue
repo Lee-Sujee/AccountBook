@@ -1,8 +1,8 @@
 <template>
   <article class="comment-card">
     <div class="comment-content">
+      <span class="writer">{{ comment.writerName }}</span>
       {{ comment.content }} | 
-      <span class="writer">작성자 {{ comment.writerName }}</span>
     </div>
 
     <div v-if="isAuthor" class="comment-actions">
@@ -45,11 +45,11 @@ const onDelete = () => {
 <style scoped>
 .comment-card {
   padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #0063f8;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background-color: #ffffff;
+  background-color: #EDEDED;
 }
 
 /* 댓글 내용 */
@@ -64,9 +64,9 @@ const onDelete = () => {
 .comment-content .writer {
   display: block;
   margin-top: 4px;
+  margin-bottom: 8px;
   font-size: 12px;
   color: #6b7280;
-  text-align: right;   /* ⭐ 오른쪽 정렬 */
 }
 
 /* 수정 / 삭제 영역 */
@@ -87,7 +87,7 @@ const onDelete = () => {
 }
 
 .update-button {
-  background-color: #e5e7eb;
+  background-color: #EDEDED;
   color: #374151;
 }
 
@@ -96,8 +96,8 @@ const onDelete = () => {
 }
 
 .delete-button {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: #EDEDED;
+  color: #374151;
 }
 
 .delete-button:hover {

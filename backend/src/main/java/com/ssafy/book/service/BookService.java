@@ -17,4 +17,6 @@ public interface BookService {
 	int delete(int id, String userId);
 	
 	List<CategorySummaryDto> getCategorySummary(String userId, String type, int year, int month);
+
+	String analyzeFinances(String userId, int income, int expense);
 }

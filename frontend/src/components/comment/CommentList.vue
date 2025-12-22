@@ -1,11 +1,11 @@
 <template>
   <div class="list-wrapper">
     <div class="list-header">
-      <h2>댓글목록</h2>
+      <h4>댓글</h4>
     </div>
 
     <div v-if="commentList.length === 0">
-      <p>댓글이 없습니다.</p>
+      <p>아직 등록된 댓글이 없습니다.</p>
     </div>
 
     <div v-else>
@@ -54,3 +54,10 @@ const startDelete = (comment) => {
   store.deleteComment(props.boardId, comment.id);
 }
 </script>
+
+<style scoped>
+.list-header{
+  border-bottom: 1px solid #0063f8;
+}
+
+</style>
