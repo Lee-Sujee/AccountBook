@@ -1,11 +1,9 @@
 package com.ssafy.stats.service;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.ssafy.stats.entity.Stats;
 import com.ssafy.stats.repository.StatsRepository;
 
@@ -15,46 +13,71 @@ public class StatsCompareService {
     @Autowired
     private StatsRepository repository;
 
-    public Map<String, Object> compare(String menu, String category, int userPrice) {
+    @Autowired
+    private OpenAiService openAiService;
 
-        Stats latest = repository.findByMenuAndCategory(menu, category);
+    /**
+     * ✅ DB 데이터 + AI 매칭 + GPT 시장 조언을 모두 합친 메인 로직
+     */
+    public Map<String, Object> getCombinedResult(String menu, String category, int userPrice) {
+        // 1. DB 데이터 조회 (일단 전체 업태 조회)
+        List<Stats> targetList = repository.findAllByMenuLike(menu);
 
-        if (latest == null) {
-            return Map.of(
-                "menu", menu,
-                "category", category,
-                "averagePrice", 0,
-                "result", "비교할 평균 가격 데이터가 없습니다."
-            );
+        // 2. 검색 결과가 없으면 AI 매칭 시도
+        if (targetList.isEmpty()) {
+            List<String> allMenus = repository.findAllDistinctMenus();
+            String aiMatchedMenu = openAiService.findBestMatch(menu, allMenus);
+
+            if (!"NONE".equals(aiMatchedMenu) && !"ERROR".equals(aiMatchedMenu)) {
+                targetList = repository.findAllByMenuLike(aiMatchedMenu);
+            }
         }
 
-        int avgPrice = latest.getPrice();
-
-        String result;
-        if (userPrice > avgPrice * 1.1) {
-            result = "비싼 소비예요 😥";
-        } else if (userPrice < avgPrice * 0.9) {
-            result = "아주 합리적인 소비예요 👍";
-        } else {
-            result = "적정한 소비예요 🙂";
+        // 3. 중복 제거 (상품명 + 업태 + 조사일 기준)
+        Map<String, Stats> uniqueMap = new LinkedHashMap<>(); 
+        for (Stats s : targetList) {
+            String key = s.getMenu() + s.getCategory() + s.getSurveyDate();
+            if (!uniqueMap.containsKey(key)) {
+                uniqueMap.put(key, s);
+            }
         }
 
-        return Map.of(
-            "menu", latest.getMenu(),
-            "category", latest.getCategory(),
-            "averagePrice", avgPrice,
-            "userPrice", userPrice,
-            "result", result,
-            "surveyDate", latest.getSurveyDate()
-        );
+        // 4. 프론트용 리스트 변환
+        List<Map<String, Object>> dbResults = uniqueMap.values().stream().map(s -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("menu", s.getMenu());
+            map.put("category", s.getCategory());
+            map.put("averagePrice", s.getPrice());
+            map.put("surveyDate", s.getSurveyDate());
+            
+            int avg = s.getPrice();
+            String resultMsg = (userPrice > avg * 1.1) ? "비싼 소비예요 😥" : 
+                               (userPrice < avg * 0.9) ? "아주 합리적인 소비예요 👍" : "적정한 소비예요 🙂";
+            map.put("result", resultMsg);
+            return map;
+        }).collect(Collectors.toList());
+
+        // 5. ChatGPT에게 외부 시장 정보 물어보기
+        String gptAdvice = openAiService.getExternalMarketPrice(menu);
+
+        // 6. 결과 묶어서 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("dbResults", dbResults);
+        response.put("gptAdvice", gptAdvice);
+
+        return response;
     }
 
-    // ✅ 평균계산기: 키워드 검색 리스트
+    /**
+     * ✅ 컨트롤러에서 호출하는 키워드 검색 메서드
+     * (이 부분이 없거나 이름이 다르면 에러가 납니다!)
+     */
     public List<Stats> searchLatestByKeyword(String keyword) {
         String trimmed = (keyword == null) ? "" : keyword.trim();
         if (trimmed.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
+        // Repository에 있는 메서드를 호출하여 리스트 반환
         return repository.findAllByMenuLike(trimmed);
     }
 }

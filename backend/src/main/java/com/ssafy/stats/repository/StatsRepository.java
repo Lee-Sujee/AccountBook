@@ -23,4 +23,6 @@ public interface StatsRepository {
     // 평균계산기용: 특정 상품(menu)에 대해 업태별 1개씩 리스트
     // (DB에 (menu, category) 1행만 유지되므로 그대로 조회하면 됨)
     List<Stats> findAllByMenuLike(@Param("keyword") String keyword);
+    
+    List<String> findAllDistinctMenus();
 }

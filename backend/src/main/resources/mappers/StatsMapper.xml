@@ -34,5 +34,9 @@
   		ORDER BY menu ASC, category ASC
 	</select>
 
+	<select id="findAllDistinctMenus" resultType="string">
+        SELECT DISTINCT menu 
+        FROM stats
+    </select>
 
 </mapper>
