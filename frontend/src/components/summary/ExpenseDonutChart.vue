@@ -3,9 +3,9 @@
     <h3 class="stats-title">카테고리별 비율</h3>
 
     <div class="month-selector">
-      <button @click="changeMonth(-1)">&lt;</button>
+      <button @click="changeMonth(-1)"><</button>
       <span>{{ currentMonthLabel }}</span>
-      <button @click="changeMonth(1)">&gt;</button>
+      <button @click="changeMonth(1)">></button>
     </div>
 
     <div class="btn-group">
@@ -36,7 +36,7 @@
       </div>
 
       <div class="list-card">
-        <ul class="category-list">
+        <ul class="category-list" v-if="summary.length > 0">
           <li v-for="(item, index) in summary" :key="item.category">
             <span class="color-dot" :style="{ backgroundColor: colors[index] }"></span>
             <span class="category-name">{{ item.category }}</span>
@@ -44,10 +44,15 @@
             <span class="category-amount">{{ item.total.toLocaleString() }}원</span>
           </li>
         </ul>
+        <!--데이터 없을 때-->
+        <div v-else class="no-data-message">
+          아직 등록된 항목이 없습니다.
+        </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed, onUnmounted, watch, nextTick } from 'vue'
@@ -123,6 +128,32 @@ const loadChart = async (type:'expense'|'income') => {
       `/book/summary?type=${type}&year=${y}&month=${m}`
     )
 
+    //데이터 읎으면 회색 도넛
+    if (data.length === 0) {
+      summary.value = []
+      totalAmount.value = 0
+      colors.value = []
+      chartInstance?.destroy()
+      chartInstance = new Chart(chartCanvas.value, {
+        type: 'doughnut',
+        data: {
+          labels: ['No Data'],
+          datasets: [{
+            data: [1],
+            backgroundColor: ['#d3d3d3']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: { legend: { display:false } }
+        }
+      })
+      chartInstance.resize()
+      return
+    }
+
     const sorted = [...data].sort((a,b) => b.total - a.total)
     summary.value = sorted
     totalAmount.value = sorted.reduce((s,i)=>s+i.total,0)
@@ -170,6 +201,7 @@ onUnmounted(() => {
   chartInstance = null
 })
 </script>
+
 
 
 <style scoped>
@@ -228,7 +260,6 @@ onUnmounted(() => {
   align-items: stretch;
 }
 
-/* 카드 공통 */
 .chart-card,
 .list-card {
   background: #fff;
@@ -237,19 +268,22 @@ onUnmounted(() => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
-/* 차트 영역 */
 .chart-card {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 
 .chart-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
   width: 280px;
   height: 280px;
 }
 
-/* 카테고리 리스트 */
 .category-list {
   list-style: none;
   padding: 0;
@@ -299,4 +333,11 @@ onUnmounted(() => {
   }
 }
 
+.no-data-message {
+  text-align: center;
+  color: #868e96;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 20px 0;
+}
 </style>
