@@ -34,6 +34,7 @@ const handleLogin = () => {
 <style scoped>
 .login-form {
   margin-top: 20px;
+  background-color: #EDEDED;
 }
 .form-group {
   display: flex;

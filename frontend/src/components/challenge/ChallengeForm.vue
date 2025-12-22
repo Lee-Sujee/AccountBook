@@ -27,6 +27,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { defineEmits } from 'vue';
+import { useChallengeDepositStore } from '@/stores/challengeDeposit';
+const depoisitStore = useChallengeDepositStore();
 const emit = defineEmits(["submit"]);
 
 const props = defineProps({
@@ -45,9 +47,10 @@ const isValid = computed(() => {
     return description.value.trim() !== "" 
         && startDate.value !== "" && endDate.value !== ""
         && target.value > 0;
+
 })
 
-const submit = () => {
+const submit = async () => {
     if(!isValid.value){
         alert("챌린지 목적을 입력해주세요");
         return;
@@ -110,7 +113,7 @@ h2 {
 .submit-btn {
   width: 100%;
   padding: 10px;
-  background-color: #4caf50;
+  background-color: #0063f8;
   color: white;
   border: none;
   border-radius: 4px;
@@ -120,7 +123,7 @@ h2 {
 }
 
 .submit-btn:disabled {
-  background-color: #c8e6c9;
+  background-color: #bfd3f1;
   cursor: not-allowed;
 }
 

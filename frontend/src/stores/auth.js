@@ -41,6 +41,8 @@ export const useAuthStore = defineStore('auth', () => {
       };
       localStorage.setItem("loginUser", JSON.stringify(loginUserInfo.value));
 
+      localStorage.setItem("showStats", "false");
+
       router.push({ name: "home" });
     } catch (err) {
       console.error("로그인 실패:", err);

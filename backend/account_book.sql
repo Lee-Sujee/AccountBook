@@ -86,12 +86,12 @@ CREATE TABLE `challenge_deposit` (
     FOREIGN KEY (challenge_id) REFERENCES challenge(id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE `stats` (
-	`id`					INT AUTO_INCREMENT,     
-	`menu`					VARCHAR(200) NOT NULL,   
-    `price`					INT NOT NULL,                      
-    `category`				VARCHAR(100) NOT NULL,    
+    `id`                    INT AUTO_INCREMENT,
+    `menu`                    VARCHAR(200) NOT NULL,
+    `price`                    INT NOT NULL,
+    `category`                VARCHAR(100) NOT NULL,
+    `survey_date`               DATE NOT NULL,
     PRIMARY KEY (id)
 );
 

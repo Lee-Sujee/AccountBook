@@ -50,7 +50,7 @@ const store = useAuthStore();
   font-size: 14px;
   font-weight: 700; 
   display: flex;
-  align-items: center;          /* 🔑 로고/텍스트 같은 줄 */
+  align-items: center;          /* 로고/텍스트 같은 줄 */
   gap: 20px;                    /* 메뉴 사이 간격 */
   
   
@@ -60,21 +60,22 @@ const store = useAuthStore();
 .logo-img {
   width: 180px;
   height: auto;
-  vertical-align: middle;       /* 🔑 이미지 baseline 보정 */
+  vertical-align: middle;       /* 이미지 baseline 보정 */
 }
 
 /* 공통 네비 링크 */
 .nav-link {
   text-decoration: none;
   line-height: 1;  
-  color: #0063f8;            /* 🔑 세로 흔들림 제거 */
+  color: #0063f8;            /* 세로 흔들림 제거 */
 }
 
 /* 오른쪽 영역 */
 .nav-right {
   font-size: 12px;
+  font-weight: 700;
   display: flex;
-  align-items: center;          /* 🔑 텍스트/버튼 중앙 */
+  align-items: center;          /* 텍스트/버튼 중앙 */
   gap: 18px;
 }
 
@@ -93,8 +94,7 @@ const store = useAuthStore();
   font-weight: 700;
   border: none;
   border-radius: 6px;
-  background-color: #0063f8;
-  color: #ffffff;
+  color: #0063f8;
   cursor: pointer;
 }
 

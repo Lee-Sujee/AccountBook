@@ -59,7 +59,7 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { ref, defineEmits, defineProps, onMounted, computed } from 'vue';
+import { ref, defineEmits, defineProps, onMounted, computed, watch } from 'vue';
 import { useChallengeStore } from '@/stores/challenge';
 import { useChallengeDepositStore } from '@/stores/challengeDeposit';
 import DepositList from './DepositList.vue';
@@ -92,9 +92,12 @@ const submitDeposit = async () => {
   await challengeStore.getChallengeList()
   await depositStore.getDepositList(props.challenge.id);
 }
-
 onMounted(() => {
   depositStore.getDepositSummary(props.challenge.id)
+})
+watch(() => props.challenge.id, () => {
+  depositStore.getDepositSummary(props.challenge.id)
+  depositStore.getDepositList(props.challenge.id)
 })
 
 const progressPercent = computed(() => {
@@ -113,10 +116,9 @@ const strokeDashoffset = computed(() => {
 
 <style scoped>
 .challenge-card {
-  border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 16px;
-  background-color: #ffffff;
+  background-color: #EDEDED;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -149,7 +151,7 @@ const strokeDashoffset = computed(() => {
 .deposit button {
   width: 100%;
   padding: 10px;
-  background-color: #4caf50;
+  background-color: #0063f8;
   color: white;
   border: none;
   border-radius: 4px;
@@ -181,13 +183,13 @@ const strokeDashoffset = computed(() => {
 }
 
 .actions button:first-child {
-  background-color: #2196f3;
-  color: white;
+  background-color: #FFFFFF;
+  color: black;
   border: none;
 }
 
 .actions button:last-child {
-  background-color: #f44336;
+  background-color: #0063f8;
   color: white;
   border: none;
 }

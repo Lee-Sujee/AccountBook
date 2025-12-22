@@ -88,17 +88,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 		challenge.setEndDate(request.getEndDate());
 		challenge.setTarget(request.getTarget());
 		challenge.setDescription(request.getDescription());
-
+		// status 정하기
+		LocalDate today = LocalDate.now();
+		
+		ChallengeStatus status = request.getStartDate().isAfter(today) ? ChallengeStatus.READY
+				: ChallengeStatus.ONGOING;
+		challenge.setStatus(status);
 		// 시작일이 종료일보다 빠른지 체크
 		if (request.getStartDate().isAfter(request.getEndDate())) {
 			throw new IllegalArgumentException("시작일은 종료일보다 늦을 수 없습니다.");
 		}
 
-		// status 정하기
-		LocalDate today = LocalDate.now();
-
-		ChallengeStatus status = request.getStartDate().isAfter(today) ? ChallengeStatus.READY
-				: ChallengeStatus.ONGOING;
 
 		int res = challengeRepository.updateChallenge(challenge);
 		if (res != 1)

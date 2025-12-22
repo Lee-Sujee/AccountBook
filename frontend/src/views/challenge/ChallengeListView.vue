@@ -100,7 +100,7 @@ const deleteChallenge = async () => {
   width: 200px;
   margin: 20px auto 12px;
   padding: 10px;
-  background-color: #4caf50;
+  background-color: #0063f8;
   color: white;
   border: none;
   border-radius: 6px;
@@ -110,7 +110,7 @@ const deleteChallenge = async () => {
 }
 
 .create-btn:hover {
-  background-color: #43a047;
+  background-color: #0063f8;
 }
 
 </style>

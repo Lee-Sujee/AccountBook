@@ -8,13 +8,10 @@ import { useAuthStore } from '@/stores/auth'
 import CommunityListView from '@/views/community/CommunityListView.vue'
 import CommunityWriteView from '@/views/community/CommunityWriteView.vue'
 import CommunityDetailView from '@/views/community/CommunityDetailView.vue'
-<<<<<<< HEAD
 import ChallengeListView from '@/views/challenge/ChallengeListView.vue'
 import ChallengeCreateView from '@/views/challenge/ChallengeCreateView.vue'
 import ChallengeEditView from '@/views/challenge/ChallengeEditView.vue'
-=======
 import AverageCalculatorView from '@/views/AverageCalculatorView.vue'
->>>>>>> 7587222e1b6f310d9a74271f7111be18c17d746b
 
 const router = createRouter({
   history: createWebHistory(),

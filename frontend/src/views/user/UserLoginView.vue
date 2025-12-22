@@ -14,7 +14,7 @@ import LoginForm from "@/components/auth/LoginForm.vue";
   max-width: 480px;
   margin: 50px auto;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: #EDEDED;
 }
 
 .title {

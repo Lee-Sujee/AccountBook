@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="list-header">
-      <h2>커뮤니티</h2>
+      <h2>COMMUNITY</h2>
       <button class="write-btn" @click="router.push({ name: 'CommunityWrite' })">
         새 글 작성
       </button>
@@ -69,64 +69,74 @@ onMounted(() => {
 
 <style scoped>
  .list-wrapper {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 40px auto;
-  padding: 0 16px;
+  padding: 24px;
+  background: #EDEDED;
+  border-radius: 12px;
 }
 
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  background-color: #EDEDED;
 }
 
 .list-header h2 {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0063f8;
 }
 
 .write-btn {
-  padding: 8px 14px;
-  background-color: #4f7cff;
+  padding: 8px 30px;
+  background-color: #0063f8;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 20px;
+  font-size: 13px;
   cursor: pointer;
 }
 
 .write-btn:hover {
-  background-color: #3f68d8;
+  background-color: #0063f8;
 }
 
 .community-table {
   width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #EDEDED;
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.community-table thead {
-  background-color: #f5f6f8;
-}
-
-.community-table th,
-.community-table td {
-  padding: 12px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.community-table th {
+.community-table thead th {
+  padding: 14px 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: #444;
+  color: #0063f8;
+  border-bottom: 1px solid #0063f8;
+  background-color: #EDEDED;
+}
+
+.community-table tbody td {
+  padding: 14px 12px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+  text-align: center;
+}
+
+.community-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .table-row:hover {
-  background-color: #f9fafc;
+  background-color: #e5e7eb;
+  
 }
 
 .title-cell {
@@ -134,20 +144,21 @@ onMounted(() => {
 }
 
 .title-link {
-  color: #333;
-  text-decoration: none;
+  color: #111827;
   font-weight: 500;
+  text-decoration: none;
 }
 
 .title-link:hover {
+  color: #0063f8;
   text-decoration: underline;
-  color: #4f7cff;
 }
 
 .empty-row {
-  padding: 24px;
-  color: #777;
+  padding: 32px;
   text-align: center;
+  color: #EDEDED;
 }
+
    
 </style>

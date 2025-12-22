@@ -30,7 +30,7 @@
 
     <div class="content-grid">
       <div class="chart-card">
-        <div class="chart-area">
+        <div class="chart-area" ref="chartArea">
           <canvas ref="chartCanvas"></canvas>
         </div>
       </div>
@@ -50,13 +50,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onUnmounted, watch, nextTick } from 'vue'
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js'
 import instance from '@/api/axiosInstance'
 
 Chart.register(DoughnutController, ArcElement, Tooltip)
 
-defineProps<{ visible?: boolean }>()
+const props = defineProps<{ visible: boolean }>()
 
 interface CategorySummary {
   category: string
@@ -64,6 +64,7 @@ interface CategorySummary {
 }
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
+const chartArea = ref<HTMLDivElement | null>(null)
 let chartInstance: Chart | null = null
 
 const summary = ref<CategorySummary[]>([])
@@ -91,54 +92,85 @@ const changeMonth = (diff:number) => {
   loadChart(currentType.value)
 }
 
-const loadChart = async (type:'expense'|'income') => {
-  if (!chartCanvas.value) return
+const waitUntilVisibleSized = async () => {
+  for (let i = 0; i < 60; i++) { 
+    await nextTick()
+    await new Promise<void>((r) => requestAnimationFrame(() => r()))
 
+    const area = chartArea.value
+    if (area && area.clientWidth > 0 && area.clientHeight > 0) return true
+  }
+  return false
+}
+
+const loadChart = async (type:'expense'|'income') => {
   currentType.value = type
+
+  // 1) 통계 화면이 아닐 때는 불필요 호출 방지
+  if (!props.visible) return
+
+  // 2) DOM/레이아웃이 "보이는 상태"로 잡힐 때까지 대기
+  const ok = await waitUntilVisibleSized()
+  if (!ok) return
+
+  if (!chartCanvas.value) return
 
   const y = currentMonth.value.getFullYear()
   const m = currentMonth.value.getMonth() + 1
 
-  const { data } = await instance.get<CategorySummary[]>(
-    `/book/summary?type=${type}&year=${y}&month=${m}`
-  )
+  try {
+    const { data } = await instance.get<CategorySummary[]>(
+      `/book/summary?type=${type}&year=${y}&month=${m}`
+    )
 
-  const sorted = [...data].sort((a,b) => b.total - a.total)
-  summary.value = sorted
-  totalAmount.value = sorted.reduce((s,i)=>s+i.total,0)
-  colors.value = sorted.map((_,i)=>generateColor(i))
+    const sorted = [...data].sort((a,b) => b.total - a.total)
+    summary.value = sorted
+    totalAmount.value = sorted.reduce((s,i)=>s+i.total,0)
+    colors.value = sorted.map((_,i)=>generateColor(i))
 
-  chartInstance?.destroy()
+    chartInstance?.destroy()
+    chartInstance = new Chart(chartCanvas.value, {
+      type: 'doughnut',
+      data: {
+        labels: sorted.map(i=>i.category),
+        datasets: [{ data: sorted.map(i=>i.total), backgroundColor: colors.value }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: { legend: { display:false } }
+      }
+    })
 
-  chartInstance = new Chart(chartCanvas.value, {
-    type: 'doughnut',
-    data: {
-      labels: sorted.map(i=>i.category),
-      datasets: [{ data: sorted.map(i=>i.total), backgroundColor: colors.value }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '65%',
-      plugins: { legend: { display:false } }
-    }
-  })
+    chartInstance.resize()
+
+  } catch (e) {
+    console.error('summary api failed:', e)
+    summary.value = []
+    totalAmount.value = 0
+    colors.value = []
+    chartInstance?.destroy()
+    chartInstance = null
+  }
 }
 
-
-watch(() => chartCanvas.value, async () => {
-  await nextTick()
-  chartInstance?.resize()
-})
-
-onMounted(() => loadChart('expense'))
+watch(
+  () => props.visible,
+  async (v) => {
+    if (v) {
+      await loadChart(currentType.value)
+    }
+  },
+  {immediate: true}
+)
 
 onUnmounted(() => {
   chartInstance?.destroy()
   chartInstance = null
 })
-
 </script>
+
 
 <style scoped>
 .stats-container {
