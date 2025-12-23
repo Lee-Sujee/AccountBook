@@ -16,40 +16,40 @@ public class StatsCompareService {
     @Autowired
     private OpenAiService openAiService;
 
-    /**
-     * ✅ DB 데이터 + AI 매칭 + GPT 시장 조언을 모두 합친 메인 로직
-     */
     public Map<String, Object> getCombinedResult(String menu, String category, int userPrice) {
-        // 1. DB 데이터 조회 (일단 전체 업태 조회)
+        // 1. db 조회 -> 데이터 찾기
         List<Stats> targetList = repository.findAllByMenuLike(menu);
-
-        // 2. 검색 결과가 없으면 AI 매칭 시도
         if (targetList.isEmpty()) {
             List<String> allMenus = repository.findAllDistinctMenus();
-            String aiMatchedMenu = openAiService.findBestMatch(menu, allMenus);
+            
+            // 프롬프트
+            String systemRole = "너는 마트 상품명 매칭 전문가야. 규칙을 반드시 지켜.\n" 
+                    + "1. 입력된 단어(예: 퐁퐁)의 '용도'를 파악해라.\n"
+                    + "2. 제공된 리스트에서 용도가 가장 비슷한 상품명을 딱 하나만 골라라.\n" 
+                    + "3. '퐁퐁'이나 '트리오'는 리스트에 '주방세제'가 있다면 그것을 골라라.\n"
+                    + "4. 리스트에 있는 이름 그대로 대답하고, 부연설명은 절대 하지 마라.\n" 
+                    + "5. 절대 'NONE'이라고 하지 말고 리스트에서 가장 확률 높은 것을 골라라.";
+            String userPrompt = "상품 리스트: " + allMenus.toString() + "\n사용자 입력: " + menu;
 
+            String aiMatchedMenu = openAiService.getGptResponse(systemRole, userPrompt, 0.5);
+            
             if (!"NONE".equals(aiMatchedMenu) && !"ERROR".equals(aiMatchedMenu)) {
-                targetList = repository.findAllByMenuLike(aiMatchedMenu);
+                targetList = repository.findAllByMenuLike(aiMatchedMenu.replaceAll("['\"\\.]", ""));
             }
         }
 
-        // 3. 중복 제거 (상품명 + 업태 + 조사일 기준)
+        // DB 결과
         Map<String, Stats> uniqueMap = new LinkedHashMap<>(); 
         for (Stats s : targetList) {
             String key = s.getMenu() + s.getCategory() + s.getSurveyDate();
-            if (!uniqueMap.containsKey(key)) {
-                uniqueMap.put(key, s);
-            }
+            if (!uniqueMap.containsKey(key)) uniqueMap.put(key, s);
         }
-
-        // 4. 프론트용 리스트 변환
         List<Map<String, Object>> dbResults = uniqueMap.values().stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
             map.put("menu", s.getMenu());
             map.put("category", s.getCategory());
             map.put("averagePrice", s.getPrice());
             map.put("surveyDate", s.getSurveyDate());
-            
             int avg = s.getPrice();
             String resultMsg = (userPrice > avg * 1.1) ? "비싼 소비예요 😥" : 
                                (userPrice < avg * 0.9) ? "아주 합리적인 소비예요 👍" : "적정한 소비예요 🙂";
@@ -57,27 +57,25 @@ public class StatsCompareService {
             return map;
         }).collect(Collectors.toList());
 
-        // 5. ChatGPT에게 외부 시장 정보 물어보기
-        String gptAdvice = openAiService.getExternalMarketPrice(menu);
+        // ChatGPT -> 외부 시장 평균가 가져와!
+        String marketSystemRole = "너는 한국의 온/오프라인 물가 전문가야. 아주 정확한 가격 정보를 제공해.";
+        String marketPrompt = String.format(
+            "사용자가 '%s'의 가격을 궁금해해. 대한민국 내 일반적인 대형마트나 온라인 쇼핑몰의 평균 가격(단위/용량 포함)을 조사해서 알려줘.\n" +
+            "답변 형식은 반드시 아래 형식을 지켜줘.\n" +
+            "[가격: 0,000원], [팁: 구매 시 유용한 정보 한 문장]\n" +
+            "예시: [가격: 5,500원], [팁: 리필용 제품을 묶음으로 구매하는 것이 훨씬 경제적입니다.]", menu);
 
-        // 6. 결과 묶어서 반환
+        String gptAdvice = openAiService.getGptResponse(marketSystemRole, marketPrompt, 0.7);
+
+        // 결과 내놔!!!
         Map<String, Object> response = new HashMap<>();
         response.put("dbResults", dbResults);
         response.put("gptAdvice", gptAdvice);
-
         return response;
     }
 
-    /**
-     * ✅ 컨트롤러에서 호출하는 키워드 검색 메서드
-     * (이 부분이 없거나 이름이 다르면 에러가 납니다!)
-     */
     public List<Stats> searchLatestByKeyword(String keyword) {
         String trimmed = (keyword == null) ? "" : keyword.trim();
-        if (trimmed.isEmpty()) {
-            return new ArrayList<>();
-        }
-        // Repository에 있는 메서드를 호출하여 리스트 반환
-        return repository.findAllByMenuLike(trimmed);
+        return trimmed.isEmpty() ? new ArrayList<>() : repository.findAllByMenuLike(trimmed);
     }
 }

@@ -27,6 +27,7 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 import { ref, onUnmounted, watch, nextTick } from 'vue'
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js'
@@ -173,6 +174,7 @@ onUnmounted(() => {
   chartInstance?.destroy()
 })
 </script>
+
 
 
 

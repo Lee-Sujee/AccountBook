@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.book.dto.response.CategorySummaryDto;
-import com.ssafy.book.mapper.BookStatsMapper;
+import com.ssafy.book.stats.repository.BookStatsMapper;
 
 import lombok.RequiredArgsConstructor;
 

@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.book.dto.request.AnalyzeFinancesRequest;
+import com.ssafy.book.dto.request.BookRequestDto;
 import com.ssafy.book.dto.response.CategorySummaryDto;
 import com.ssafy.book.entity.Book;
-import com.ssafy.book.mapper.BookStatsMapper;
 import com.ssafy.book.repository.BookRepository;
+import com.ssafy.book.stats.repository.BookStatsMapper;
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -28,6 +29,7 @@ public class BookServiceImpl implements BookService{
 	private OpenAIService openAIService;
 	
 	@Override
+	@Transactional
 	public List<Book> selectAll(String userId) {
 		return bookRepository.selectAll(userId);
 	}
@@ -41,26 +43,47 @@ public class BookServiceImpl implements BookService{
 	}
 	
 	@Override
+	@Transactional
 	public Book select(int id, String userId) {
-		return bookRepository.select(id, userId);
+		Book book = bookRepository.select(id, userId);
+		if(book == null) {
+			throw new RuntimeException("해당 항목을 찾을 수 없습니다.");
+		}
+		return book;
 	}
 
 	@Override
-	public int insert(Book book) {
-		return bookRepository.insert(book);
+	@Transactional
+	public void insert(String userId, BookRequestDto dto) {
+		Book book = convertToEntity(userId, dto);
+		int result = bookRepository.insert(book);
+		if (result <= 0) throw new RuntimeException("가계부 등록에 실패했습니다.");
 	}
 
 	@Override
-	public int update(Book book) {
-		return bookRepository.update(book);
+	@Transactional
+	public void update(int id, String userId, BookRequestDto dto) {
+		this.select(id, userId);
+		
+		Book book = convertToEntity(userId, dto);
+		book.setId(id);
+		
+		int result = bookRepository.update(book);
+		if(result <= 0) throw new RuntimeException("가계부 수정에 실패했습니다.");
 	}
-
+	
 	@Override
-	public int delete(int id, String userId) {
-		return bookRepository.delete(id, userId);
+	@Transactional
+	public void delete(int id, String userId) {
+		//user 있는지 확인
+		this.select(id, userId);
+		
+		int result = bookRepository.delete(id, userId);
+		if (result <= 0) throw new RuntimeException("가계부 삭제에 실패했습니다.");
 	}
-
+	
 	@Override
+	@Transactional
 	public List<CategorySummaryDto> getCategorySummary(
 			String userId, 
 			String type, 
@@ -72,7 +95,8 @@ public class BookServiceImpl implements BookService{
 		
 		return bookStatsMapper.selectCategorySummary(userId, type, start, end);
 	}
-
+	
+	//수입, 지출 전달
 	@Override
 	public String analyzeFinances(String userId, AnalyzeFinancesRequest req) {
 	    if (req == null || req.getHistory() == null || req.getHistory().isEmpty()) {
@@ -125,6 +149,24 @@ public class BookServiceImpl implements BookService{
 	    return openAIService.analyzeFinances(prompt);
 	}
 	
+	//dto -> db에 저장할 수 있는 엔티티로 바꿈
+	private Book convertToEntity(String userId, BookRequestDto dto) {
+		Book book = new Book();
+		
+		book.setUserId(userId);
+		book.setCategory(dto.getCategory());
+		book.setContent(dto.getContent());
+		book.setType(dto.getType());
+		book.setAmount(dto.getAmount());
+		book.setMemo(dto.getMemo());
+		book.setCreatedAt(parseToLocalDateTime(dto.getCreatedAt()));
+		return book;
+	}
 	
+	//날짜 형식 변환
+	private LocalDateTime parseToLocalDateTime(String s) {
+        if (s == null || s.isBlank()) return LocalDateTime.now();
+        return LocalDateTime.parse(s);
+    }
 
 }

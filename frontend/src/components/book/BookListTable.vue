@@ -3,55 +3,45 @@
     <table class="book-table">
       <thead>
         <tr>
-          <th class="date-col-header">날짜</th>
-          <th class="type-col-header">구분</th>
-          <th class="category-col-header">카테고리</th>
-          <th class="content-col-header">내용</th>
-          <th class="memo-col-header">메모</th>
-          <th class="amount-col">금액 (원)</th>
+          <th style="width: 15%">날짜</th>
+          <th style="width: 10%">구분</th>
+          <th style="width: 15%">카테고리</th>
+          <th style="width: 20%">내용</th>
+          <th style="width: 25%">메모</th>
+          <th style="width: 15%" class="amount-col-header">금액(원)</th>
         </tr>
       </thead>
 
       <tbody>
-        <template v-for="entry in entries" :key="entry.id">
-          <!--기본 행-->
-          <tr class="entry-row" @click="selectEntry(entry)">
-            <td>{{ formatDate(entry.createdAt) }}</td>
-            <td
-            :class="entry.type === 'income' ? 'text-income' : 'text-expense'"
-          >
+        <tr v-for="entry in entries" :key="entry.id" class="entry-row" @click="selectEntry(entry)">
+          <td class="date-cell">{{ formatDateSimple(entry.createdAt) }}</td>
+          <td :class="entry.type === 'income' ? 'text-income' : 'text-expense'" class="type-cell">
             {{ entry.type === 'income' ? '수입' : '지출' }}
           </td>
-
           <td>{{ entry.category }}</td>
-          <td>{{ entry.content }}</td>
-          <td>{{ entry.memo }}</td>
+          <td class="content-cell">{{ entry.content }}</td>
+          <td class="memo-cell">{{ entry.memo }}</td>
           <td class="amount-col">{{ formatAmount(entry.amount) }}</td>
-
         </tr>
-  </template>
 
-  <tr v-if="entries.length === 0">
-    <td colspan="6" class="no-data">
-      등록된 가계부 항목이 없습니다.
-    </td>
-  </tr>
-</tbody>
-</table>
+        <tr v-if="entries.length === 0">
+          <td colspan="6" class="no-data">등록된 항목이 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <!--합계-->
-    <div class="total-box">
-      <div>
-        <span>총 수입:</span>
+    <div class="summary-container">
+      <div class="summary-item">
+        <span class="summary-label">총 수입 :</span>
         <span class="text-income">{{ formatAmount(totalIncome) }}원</span>
       </div>
-      <div>
-        <span>총 지출:</span>
+      <div class="summary-item">
+        <span class="summary-label">총 지출 :</span>
         <span class="text-expense">{{ formatAmount(totalExpense) }}원</span>
       </div>
-      <div>
-        <span>잔액:</span>
-        <span :class="balance >= 0 ? 'text-income' : 'text-expense'">
+      <div class="summary-item total-balance">
+        <span class="summary-label">잔액 :</span>
+        <span :class="balance >= 0 ? 'text-balance-positive' : 'text-balance-negative'">
           {{ formatAmount(balance) }}원
         </span>
       </div>
@@ -78,14 +68,10 @@ const selectEntry = (entry) => emit('selectEntry', entry)
 const formatAmount = (amount) =>
   amount ? amount.toLocaleString('ko-KR') : '0'
 
-const formatDate = (dateString) => {
+const formatDateSimple = (dateString) => {
   if (!dateString) return ''
   const d = new Date(dateString)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-    d.getDate()
-  ).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(
-    d.getMinutes()
-  ).padStart(2, '0')}`
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 // 합계 계산
@@ -106,99 +92,94 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
 
 <style scoped>
 .book-list-container {
-  overflow-x: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background-color: white;
+  background-color: #ededed;
 }
 
 .book-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-.book-table th,
+/* 헤더 */
+.book-table th {
+  padding: 15px 5px;
+  border-bottom: 2px solid #0063f8;
+  color: #0063f8;
+  font-weight: 600;
+  font-size: 15px;
+}
+
 .book-table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid #eee;
+  padding: 15px 5px;
+  border-bottom: 1px solid #d1d1d1;
+  color: #040000;
+  font-size: 14px;
   text-align: center;
-  vertical-align: middle;
 }
 
 .entry-row:hover {
-  background-color: #f9f9f9;
+  background-color: #f0f0f0;
   cursor: pointer;
+}
+
+/* 수입/지출 */
+.text-income {
+  color: #029b07 !important;
+  font-weight: bold;
+}
+
+/* 주황 */
+.text-expense {
+  color: #f04400 !important;
+  font-weight: bold;
 }
 
 .amount-col {
-  text-align: right;
-  font-weight: bold;
-}
-
-.text-income {
-  color: #1f8a4c;
-}
-
-.text-expense {
-  color: #d9534f;
-}
-
-.btn-compare {
-  background-color: #f0f7ff;
-  color: #007bff;
-  border: 1px solid #b3d4ff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.btn-compare:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.no-data {
   text-align: center;
-  padding: 20px;
-  color: #999;
-}
-
-.total-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  margin-top: 10px;
-  padding: 0 15px 15px 0;
-  gap: 4px;
+  padding-right: 20px !important;
   font-weight: 600;
 }
 
-.card-header {
+.amount-col-header {
+  text-align: center;
+  padding-right: 20px !important;
+}
+
+/* 하단 요약 영역*/
+.summary-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  gap: 20px;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 20px;
+  gap: 5px;
 }
 
-.close-btn {
-  border: none;
-  background: none;
-  font-size: 18px;
-  cursor: pointer;
+.summary-item {
+  font-size: 16px;
+  font-weight: 600;
 }
 
-.result-text {
-  margin-top: 8px;
+.summary-label {
+  color: #040000;
+  margin-right: 10px;
+}
+
+.total-balance {
+  margin-top: 5px;
+  border-top: 1px solid #868686;
+  padding-top: 5px;
+}
+
+.text-balance-positive {
+  color: #029b07;
+  /* 잔액이 플러스면 초록 */
   font-weight: bold;
 }
 
-.card-body p {
-  margin: 5px 0;
+.text-balance-negative {
+  color: #f4863b;
+  /* 잔액이 마이너스면 주황 */
+  font-weight: bold;
 }
-
 </style>
