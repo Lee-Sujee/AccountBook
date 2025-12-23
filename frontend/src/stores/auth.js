@@ -74,7 +74,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const res = await updateMyPageApi(updateData);
       myPageInfo.value = res.data;
-      alert("정보 수정 성공!");
       return res;
     } catch (err) {
       console.error("정보 수정 실패:", err);

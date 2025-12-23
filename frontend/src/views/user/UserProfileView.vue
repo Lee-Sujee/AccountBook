@@ -1,6 +1,5 @@
 <template>
   <div class="mypage-container">
-    <h1>마이페이지</h1>
 
     <!-- 보기 화면 -->
     <UserInfo 
@@ -30,6 +29,13 @@ onMounted(() => {
 });
 </script>
 
-<style>
-    
+<style scoped>
+.mypage-container {
+  min-height: calc(100vh - 70px); /* 이거 헤더 높이에 맞게 수정했음 */
+  display: flex;
+  justify-content: center;  
+  align-items: center;     
+  padding: 40px 16px;       
+  box-sizing: border-box;
+}
 </style>

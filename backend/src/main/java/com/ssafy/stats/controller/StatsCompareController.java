@@ -26,7 +26,7 @@ public class StatsCompareController {
             @RequestParam String category,
             @RequestParam int userPrice
     ) {
-        // 기존 compare() 대신, GPT 답변까지 포함된 getCombinedResult()를 호출합니다.
+    	//gpt 답변까지 포함
         return ResponseEntity.ok(compareService.getCombinedResult(menu, category, userPrice));
     }
 
@@ -36,7 +36,7 @@ public class StatsCompareController {
      */
     @GetMapping("/latest/search")
     public ResponseEntity<?> searchLatestList(@RequestParam String keyword) {
-        // 서비스에 작성된 키워드 검색 메서드를 호출합니다.
+        // 키워드 검색 메서드 호출
         return ResponseEntity.ok(compareService.searchLatestByKeyword(keyword));
     }
 }

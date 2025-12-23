@@ -25,4 +25,5 @@ public interface StatsRepository {
     List<Stats> findAllByMenuLike(@Param("keyword") String keyword);
     
     List<String> findAllDistinctMenus();
+    
 }

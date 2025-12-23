@@ -2,93 +2,93 @@
   <div class="avg-container">
     <h2 class="title">평균계산기</h2>
 
-    <div class="form-section">
-      <div class="input-group">
-        <label>상품명 (키워드)</label>
-        <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
-      </div>
-      <div class="input-group">
-        <label>업태</label>
-        <select v-model="category" class="underline-input">
-          <option value="">전체</option>
-          <option value="대형마트">대형마트</option>
-          <option value="백화점">백화점</option>
-          <option value="기업형슈퍼">기업형슈퍼</option>
-          <option value="편의점">편의점</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>내가 쓴 금액</label>
-        <div class="price-input-wrapper">
-          <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
-          <span class="currency">원</span>
-        </div>
-      </div>
+<div class="form-section">
+  <div class="input-group">
+    <label>상품명 (키워드)</label>
+    <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
+  </div>
+  <div class="input-group">
+    <label>업태</label>
+    <select v-model="category" class="underline-input">
+      <option value="">전체</option>
+      <option value="대형마트">대형마트</option>
+      <option value="백화점">백화점</option>
+      <option value="기업형슈퍼">기업형슈퍼</option>
+      <option value="편의점">편의점</option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label>내가 쓴 금액</label>
+    <div class="price-input-wrapper">
+      <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
+      <span class="currency">원</span>
     </div>
+  </div>
+</div>
 
-    <div class="btn-wrapper">
-      <button @click="search" :disabled="loading" class="btn-search">
-        {{ loading ? '검색 중...' : '검색' }}
-      </button>
+<div class="btn-wrapper">
+  <button @click="search" :disabled="loading" class="btn-search">
+    {{ loading ? '검색 중...' : '검색' }}
+  </button>
+</div>
+
+<div v-if="searched" class="result-card">
+  <div class="search-summary">
+    <p>검색 키워드 : <span class="highlight">{{ submitted.keyword }}</span></p>
+    <p>업태 : <span class="highlight">{{ submitted.category || '전체' }}</span></p>
+    <p>내가 쓴 금액 : <span class="highlight">{{ Number(submitted.userPrice).toLocaleString() }}원</span></p>
+  </div>
+
+  <div v-if="isAiMatched && items.length > 0" class="ai-notice-banner">
+    <span class="search-icon"></span> 검색 결과가 없습니다.
+    <strong>'{{ submitted.keyword }}'</strong> 대신 AI가 🤖 <strong>'{{ items[0].menu }}'</strong>를 찾았습니다!
+  </div>
+
+  <div v-if="filteredItems.length > 0 || gptPrice" class="table-wrapper">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>상품명</th>
+          <th>업태</th>
+          <th>조사일</th>
+          <th>평균가</th>
+          <th>판정</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, index) in filteredItems" :key="index">
+          <td class="menu-name">{{ row.menu }}</td>
+          <td>{{ row.category }}</td>
+          <td>{{ row.surveyDate }}</td>
+          <td class="price-text">{{ Number(row.averagePrice).toLocaleString() }}원</td>
+          <td>
+            <span class="judge-text" :class="judgeClass(row.averagePrice)">{{ row.result }}</span>
+          </td>
+        </tr>
+
+        <tr v-if="gptPrice" class="ai-price-row">
+          <td class="ai-menu-cell">{{ submitted.keyword }}</td>
+          <td><span class="ai-badge">AI가 확인한 평균 추정가</span></td>
+          <td class="ai-status">실시간</td>
+          <td class="gpt-price-text">{{ gptPrice }}</td>
+          <td>
+            <span class="judge-text" :class="aiJudgeClass">{{ aiJudgeResult }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div v-if="gptTip" class="gpt-tip-box">
+    <div class="tip-header">
+      <span class="tip-icon">💡</span>
+      <strong>AI 쇼핑 팁</strong>
     </div>
+    <p class="tip-content">{{ gptTip }}</p>
+  </div>
 
-    <div v-if="searched" class="result-card">
-      <div class="search-summary">
-        <p>검색 키워드 : <span class="highlight">{{ submitted.keyword }}</span></p>
-        <p>업태 : <span class="highlight">{{ submitted.category || '전체' }}</span></p>
-        <p>내가 쓴 금액 : <span class="highlight">{{ Number(submitted.userPrice).toLocaleString() }}원</span></p>
-      </div>
-
-      <div v-if="isAiMatched && items.length > 0" class="ai-notice-banner">
-        <span class="search-icon">🔍</span> 검색 결과가 없습니다.
-        <strong>'{{ submitted.keyword }}'</strong> 대신 AI가 🤖 <strong>'{{ items[0].menu }}'</strong>를 찾았어요!
-      </div>
-
-      <div v-if="filteredItems.length > 0 || gptPrice" class="table-wrapper">
-        <table class="result-table">
-          <thead>
-            <tr>
-              <th>상품명</th>
-              <th>업태</th>
-              <th>조사일</th>
-              <th>평균가</th>
-              <th>판정</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row, index) in filteredItems" :key="index">
-              <td class="menu-name">{{ row.menu }}</td>
-              <td>{{ row.category }}</td>
-              <td>{{ row.surveyDate }}</td>
-              <td class="price-text">{{ Number(row.averagePrice).toLocaleString() }}원</td>
-              <td>
-                <span class="judge-text" :class="judgeClass(row.averagePrice)">{{ row.result }}</span>
-              </td>
-            </tr>
-
-            <tr v-if="gptPrice" class="ai-price-row">
-              <td class="ai-menu-cell">{{ submitted.keyword }}</td>
-              <td><span class="ai-badge">AI가 확인한 실시간 평균</span></td>
-              <td class="ai-status">실시간</td>
-              <td class="gpt-price-text">{{ gptPrice }}</td>
-              <td>
-                <span class="judge-text" :class="aiJudgeClass">{{ aiJudgeResult }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-if="gptTip" class="gpt-tip-box">
-        <div class="tip-header">
-          <span class="tip-icon">💡</span>
-          <strong>AI 쇼핑 팁</strong>
-        </div>
-        <p class="tip-content">{{ gptTip }}</p>
-      </div>
-
-      <p v-else-if="filteredItems.length === 0" class="muted">결과가 없습니다.</p>
-    </div>
+  <p v-else-if="filteredItems.length === 0" class="muted">결과가 없습니다.</p>
+</div>
   </div>
 </template>
 
@@ -108,9 +108,9 @@ const aiJudgeResult = computed(() => {
   if (!gptPrice.value) return '분석불가';
   const avg = parseInt(gptPrice.value.replace(/[^0-9]/g, '')); // "5,500원" -> 5500
   const user = submitted.value.userPrice;
-  if (user > avg * 1.1) return "비싼 소비예요 😥";
-  if (user < avg * 0.9) return "아주 합리적인 소비예요 👍";
-  return "적정한 소비예요 🙂";
+  if (user > avg * 1.1) return "비싼 소비예요";
+  if (user < avg * 0.9) return "아주 합리적인 소비예요";
+  return "적정한 소비예요";
 });
 
 // AI 판정 스타일 클래스
@@ -163,58 +163,50 @@ const judgeClass = (avg) => {
 };
 </script>
 
+
 <style scoped>
-/* 전체 배경 */
+/* 전체 컨테이너 및 배경 설정 */
 .avg-container {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
-  color: #040000;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #ededed;
+  min-height: 100vh;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .title {
   color: #0063f8;
   font-weight: 800;
-  font-size: 28px;
   margin-bottom: 40px;
+  font-size: 24px;
 }
 
-/* 상단 입력폼 */
+/* 입력폼 */
 .form-section {
   display: flex;
-  justify-content: space-between;
-  gap: 40px;
-  margin-bottom: 30px;
-}
-
-.input-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 40px;
 }
 
 .input-group label {
   color: #0063f8;
   font-weight: 700;
   font-size: 14px;
-  margin-bottom: 10px;
+  display: block;
+  margin-bottom: 15px;
 }
 
-/* 입력창들 */
 .underline-input {
   border: none;
   outline: none;
   background: transparent;
   border-bottom: 2px solid #0063f8;
-  padding: 10px 0;
+  padding: 8px 0;
   font-size: 16px;
   font-weight: 600;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-
-.underline-input:focus {
-  border-bottom: 2px solid #0046b3;
+  width: 200px;
 }
 
 .price-input-wrapper {
@@ -225,101 +217,62 @@ const judgeClass = (avg) => {
 
 .price-input-wrapper .underline-input {
   border-bottom: none;
-  flex: 1;
-}
-
-.currency {
-  font-weight: 600;
-  color: #040000;
-  padding-left: 5px;
 }
 
 /* 검색 버튼 */
 .btn-wrapper {
   display: flex;
   justify-content: center;
-  margin: 40px 0;
+  margin-bottom: 60px;
 }
 
 .btn-search {
   background-color: #0063f8;
   color: #ffffff;
   border: none;
-  padding: 12px 60px;
-  border-radius: 30px;
+  padding: 12px 40px;
+  border-radius: 25px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
 }
 
-.btn-search:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 99, 248, 0.3);
-}
-
-.btn-search:disabled {
-  background-color: #a0c4ff;
-  cursor: not-allowed;
-}
-
-/* 결과 카드 및 요약 */
+/* 결과 */
 .result-card {
-  background-color: #f1f5f9;
-  padding: 30px;
-  border-radius: 20px;
-  animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  background-color: #f7f4f4;
+  padding: 50px;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .search-summary {
-  margin-bottom: 25px;
+  margin-bottom: 40px;
 }
 
 .search-summary p {
   font-size: 18px;
   font-weight: 700;
   color: #0063f8;
-  margin: 8px 0;
+  margin: 12px 0;
 }
 
 .search-summary .highlight {
-  color: #040000;
+  color: #333;
   margin-left: 10px;
 }
 
-/* AI 매칭 알림 배너 */
-.ai-notice-banner {
-  background-color: #ffffff;
-  padding: 15px 25px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+/* AI 매칭 */
+.ai-badge {
   font-size: 15px;
-  border-left: 5px solid #0063f8;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  color: #333;
+  margin-bottom: 25px;
 }
 
 /* 결과 테이블 */
 .table-wrapper {
-  background: #ffffff;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  margin-bottom: 40px;
 }
 
 .result-table {
@@ -328,57 +281,34 @@ const judgeClass = (avg) => {
 }
 
 .result-table th {
-  padding: 15px;
+  padding: 15px 0;
   color: #0063f8;
   border-bottom: 2px solid #0063f8;
-  font-size: 14px;
-  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .result-table td {
-  padding: 18px 15px;
+  padding: 18px 0;
   text-align: center;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f1f3f5;
   font-size: 14px;
   font-weight: 600;
+  color: #333;
 }
 
-.menu-name {
-  color: #040000;
-  text-align: left !important;
-  padding-left: 25px !important;
-}
-
-/* AI 실시간 평균 */
+/* AI */
 .ai-price-row {
-  background-color: #f8fbff !important;
+  background-color: #f8fbff;
 }
 
-.ai-price-row td {
-  border-bottom: none;
-}
-
-/* AI 배지 */
-.ai-badge {
+.ai-highlight-text {
   color: #0063f8;
   font-weight: 800;
-  background-color: #eef5ff;
-  padding: 5px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  display: inline-block;
-  border: 1px solid #d0e3ff;
-}
-
-.gpt-price-text {
-  color: #0063f8;
-  font-weight: 800 !important;
-  font-size: 15px;
 }
 
 .judge-text {
   font-weight: 800;
-  font-size: 14px;
 }
 
 .judge-text.expensive {
@@ -392,45 +322,32 @@ const judgeClass = (avg) => {
 
 /* 합리적 소비 - 초록 */
 .judge-text.ok {
-  color: #040000;
+  color: #333;
 }
 
-/* 적정 소비 - 블랙 */
-
-/* 8. AI 쇼핑 팁 박스 (하단) */
+/* AI 쇼핑 팁*/
 .gpt-tip-box {
-  margin-top: 25px;
-  padding: 20px 25px;
-  background-color: #ffffff;
-  border-left: 6px solid #f4863b;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.tip-header {
+  border-top: 1px solid #f1f3f5;
+  padding-top: 30px;
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  color: #f4863b;
-  font-weight: 800;
-  font-size: 16px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
-.tip-icon {
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-.tip-content {
-  color: #4b4b4b;
-  font-size: 14px;
-  line-height: 1.7;
+.gpt-tip-box p {
   margin: 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
 }
 
-.muted {
-  text-align: center;
-  color: #888;
-  margin-top: 20px;
+.gpt-tip-box strong {
+  color: #f4863b;
+  white-space: nowrap;
+}
+
+.ai-badge {
+  color: #0063f8;
+  font-weight: 800;
 }
 </style>
