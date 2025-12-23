@@ -13,7 +13,7 @@
         <p class="result-content">{{ financeStore.analysisResult }}</p>
       </div>
     </div>
-
+    
     <div v-else class="no-data-msg">
       분석할 내역이 없습니다.
     </div>
@@ -65,9 +65,9 @@ watch(
 
 <style scoped>
 .ai-analysis-wrapper {
-  width: 100%;
-  max-width: none;
-  margin: 0;
+  width: 100%;        
+  max-width: none;    
+  margin: 0;      
   background: #EDEDED;
   border-radius: 12px;
 }

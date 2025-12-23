@@ -74,6 +74,7 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 
 
 
+
 <style scoped>
 .stats-container {
   max-width: 1100px;

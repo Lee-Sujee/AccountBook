@@ -27,7 +27,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onUnmounted, watch, nextTick } from 'vue'
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js'
@@ -112,7 +111,6 @@ const loadChart = async (type: 'expense' | 'income' = currentType.value) => {
   }
 }
 
-// 헬퍼 함수: 데이터 초기화
 const clearData = () => {
   summary.value = []
   totalAmount.value = 0
@@ -169,6 +167,7 @@ watch(
   },
   { immediate: true }
 )
+
 
 onUnmounted(() => {
   chartInstance?.destroy()

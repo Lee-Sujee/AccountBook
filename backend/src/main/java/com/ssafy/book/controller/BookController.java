@@ -34,8 +34,24 @@ public class BookController {
     //예외 처리는 다 service 쪽으로 빼버렸어유
     // 전체 조회 (GET /book)
     @GetMapping
-    public ResponseEntity<List<Book>> getBookList(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(bookService.selectAll(userDetails.getUserId()));
+    public ResponseEntity<?> getBookList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
+        String userId = userDetails.getUserId();
+
+        // year/month 없으면 기존대로 전체
+        if (year == null || month == null) {
+            List<Book> list = bookService.selectAll(userId);
+            return ResponseEntity.ok(list);
+        }
+
+        // year/month 있으면 해당 월만
+        List<Book> list = bookService.selectByMonth(userId, year, month);
+        return ResponseEntity.ok(list);
+    
+
     }
 
     // 항목 세부조회 (GET /book/{id})
@@ -82,7 +98,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getCategorySummary(userDetails.getUserId(), type, year, month));
     }
     
-    // AI -> 수입/지출 분석
+ // AI -> 수입/지출 분석
     @PostMapping("/analyze-finances")
     public ResponseEntity<String> analyzeFinances(
             @AuthenticationPrincipal CustomUserDetails user,
@@ -91,6 +107,6 @@ public class BookController {
         String userId = user.getUserId();
         String analysis = bookService.analyzeFinances(userId, req);
         return ResponseEntity.ok(analysis);
-
     }
+
 }
