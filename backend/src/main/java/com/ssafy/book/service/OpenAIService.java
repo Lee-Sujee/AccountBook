@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class OpenAIService {
-	@Value("${openai.api.key}")
+	@Value("${gms.api.key}")
     private String apiKey;
 	
 	

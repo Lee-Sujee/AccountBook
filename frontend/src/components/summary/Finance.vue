@@ -29,7 +29,7 @@ const result = ref("");
 watch(
     () => [props.totalIncome, props.totalExpense],
     async () => {
-        await financeStore.analyzeFinances(props.totalIncome, props.totalExpense);
+        // await financeStore.analyzeFinances(props.totalIncome, props.totalExpense);
         result.value = financeStore.analysisResult;
     },
     { immediate: true }

@@ -17,8 +17,7 @@ public class StatsCompareController {
     private StatsCompareService compareService;
 
     /**
-     * ✅ 평균 가격 비교 API
-     * DB 데이터(리스트)와 ChatGPT의 시장 조언(String)을 한꺼번에 반환합니다.
+     * 평균 가격 비교 API
      * GET /api/v1/comparison/price?menu=...&category=...&userPrice=...
      */
     @GetMapping("/price")
@@ -32,7 +31,7 @@ public class StatsCompareController {
     }
 
     /**
-     * ✅ 키워드로 최신 데이터 검색 API
+     * 키워드로 최신 데이터 검색 API
      * GET /api/v1/comparison/latest/search?keyword=비타500
      */
     @GetMapping("/latest/search")

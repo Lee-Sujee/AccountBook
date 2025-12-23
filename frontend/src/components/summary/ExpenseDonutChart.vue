@@ -3,22 +3,17 @@
     <h3 class="stats-title">카테고리별 비율</h3>
 
     <div class="month-selector">
-      <button @click="changeMonth(-1)"><</button>
+      <button @click="changeMonth(-1)">
+      </button>
       <span>{{ currentMonthLabel }}</span>
       <button @click="changeMonth(1)">></button>
     </div>
 
     <div class="btn-group">
-      <button
-        :class="{ active: currentType === 'expense' }"
-        @click="loadChart('expense')"
-      >
+      <button :class="{ active: currentType === 'expense' }" @click="loadChart('expense')">
         지출
       </button>
-      <button
-        :class="{ active: currentType === 'income' }"
-        @click="loadChart('income')"
-      >
+      <button :class="{ active: currentType === 'income' }" @click="loadChart('income')">
         수입
       </button>
     </div>
@@ -84,13 +79,13 @@ const currentMonthLabel = computed(() => {
   return `${y}년 ${m}월`
 })
 
-const palette = ['#FF6B6B','#FFA94D','#FFD43B','#74C0FC','#69DB7C','#B197FC']
-const generateColor = (i:number) => palette[i % palette.length]
+const palette = ['#FF6B6B', '#FFA94D', '#FFD43B', '#74C0FC', '#69DB7C', '#B197FC']
+const generateColor = (i: number) => palette[i % palette.length]
 
-const getPercent = (v:number) =>
+const getPercent = (v: number) =>
   totalAmount.value ? ((v / totalAmount.value) * 100).toFixed(1) : '0.0'
 
-const changeMonth = (diff:number) => {
+const changeMonth = (diff: number) => {
   const d = new Date(currentMonth.value)
   d.setMonth(d.getMonth() + diff)
   currentMonth.value = d
@@ -98,7 +93,7 @@ const changeMonth = (diff:number) => {
 }
 
 const waitUntilVisibleSized = async () => {
-  for (let i = 0; i < 60; i++) { 
+  for (let i = 0; i < 60; i++) {
     await nextTick()
     await new Promise<void>((r) => requestAnimationFrame(() => r()))
 
@@ -108,7 +103,7 @@ const waitUntilVisibleSized = async () => {
   return false
 }
 
-const loadChart = async (type:'expense'|'income') => {
+const loadChart = async (type: 'expense' | 'income') => {
   currentType.value = type
 
   // 1) 통계 화면이 아닐 때는 불필요 호출 방지
@@ -147,30 +142,30 @@ const loadChart = async (type:'expense'|'income') => {
           responsive: true,
           maintainAspectRatio: false,
           cutout: '65%',
-          plugins: { legend: { display:false } }
+          plugins: { legend: { display: false } }
         }
       })
       chartInstance.resize()
       return
     }
 
-    const sorted = [...data].sort((a,b) => b.total - a.total)
+    const sorted = [...data].sort((a, b) => b.total - a.total)
     summary.value = sorted
-    totalAmount.value = sorted.reduce((s,i)=>s+i.total,0)
-    colors.value = sorted.map((_,i)=>generateColor(i))
+    totalAmount.value = sorted.reduce((s, i) => s + i.total, 0)
+    colors.value = sorted.map((_, i) => generateColor(i))
 
     chartInstance?.destroy()
     chartInstance = new Chart(chartCanvas.value, {
       type: 'doughnut',
       data: {
-        labels: sorted.map(i=>i.category),
-        datasets: [{ data: sorted.map(i=>i.total), backgroundColor: colors.value }]
+        labels: sorted.map(i => i.category),
+        datasets: [{ data: sorted.map(i => i.total), backgroundColor: colors.value }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         cutout: '65%',
-        plugins: { legend: { display:false } }
+        plugins: { legend: { display: false } }
       }
     })
 
@@ -193,7 +188,7 @@ watch(
       await loadChart(currentType.value)
     }
   },
-  {immediate: true}
+  { immediate: true }
 )
 
 onUnmounted(() => {
