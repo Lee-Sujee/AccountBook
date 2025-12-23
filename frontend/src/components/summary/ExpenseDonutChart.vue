@@ -1,67 +1,48 @@
 <template>
-  <div class="stats-container">
-    <h3 class="stats-title">카테고리별 비율</h3>
-
-    <div class="month-selector">
-      <button @click="changeMonth(-1)"><</button>
-      <span>{{ currentMonthLabel }}</span>
-      <button @click="changeMonth(1)">></button>
+  <div class="stats-detail-container">
+    <div class="type-selector">
+      <button :class="{ active: currentType === 'expense' }" @click="loadChart('expense')">지출</button>
+      <button :class="{ active: currentType === 'income' }" @click="loadChart('income')">수입</button>
     </div>
 
-    <div class="btn-group">
-      <button
-        :class="{ active: currentType === 'expense' }"
-        @click="loadChart('expense')"
-      >
-        지출
-      </button>
-      <button
-        :class="{ active: currentType === 'income' }"
-        @click="loadChart('income')"
-      >
-        수입
-      </button>
+    <div class="chart-section" ref="chartArea">
+      <canvas ref="chartCanvas"></canvas>
     </div>
 
-    <div class="total-amount">
-      총 {{ currentType === 'expense' ? '지출' : '수입' }}
-      <strong>{{ totalAmount.toLocaleString() }}원</strong>
-    </div>
-
-    <div class="content-grid">
-      <div class="chart-card">
-        <div class="chart-area" ref="chartArea">
-          <canvas ref="chartCanvas"></canvas>
-        </div>
-      </div>
-
-      <div class="list-card">
-        <ul class="category-list" v-if="summary.length > 0">
-          <li v-for="(item, index) in summary" :key="item.category">
-            <span class="color-dot" :style="{ backgroundColor: colors[index] }"></span>
-            <span class="category-name">{{ item.category }}</span>
-            <span class="category-percent">{{ getPercent(item.total) }}%</span>
-            <span class="category-amount">{{ item.total.toLocaleString() }}원</span>
-          </li>
-        </ul>
-        <!--데이터 없을 때-->
-        <div v-else class="no-data-message">
-          아직 등록된 항목이 없습니다.
-        </div>
-      </div>
+    <div class="list-section">
+      <ul class="category-list" v-if="summary.length > 0">
+        <li v-for="(item, index) in summary" :key="item.category" class="list-item">
+          <div class="cat-left">
+            <span class="dot" :style="{ backgroundColor: colors[index] }"></span>
+            <span class="name">{{ item.category }}</span>
+            <span class="percent">{{ getPercent(item.total) }}%</span>
+          </div>
+          <div class="cat-right">
+            <span class="amount">{{ item.total.toLocaleString() }}원</span>
+          </div>
+        </li>
+      </ul>
+      <div v-else class="empty-msg">내역이 없습니다.</div>
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { ref, computed, onUnmounted, watch, nextTick } from 'vue'
+import { ref, onUnmounted, watch, nextTick } from 'vue'
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js'
 import instance from '@/api/axiosInstance'
 
-Chart.register(DoughnutController, ArcElement, Tooltip)
+// Props 정의
+const props = defineProps<{
+  visible: boolean
+  year: number
+  month: number
+}>()
 
-const props = defineProps<{ visible: boolean }>()
+// Emit 정의 (월 변경 시 부모의 상태를 바꾸기 위함)
+const emit = defineEmits(['change-month'])
+
+Chart.register(DoughnutController, ArcElement, Tooltip)
 
 interface CategorySummary {
   category: string
@@ -76,268 +57,218 @@ const summary = ref<CategorySummary[]>([])
 const colors = ref<string[]>([])
 const totalAmount = ref(0)
 const currentType = ref<'expense' | 'income'>('expense')
-const currentMonth = ref(new Date())
 
-const currentMonthLabel = computed(() => {
-  const y = currentMonth.value.getFullYear()
-  const m = currentMonth.value.getMonth() + 1
-  return `${y}년 ${m}월`
-})
+const palette = ['#4DABF7', '#63E6BE', '#FF8787', '#B197FC', '#FFD93D', '#495057']
+const generateColor = (i: number) => palette[i % palette.length]
 
-const palette = ['#FF6B6B','#FFA94D','#FFD43B','#74C0FC','#69DB7C','#B197FC']
-const generateColor = (i:number) => palette[i % palette.length]
-
-const getPercent = (v:number) =>
+const getPercent = (v: number) =>
   totalAmount.value ? ((v / totalAmount.value) * 100).toFixed(1) : '0.0'
 
-const changeMonth = (diff:number) => {
-  const d = new Date(currentMonth.value)
-  d.setMonth(d.getMonth() + diff)
-  currentMonth.value = d
-  loadChart(currentType.value)
+// 부모에게 월 변경 알림
+const emitMonthChange = (diff: number) => {
+  emit('change-month', diff)
 }
 
 const waitUntilVisibleSized = async () => {
-  for (let i = 0; i < 60; i++) { 
+  for (let i = 0; i < 60; i++) {
     await nextTick()
     await new Promise<void>((r) => requestAnimationFrame(() => r()))
-
     const area = chartArea.value
     if (area && area.clientWidth > 0 && area.clientHeight > 0) return true
   }
   return false
 }
 
-const loadChart = async (type:'expense'|'income') => {
+const loadChart = async (type: 'expense' | 'income' = currentType.value) => {
   currentType.value = type
 
-  // 1) 통계 화면이 아닐 때는 불필요 호출 방지
   if (!props.visible) return
 
-  // 2) DOM/레이아웃이 "보이는 상태"로 잡힐 때까지 대기
   const ok = await waitUntilVisibleSized()
-  if (!ok) return
-
-  if (!chartCanvas.value) return
-
-  const y = currentMonth.value.getFullYear()
-  const m = currentMonth.value.getMonth() + 1
+  if (!ok || !chartCanvas.value) return
 
   try {
+    // 부모로부터 받은 props.year와 props.month를 API 파라미터로 사용
     const { data } = await instance.get<CategorySummary[]>(
-      `/book/summary?type=${type}&year=${y}&month=${m}`
+      `/book/summary?type=${type}&year=${props.year}&month=${props.month}`
     )
 
-    //데이터 읎으면 회색 도넛
     if (data.length === 0) {
-      summary.value = []
-      totalAmount.value = 0
-      colors.value = []
-      chartInstance?.destroy()
-      chartInstance = new Chart(chartCanvas.value, {
-        type: 'doughnut',
-        data: {
-          labels: ['No Data'],
-          datasets: [{
-            data: [1],
-            backgroundColor: ['#d3d3d3']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
-          plugins: { legend: { display:false } }
-        }
-      })
-      chartInstance.resize()
+      clearData()
+      renderNoDataChart()
       return
     }
 
-    const sorted = [...data].sort((a,b) => b.total - a.total)
+    const sorted = [...data].sort((a, b) => b.total - a.total)
     summary.value = sorted
-    totalAmount.value = sorted.reduce((s,i)=>s+i.total,0)
-    colors.value = sorted.map((_,i)=>generateColor(i))
+    totalAmount.value = sorted.reduce((s, i) => s + i.total, 0)
+    colors.value = sorted.map((_, i) => generateColor(i))
 
-    chartInstance?.destroy()
-    chartInstance = new Chart(chartCanvas.value, {
-      type: 'doughnut',
-      data: {
-        labels: sorted.map(i=>i.category),
-        datasets: [{ data: sorted.map(i=>i.total), backgroundColor: colors.value }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        plugins: { legend: { display:false } }
-      }
-    })
-
-    chartInstance.resize()
-
+    renderChart(sorted)
   } catch (e) {
     console.error('summary api failed:', e)
-    summary.value = []
-    totalAmount.value = 0
-    colors.value = []
-    chartInstance?.destroy()
-    chartInstance = null
+    clearData()
   }
 }
 
+// 헬퍼 함수: 데이터 초기화
+const clearData = () => {
+  summary.value = []
+  totalAmount.value = 0
+  colors.value = []
+  chartInstance?.destroy()
+  chartInstance = null
+}
+
+// 헬퍼 함수: 차트 렌더링
+const renderChart = (data: CategorySummary[]) => {
+  chartInstance?.destroy()
+  if (!chartCanvas.value) return
+
+  chartInstance = new Chart(chartCanvas.value, {
+    type: 'doughnut',
+    data: {
+      labels: data.map(i => i.category),
+      datasets: [{ data: data.map(i => i.total), backgroundColor: colors.value }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: { legend: { display: false } }
+    }
+  })
+}
+
+// 헬퍼 함수: 데이터 없을 때 회색 차트
+const renderNoDataChart = () => {
+  if (!chartCanvas.value) return
+  chartInstance = new Chart(chartCanvas.value, {
+    type: 'doughnut',
+    data: {
+      labels: ['No Data'],
+      datasets: [{ data: [1], backgroundColor: ['#d3d3d3'] }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: { legend: { display: false } }
+    }
+  })
+}
+
+// 감시자 설정: visible, year, month 중 하나라도 변경되면 loadChart 실행
 watch(
-  () => props.visible,
-  async (v) => {
-    if (v) {
-      await loadChart(currentType.value)
+  [() => props.visible, () => props.year, () => props.month],
+  ([newVisible]) => {
+    if (newVisible) {
+      loadChart()
     }
   },
-  {immediate: true}
+  { immediate: true }
 )
 
 onUnmounted(() => {
   chartInstance?.destroy()
-  chartInstance = null
 })
 </script>
 
 
 
 <style scoped>
-.stats-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px;
+.stats-detail-container {
+  background: #EDEDED;
+  padding: 0;
 }
 
-.stats-title {
-  text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.month-selector {
+.type-selector {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 40px;
 }
 
-.btn-group {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.btn-group button {
-  padding: 6px 14px;
+.type-selector button {
+  padding: 8px 24px;
   border-radius: 20px;
-  border: 1px solid #ddd;
-  background: #f1f3f5;
+  border: 1.5px solid #0063f8;
+  background: transparent;
+  color: #0063f8;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.btn-group button.active {
-  background: #339af0;
+.type-selector button.active {
+  background: #0063f8;
   color: #fff;
-  border-color: #339af0;
 }
 
-.total-amount {
-  text-align: center;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: stretch;
-}
-
-.chart-card,
-.list-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-}
-
-.chart-card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.chart-area {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* 차트 영역: 중앙에 크게 배치 */
+.chart-section {
   position: relative;
-  width: 280px;
-  height: 280px;
+  height: 350px; /* 차트 크기를 더 키움 */
+  width: 100%;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
 }
 
+/* 리스트 영역: 게시판 테이블처럼 넓게 사용 */
 .category-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  border-top: 1.5px solid #0063f8; /* 게시판 헤더 선 스타일 */
+  border-bottom: 1.5px solid #0063f8; /* 게시판 헤더 선 스타일 */
 }
 
-.category-list li {
-  display: grid;
-  grid-template-columns: 12px 1fr auto auto;
+.list-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f1f3f5;
+  padding: 16px 20px; /* 게시판 td 패딩과 유사하게 */
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.category-list li:last-child {
-  border-bottom: none;
+.list-item:hover {
+  background-color: #e5e7eb; /* 게시판 hover 효과 */
 }
 
-.color-dot {
-  width: 10px;
-  height: 10px;
+.cat-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
 }
 
-.category-name {
-  font-weight: 500;
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 80px;
 }
 
-.category-percent {
-  color: #868e96;
+.percent {
+  color: #0063f8;
+  font-weight: 700;
   font-size: 14px;
 }
 
-.category-amount {
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-area {
-    width: 240px;
-    height: 240px;
-  }
-}
-
-.no-data-message {
-  text-align: center;
-  color: #868e96;
+.amount {
   font-size: 16px;
-  font-weight: 500;
-  padding: 20px 0;
+  font-weight: 700;
+  color: #374151;
+}
+
+.empty-msg {
+  padding: 60px;
+  text-align: center;
+  color: #9ca3af;
 }
 </style>

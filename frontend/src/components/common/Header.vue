@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
@@ -96,6 +95,67 @@ const store = useAuthStore();
   border-radius: 6px;
   color: #0063f8;
   cursor: pointer;
+}
+
+/* 전체 navbar */
+.navbar {
+  width: 100%;
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+
+  flex-wrap: wrap;          
+  gap: 12px;
+}
+
+/* 왼쪽 로고+메뉴: 줄바꿈 허용 */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;         
+  min-width: 0;
+}
+
+/* 오른쪽 영역: 필요시 다음 줄로 */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;          
+  justify-content: flex-end;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .logo-img {
+    width: 130px;          
+  }
+
+  .logo {
+    gap: 12px;
+  }
+
+  .nav-right {
+    width: 100%;           
+    justify-content: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .logo-img {
+    width: 110px;
+  }
+  .nav-link {
+    font-size: 13px;
+  }
 }
 
 </style>

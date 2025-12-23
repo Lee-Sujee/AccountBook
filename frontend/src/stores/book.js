@@ -2,11 +2,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getBookList, createBookEntry, updateBookEntry, deleteBookEntry } from "@/api/bookApi";
 
-export const useBookStore = defineStore('book', () => {
+export const useBookStore = defineStore("book", () => {
   const bookEntries = ref([]);
   const selectEntry = ref(null);
   const isFormModalVisible = ref(false);
   const isDetailModalVisible = ref(false);
+
+  // 마지막 조회 조건 기억 (월별/전체)
+  const lastFilterYear = ref(undefined);
+  const lastFilterMonth = ref(undefined);
 
   const closeModal = () => {
     isFormModalVisible.value = false;
@@ -30,20 +34,35 @@ export const useBookStore = defineStore('book', () => {
     isDetailModalVisible.value = false;
   };
 
-  const handleSuccess = async (message) => {
-    alert(message);
-    closeModal();
-    await loadBookList();
-  }
-
-  //JWT 포함 요청
-  const loadBookList = async () => {
+  const loadBookList = async (year, month) => {
     try {
-      const res = await getBookList();
-      bookEntries.value = res.data;
+      // year/month 둘 다 있으면 월별 조회, 아니면 전체 조회
+      if (typeof year === "number" && typeof month === "number") {
+        lastFilterYear.value = year;
+        lastFilterMonth.value = month;
+        const res = await getBookList({ year, month });
+        bookEntries.value = res.data;
+      } else {
+        lastFilterYear.value = undefined;
+        lastFilterMonth.value = undefined;
+        const res = await getBookList(); // 전체
+        bookEntries.value = res.data;
+      }
     } catch (err) {
       console.error("가계부 목록 로드 실패:", err);
       alert("가계부 목록을 불러오는데 실패했습니다. 로그인 상태를 확인하세요.");
+    }
+  };
+
+  const handleSuccess = async (message) => {
+    alert(message);
+    closeModal();
+
+    // CRUD 후에도 마지막 조건으로 다시 로드
+    if (typeof lastFilterYear.value === "number" && typeof lastFilterMonth.value === "number") {
+      await loadBookList(lastFilterYear.value, lastFilterMonth.value);
+    } else {
+      await loadBookList();
     }
   };
 
@@ -80,6 +99,8 @@ export const useBookStore = defineStore('book', () => {
       throw err;
     }
   };
+
+ 
 
   return {
     bookEntries,

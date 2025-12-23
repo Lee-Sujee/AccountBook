@@ -1,5 +1,6 @@
 package com.ssafy.book.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -11,6 +12,8 @@ public interface BookRepository {
 	
 	//userId로 찾은 user의 가계부 상세조회
 	List<Book> selectAll(String userId);
+	
+	List<Book> selectByMonth(String userId, LocalDateTime start, LocalDateTime end);
 	
 	//가계부 항목 상세보기 (id + userId)
 	Book select(int id, String userId);

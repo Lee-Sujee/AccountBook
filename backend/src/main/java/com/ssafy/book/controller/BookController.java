@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.book.dto.request.AnalyzeFinancesRequest;
 import com.ssafy.book.dto.request.BookRequestDto;
 import com.ssafy.book.entity.Book;
 import com.ssafy.book.service.BookService;
@@ -31,11 +32,22 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    // 전체 조회 (GET /book)
     @GetMapping
-    public ResponseEntity<?> getBookList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getBookList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
         String userId = userDetails.getUserId();
-        List<Book> list = bookService.selectAll(userId);
+
+        // year/month 없으면 기존대로 전체
+        if (year == null || month == null) {
+            List<Book> list = bookService.selectAll(userId);
+            return ResponseEntity.ok(list);
+        }
+
+        // year/month 있으면 해당 월만
+        List<Book> list = bookService.selectByMonth(userId, year, month);
         return ResponseEntity.ok(list);
     }
 
@@ -114,7 +126,7 @@ public class BookController {
 
     // 카테고리별 수입/지출 요약(분석)
     @GetMapping("/summary")
-    public ResponseEntity<?> getCategorySummary(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<?> getBookSummary(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                 @RequestParam String type,
                                                 @RequestParam int year,
                                                 @RequestParam int month) {
@@ -133,12 +145,13 @@ public class BookController {
     }
     
     // AI -> 수입/지출 분석
-    @GetMapping("/analyze-finances")
-    public ResponseEntity<String> analyzeFinances(@AuthenticationPrincipal CustomUserDetails user,
-    			@RequestParam int income, @RequestParam int expense) {
-    	String userId = user.getUserId();
-    	String analysis = bookService.analyzeFinances(userId, income, expense);
-    	
-    	return ResponseEntity.ok(analysis);
+    @PostMapping("/analyze-finances")
+    public ResponseEntity<String> analyzeFinances(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestBody AnalyzeFinancesRequest req
+    ) {
+        String userId = user.getUserId();
+        String analysis = bookService.analyzeFinances(userId, req);
+        return ResponseEntity.ok(analysis);
     }
 }

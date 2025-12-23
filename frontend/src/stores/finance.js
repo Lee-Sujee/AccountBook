@@ -2,56 +2,45 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { analyzeFinancesApi } from "@/api/bookApi";
 
-export const useFinanceStore = defineStore('finance', () => {
-    
-    const income = ref(0);
-    const expense = ref(0);
-    const analysisResult = ref(null);
+export const useFinanceStore = defineStore("finance", () => {
+  const analysisResult = ref("");
+  const summaryList = ref([]);
+  const totalAmount = ref(0);
 
-    const setIncome = (value) => {
-        income.value = value;
+  const reset = () => {
+    analysisResult.value = "";
+    summaryList.value = [];
+    totalAmount.value = 0;
+  };
+
+  const analyzeFinances = async (type, year, month, entries = []) => {
+    if (!entries.length) {
+      reset();
+      return;
     }
 
-    const setExpense = (value) => {
-        expense.value = value;
+    const history = entries.map((e) => ({
+      category: e.category,
+      amount: Number(e.amount || 0),
+      type: e.type,
+      memo: e.memo || "",
+      date: e.date || null,
+    }));
+
+    const res = await analyzeFinancesApi({ type, year, month, history });
+
+    if (typeof res.data === "string") {
+      analysisResult.value = res.data;
+      summaryList.value = [];
+      totalAmount.value = 0;
+      return;
     }
 
-    // 가계부 항목 기반으로 수입/지출 값 가져오기
-    const calculateIncomeAndExpense = (entries) => {
-        let totalIncome = 0;
-        let totalExpense = 0;
+    analysisResult.value = res.data.aiReport ?? "";
+    const list = res.data.summaryList ?? [];
+    summaryList.value = list;
+    totalAmount.value = list.reduce((s, i) => s + Number(i.total || 0), 0);
+  };
 
-        entries.forEach(entry => {
-            if(entry.type === 'income')
-                totalIncome += entry.amount;
-            else if(entry.type === 'expense') {
-                totalExpense += entry.amount;
-            }
-        })
-    }
-
-    const analyzeFinances = (inputIncome, inputExpense) => {
-        setIncome(inputIncome);
-        setExpense(inputExpense);
-        return analyzeFinancesApi(income.value, expense.value)
-        .then((res) => {
-            console.log(income.value)
-            analysisResult.value = res.data;
-        })
-        .catch((err) => {
-            console.error("수입/지출 분석 실패: ", err);
-            throw err;
-        })
-    }
-
-
-    return{
-        income,
-        expense,
-        analysisResult,
-        setIncome,
-        setExpense,
-        analyzeFinances,
-        calculateIncomeAndExpense,
-    }
-})
+  return { analysisResult, summaryList, totalAmount, analyzeFinances, reset };
+});

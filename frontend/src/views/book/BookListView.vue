@@ -29,7 +29,7 @@
 
 <script setup>
 import BookList from '@/components/book/BookListTable.vue';
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBookStore } from '@/stores/book'
 
@@ -44,6 +44,8 @@ onMounted(async () => {
     await bookStore.loadBookList()
   }
 })
+
+const showStats = ref(localStorage.getItem("showStats") === "true")
 </script>
 
 <style scoped>
