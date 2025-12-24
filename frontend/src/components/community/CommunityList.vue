@@ -14,36 +14,41 @@
           <th width="45%">제목</th>
           <th width="15%">작성자</th>
           <th width="20%">작성일</th>
-          <th width="10%">조회/좋아요</th>
+          <th width="10%">조회수</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr
-          v-for="(post, index) in pagedList"
-          :key="post.id"
-          class="table-row"
-        >
-          <!-- 전체 리스트 기준 번호 -->
-          <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+  <tr
+    v-for="(post, index) in pagedList"
+    :key="post.id"
+    class="table-row"
+    @click="goDetail(post.id)"
+  >
+    <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
 
-          <td class="title-cell">
-            <router-link :to="`/community/${post.id}`" class="title-link">
-              {{ post.title }}
-            </router-link>
-          </td>
+    <td class="title-cell">
+      <!-- 행 클릭과 중복 실행 방지 -->
+      <router-link
+        :to="`/community/${post.id}`"
+        class="title-link"
+        @click.stop
+      >
+        {{ post.title }}
+      </router-link>
+    </td>
 
-          <td data-label="작성자">{{ post.writerName }}</td>
-          <td data-label="작성일">{{ post.createdAt }}</td>
-          <td data-label="반응">
-            <span class="mobile-stat">조회 {{ post.views }} · 좋아요 {{ post.likes }}</span>
-          </td>
-        </tr>
+    <td data-label="작성자">{{ post.writerName }}</td>
+    <td data-label="작성일">{{ post.createdAt }}</td>
+    <td data-label="반응">
+      <span class="mobile-stat">조회 {{ post.views }}</span>
+    </td>
+  </tr>
 
-        <tr v-if="communityList.length === 0">
-          <td colspan="6" class="empty-row">작성된 게시글이 없습니다.</td>
-        </tr>
-      </tbody>
+  <tr v-if="communityList.length === 0">
+    <td colspan="6" class="empty-row">작성된 게시글이 없습니다.</td>
+  </tr>
+</tbody>
     </table>
 
     <!-- ✅ 페이지네이션 -->
@@ -146,6 +151,11 @@ watch(
     if (communityList.value.length === 0) currentPage.value = 1;
   }
 );
+
+const goDetail = (id) => {
+  router.push(`/community/${id}`);
+};
+
 </script>
 
 <style scoped>
@@ -209,6 +219,10 @@ watch(
   color: #374151;
   border-bottom: 1px solid #e1e1e1;
   text-align: center;
+}
+
+.table-row {
+  cursor: pointer;
 }
 
 .table-row:hover {

@@ -143,72 +143,93 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
+/* overlay (상세조회 모달과 동일 톤) */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background: rgba(17, 24, 39, 0.35);
+  backdrop-filter: blur(6px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 18px;
   z-index: 1100;
-  backdrop-filter: blur(2px);
 }
 
+/* modal card */
 .modal-content {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: min(520px, 100%);
+  background: #ededed;
+  border-radius: 16px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  border: 1px solid rgba(0, 99, 248, 0.12);
 }
 
+/* header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  padding: 18px 20px;
+  background: #ededed;
+  border-bottom: 2px solid #0063f8;
 }
 
 .modal-title {
-  font-size: 20px;
+  margin: 0;
+  font-size: 18px;
   font-weight: 800;
   color: #0063f8;
-  margin: 0;
+  letter-spacing: 0.2px;
 }
 
 .close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 99, 248, 0.18);
+  background: #fff;
+  color: #0063f8;
+  font-size: 22px;
+  line-height: 1;
   cursor: pointer;
-  color: #999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.close-btn:hover {
+  filter: brightness(0.97);
+}
+
+/* form container */
+.form-container {
+  padding: 16px 20px 12px;
+}
+
+/* label */
 .form-group {
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
   color: #0063f8;
   margin-bottom: 8px;
 }
 
+/* inputs: 깔끔한 언더라인 스타일 */
 .underline-input {
   width: 100%;
   border: none;
-  border-bottom: 2px solid rgba(0, 99, 248, 0.2);
-  padding: 8px 4px;
-  font-size: 15px;
+  border-bottom: 1px solid #d6d6d6; /* 회색 라인 */
+  padding: 10px 6px;
+  font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #111827;
   background: transparent;
   outline: none;
   box-sizing: border-box;
@@ -217,25 +238,62 @@ const handleSubmit = async () => {
 .underline-input:focus {
   border-bottom-color: #0063f8;
 }
+.underline-input,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
 
+/* 특히 datetime-local 강제 */
+input[type="datetime-local"] {
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #111827;
+}
+.select-box {
+  appearance: none;
+}
+
+/* textarea는 약간만 박스로 */
+.memo-area {
+  border: 1px solid #d6d6d6;
+  border-radius: 10px;
+  padding: 10px 10px;
+  resize: none;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.memo-area:focus {
+  border-color: #0063f8;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* grid */
 .input-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: 15px;
+  gap: 14px;
 }
 
+/* type selector (지출/수입) */
 .type-selector {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
 }
 
 .radio-wrapper {
   display: flex;
-  background: #f0f0f0;
-  padding: 4px;
-  border-radius: 12px;
+  gap: 6px;
   width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 99, 248, 0.12);
+  padding: 6px;
+  border-radius: 14px;
 }
 
 .radio-wrapper input[type="radio"] {
@@ -245,41 +303,63 @@ const handleSubmit = async () => {
 .type-btn {
   flex: 1;
   text-align: center;
-  padding: 10px;
-  border-radius: 9px;
+  padding: 10px 0;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 14px;
-  color: #666;
-  transition: all 0.2s;
+  font-weight: 900;
+  font-size: 13px;
+  color: #374151;
+  transition: filter 0.15s ease, transform 0.06s ease;
+  user-select: none;
 }
 
-input[id="expense"]:checked+.expense {
-  background: #f04400;
+.type-btn:active {
+  transform: translateY(1px);
+}
+
+/* 선택 전: 살짝 톤 */
+.type-btn.expense {
+  background: rgba(239, 68, 68, 0.10);
+}
+
+.type-btn.income {
+  background: rgba(16, 185, 129, 0.12);
+}
+
+/* 선택 후 */
+input#expense:checked + .expense {
+  background: #ef4444;
   color: #fff;
 }
 
-input[id="income"]:checked+.income {
-  background: #029b07;
+input#income:checked + .income {
+  background: #10b981;
   color: #fff;
 }
 
+/* footer buttons (상세조회 모달처럼 작고 pill) */
 .modal-footer {
-  margin-top: 30px;
+  margin-top: 10px;
+  padding: 0 0 6px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 7px 12px; /* ✅ 작게 */
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 0.06s ease, filter 0.12s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
 }
 
 .btn-primary {
@@ -288,18 +368,39 @@ input[id="income"]:checked+.income {
 }
 
 .btn-ghost {
-  background: transparent;
-  color: #666;
-  font-size: 14px;
+  background: #ffffff;
+  color: #0063f8;
+  border: 1px solid #cbd7ff;
 }
 
-.btn-ghost:hover {
-  text-decoration: underline;
+.btn:hover {
+  filter: brightness(0.96);
 }
 
-.memo-area {
-  border: 1.5px solid rgba(0, 99, 248, 0.2);
-  border-radius: 8px;
-  padding: 10px;
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .modal-header {
+    padding: 16px;
+  }
+
+  .form-container {
+    padding: 14px 16px 10px;
+  }
+
+  .input-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .modal-footer {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  .btn {
+    min-width: 92px;
+  }
 }
 </style>

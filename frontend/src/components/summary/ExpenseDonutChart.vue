@@ -58,7 +58,8 @@ const colors = ref<string[]>([])
 const totalAmount = ref(0)
 const currentType = ref<'expense' | 'income'>('expense')
 
-const palette = ['#4DABF7', '#63E6BE', '#FF8787', '#B197FC', '#FFD93D', '#495057']
+const palette = ['#003A8C', '#0050B3', '#0063F8', '#1A75FF', '#338AFF', '#4D9DFF'];
+
 const generateColor = (i: number) => palette[i % palette.length]
 
 const getPercent = (v: number) =>

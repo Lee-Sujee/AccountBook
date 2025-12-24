@@ -15,6 +15,7 @@ import com.ssafy.book.dto.response.CategorySummaryDto;
 import com.ssafy.book.entity.Book;
 import com.ssafy.book.repository.BookRepository;
 import com.ssafy.book.stats.repository.BookStatsMapper;
+import com.ssafy.common.ai.OpenAIGateway;
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -26,7 +27,7 @@ public class BookServiceImpl implements BookService{
 	private BookStatsMapper bookStatsMapper;
 	
 	@Autowired
-	private OpenAIService openAIService;
+	private OpenAIGateway openAIGateway;
 	
 	@Override
 	@Transactional
@@ -96,45 +97,44 @@ public class BookServiceImpl implements BookService{
 		return bookStatsMapper.selectCategorySummary(userId, type, start, end);
 	}
 	
-	//수입, 지출 전달
-	 @Override
-     public String analyzeFinances(String userId, AnalyzeFinancesRequest req) {
-         if (req == null || req.getHistory() == null || req.getHistory().isEmpty()) {
-             return "분석할 내역이 없습니다.";
-         }
+	// 수입, 지출 전달
+	@Override
+	public String analyzeFinances(String userId, AnalyzeFinancesRequest req) {
+	    if (req == null || req.getHistory() == null || req.getHistory().isEmpty()) {
+	        return "분석할 내역이 없습니다.";
+	    }
 
-         // 1) 합계 계산
-         int income = req.getHistory().stream()
-                 .filter(h -> "income".equals(h.getType()))
-                 .mapToInt(h -> h.getAmount() == null ? 0 : h.getAmount())
-                 .sum();
+	    // 1) 합계 계산
+	    int income = req.getHistory().stream()
+	            .filter(h -> "income".equals(h.getType()))
+	            .mapToInt(h -> h.getAmount() == null ? 0 : h.getAmount())
+	            .sum();
 
-         int expense = req.getHistory().stream()
-                 .filter(h -> "expense".equals(h.getType()))
-                 .mapToInt(h -> h.getAmount() == null ? 0 : h.getAmount())
-                 .sum();
+	    int expense = req.getHistory().stream()
+	            .filter(h -> "expense".equals(h.getType()))
+	            .mapToInt(h -> h.getAmount() == null ? 0 : h.getAmount())
+	            .sum();
 
-         int balance = income - expense;
-         int ratio = income == 0 ? 0 : (int) Math.round((expense * 100.0) / income);
+	    int balance = income - expense;
+	    int ratio = income == 0 ? 0 : (int) Math.round((expense * 100.0) / income);
 
-         // 2) 지출 카테고리 TOP 5
-         Map<String, Integer> expenseByCategory = req.getHistory().stream()
-                 .filter(h -> "expense".equals(h.getType()))
-                 .collect(Collectors.groupingBy(
-                         h -> (h.getCategory() == null || h.getCategory().isBlank()) ? "기타" : h.getCategory(),
-                         Collectors.summingInt(h -> h.getAmount() == null ? 0 : h.getAmount())
-                 ));
+	    // 2) 지출 카테고리 TOP 5
+	    Map<String, Integer> expenseByCategory = req.getHistory().stream()
+	            .filter(h -> "expense".equals(h.getType()))
+	            .collect(Collectors.groupingBy(
+	                    h -> (h.getCategory() == null || h.getCategory().isBlank()) ? "기타" : h.getCategory(),
+	                    Collectors.summingInt(h -> h.getAmount() == null ? 0 : h.getAmount())
+	            ));
 
-         String top5 = expenseByCategory.entrySet().stream()
-                 .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                 .limit(5)
-                 .map(e -> e.getKey() + " " + e.getValue() + "원")
-                 .collect(Collectors.joining(", "));
+	    String top5 = expenseByCategory.entrySet().stream()
+	            .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+	            .limit(5)
+	            .map(e -> e.getKey() + " " + e.getValue() + "원")
+	            .collect(Collectors.joining(", "));
 
-         String period = (req.getYear() != null && req.getMonth() != null)
-                 ? req.getYear() + "년 " + req.getMonth() + "월"
-                 : "이번 기간";
-
+	    String period = (req.getYear() != null && req.getMonth() != null)
+	            ? req.getYear() + "년 " + req.getMonth() + "월"
+	            : "이번 기간";
 
 	    // 3) AI에게 줄 요약 텍스트(=프롬프트)
 	    String prompt = """
@@ -142,21 +142,24 @@ public class BookServiceImpl implements BookService{
 	            기간: %s
 	            총수입: %d원, 총지출: %d원, 잔액: %d원, 지출비율: %d%%
 	            지출 TOP5: %s
-	            위 내용을 바탕으로사용자의 소비 패턴을 요약하고, 개선 포인트와 실행 가능한 절약/수입 개선 액션을 제안해줘. 
+	            위 내용을 바탕으로 사용자의 소비 패턴을 요약하고, 개선 포인트와 실행 가능한 절약/수입 개선 액션을 제안해줘.
 	            판단은 데이터에 근거하고, 과도한 추측은 하지 마.
 	            대답은 800자를 넘지 않게 작성하고 말투는 대화형으로 적어줘.
-	            답변을 다 쓴 뒤 스스로 글자 수를 가늠해서 800자름 넘으면 "불필요한 수식어/중복 문장"을 삭제하고 더 짧게 다시 써.
+	            답변을 다 쓴 뒤 스스로 글자 수를 가늠해서 800자를 넘으면 "불필요한 수식어/중복 문장"을 삭제하고 더 짧게 다시 써.
 	            글자수는 절대로 출력하지 마.
-	            
-	            예시 ) 당신의 이번달 지출 내역을 보니 총 수입 100만원에 지출은 쇼핑 30000원, 교통비 5500원, 식비 2000원으로
+
+	            예시) 당신의 이번달 지출 내역을 보니 총 수입 100만원에 지출은 쇼핑 30000원, 교통비 5500원, 식비 2000원으로
 	            수입에 비해 지출이 매우 적은 편이에요! 하지만 수입이 100만원 정도면 평균에 비해 많이 적은 편이라고 할 수 있어요.
 	            가능하다면 수입을 늘리는 방안을 추천드릴게요! 그 중에서도 식비가 가장 높은 걸 보니 이번달에 혹시 약속이 많았나요?
 	            다음달에는 장보기를 늘리고 식비 지출을 줄인다면 더 건강한 소비습관을 가질 수 있을거에요!
 	            """.formatted(period, income, expense, balance, ratio, top5.isBlank() ? "없음" : top5);
 
-         // OpenAIService에 "prompt를 받는 메서드" 하나 만들고 그걸 호출하는 걸 추천
-         return openAIService.analyzeFinances(prompt);
-     }
+	    // ✅ 변경된 부분: OpenAiGateway 사용
+	    String systemPrompt = "You are a helpful and friendly financial assistant.";
+
+	    // openAiGateway는 @Autowired 또는 생성자 주입으로 주입되어 있어야 함
+	    return openAIGateway.chat(systemPrompt, prompt, 1200);
+	}
 
 	
 	//dto -> db에 저장할 수 있는 엔티티로 바꿈

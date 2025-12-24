@@ -1,11 +1,17 @@
 package com.ssafy.stats.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.common.ai.OpenAIGateway;
 import com.ssafy.stats.entity.Stats;
 import com.ssafy.stats.repository.StatsRepository;
 
@@ -16,7 +22,7 @@ public class StatsCompareService {
     private StatsRepository repository;
 
     @Autowired
-    private OpenAiService openAiService;
+    private OpenAIGateway openAIGateway;
 
     public Map<String, Object> getCombinedResult(String menu, String category, int userPrice) {
 
@@ -41,7 +47,8 @@ public class StatsCompareService {
 
             String userPrompt = "상품 리스트: " + allMenus + "\n사용자 입력: " + inputMenu;
 
-            String aiKeywordRaw = openAiService.getGptResponse(systemRole, userPrompt, 0.0);
+            // ✅ 변경: openAiGateway 사용 (temperature=0.0)
+            String aiKeywordRaw = openAIGateway.chat(systemRole, userPrompt, null, 0.0);
             String aiKeyword = cleanGptText(aiKeywordRaw);
 
             if (!aiKeyword.isBlank()) {
@@ -107,11 +114,8 @@ public class StatsCompareService {
                 inputMenu
         );
 
-        String gptAdvice = openAiService.getGptResponse(
-                marketSystemRole,
-                marketPrompt,
-                0.2
-        );
+        // ✅ 변경: openAiGateway 사용 (temperature=0.2)
+        String gptAdvice = openAIGateway.chat(marketSystemRole, marketPrompt, null, 0.2);
 
         // 응답
         Map<String, Object> response = new HashMap<>();

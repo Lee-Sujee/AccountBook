@@ -13,7 +13,7 @@
         <!-- ✅ 등록일(두번째 줄)과 같은 라인에 조회/좋아요 배치 -->
         <div class="post-stats">
           <span class="stat">
-            <span class="icon">👁️</span>
+            <span class="icon">조회수</span>
             <span class="num">{{ communityDetail.views }}</span>
           </span>
 
@@ -171,11 +171,10 @@ watch(
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
-  border: 1px solid #cbd7ff;
   border-radius: 999px;
-  background: #fff;
+  background: #ededed;
   color: #0063f8;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -196,16 +195,17 @@ watch(
   gap: 6px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid #cbd7ff;
-  background: #fff;
+  border: 1px solid #4c93ff;
+  background: #ededed;
   color: #0063f8;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   line-height: 1;
+  margin-right: 5px;
 }
 
 .like-btn .icon {
-  color: #ff4d6d;
+  color: #808080;
 }
 
 .like-btn.active {
@@ -237,11 +237,11 @@ watch(
 }
 
 .post-actions button {
-  padding: 8px 18px;
-  font-size: 14px;
+  padding: 4px 12px;
+  font-size: 12px;
   cursor: pointer;
   background-color: #ededed;
-  border: 1.5px solid #0063f8 !important;
+  border: 1.5px solid #4c93ff !important;
   border-radius: 20px;
   white-space: nowrap;
 }
