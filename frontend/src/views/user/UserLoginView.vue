@@ -18,10 +18,10 @@ import LoginForm from "@/components/auth/LoginForm.vue";
 }
 
 .title {
-  text-align: center;
+  text-align: left;
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 10px;
-  color: #1C2A3A;
+  color: #0063f8;
 }
 </style>

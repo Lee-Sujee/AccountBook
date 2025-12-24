@@ -48,12 +48,12 @@ watch(
 
     isLoading.value = true;
     try {
-      await financeStore.analyzeFinances(
-        props.currentType,
-        props.year,
-        props.month,
-        props.entries
-      );
+      // await financeStore.analyzeFinances(
+      //   props.currentType,
+      //   props.year,
+      //   props.month,
+      //   props.entries
+      // );
     } finally {
       isLoading.value = false;
     }
@@ -79,13 +79,15 @@ watch(
 .title {
   font-size: 22px;
   font-weight: 700;
-  color: #0063f8; /* 게시판 포인트 블루 */
+  color: #0063f8;
+  /* 게시판 포인트 블루 */
 }
 
 .ai-result-box {
   background-color: #EDEDED;
   padding: 24px 0;
-  border-top: 1.5px solid #0063f8; /* 게시판 테이블 헤더 선 스타일 */
+  border-top: 1.5px solid #0063f8;
+  /* 게시판 테이블 헤더 선 스타일 */
   border-bottom: 1.5px solid #0063f8;
 }
 
@@ -101,10 +103,12 @@ watch(
   font-size: 16px;
   line-height: 1.8;
   color: #374151;
-  white-space: pre-wrap; /* AI 답변의 줄바꿈 유지 */
+  white-space: pre-wrap;
+  /* AI 답변의 줄바꿈 유지 */
 }
 
-.loading-state, .no-data-msg {
+.loading-state,
+.no-data-msg {
   text-align: center;
   padding: 40px;
   color: #6b7280;

@@ -2,16 +2,10 @@
   <div class="mypage-container">
 
     <!-- 보기 화면 -->
-    <UserInfo 
-      v-if="mode === 'view'" 
-      @edit="mode = 'edit'"
-    />
+    <UserInfo v-if="mode === 'view'" @edit="mode = 'edit'" />
 
     <!-- 수정 화면 -->
-    <UserEditForm
-      v-else
-      @cancel="mode = 'view'"
-    />
+    <UserEditForm v-else @cancel="mode = 'view'" />
   </div>
 </template>
 
@@ -31,11 +25,12 @@ onMounted(() => {
 
 <style scoped>
 .mypage-container {
-  min-height: calc(100vh - 70px); /* 이거 헤더 높이에 맞게 수정했음 */
+  min-height: 700px;
   display: flex;
-  justify-content: center;  
-  align-items: center;     
-  padding: 40px 16px;       
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
   box-sizing: border-box;
+
 }
 </style>

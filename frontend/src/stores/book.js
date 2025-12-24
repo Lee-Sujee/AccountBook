@@ -100,7 +100,7 @@ export const useBookStore = defineStore("book", () => {
     }
   };
 
- 
+
 
   return {
     bookEntries,

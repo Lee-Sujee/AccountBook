@@ -31,8 +31,8 @@ public class BookController {
     private BookService bookService;
 
 
-    //예외 처리는 다 service 쪽으로 빼버렸어유
-    // 전체 조회 (GET /book)
+    //예외 처리는 다 service 쪽으로
+    //전체 조회 (GET /book)
     @GetMapping
     public ResponseEntity<?> getBookList(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -98,7 +98,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getCategorySummary(userDetails.getUserId(), type, year, month));
     }
     
- // AI -> 수입/지출 분석
+    // AI -> 수입/지출 분석
     @PostMapping("/analyze-finances")
     public ResponseEntity<String> analyzeFinances(
             @AuthenticationPrincipal CustomUserDetails user,

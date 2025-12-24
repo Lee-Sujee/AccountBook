@@ -76,7 +76,6 @@ const handleDelete = async () => {
 }
 
 //금액 및 날짜 함수
-//이건 몰라서 gpt가 다 알려줌,,
 const formatAmount = (amount) => amount ? amount.toLocaleString('ko-KR') : '0';
 const formatDate = (dateString) => {
     if (!dateString) return '';

@@ -22,7 +22,7 @@ public class OpenAiService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * 프롬프트 -> gpt에게 보내버리고
+     * 프롬프트 -> gpt에게 보냄
      */
     public String getGptResponse(String systemRole, String userPrompt, double temperature) {
         ChatRequest body = new ChatRequest(

@@ -1,62 +1,60 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay">
+  <div v-if="isVisible" class="modal-overlay" @click.self="$emit('closeModal')">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">{{ isEditMode ? '가계부 항목 수정' : '새 항목 등록' }}</h3>
+        <h3 class="modal-title">{{ isEditMode ? '항목 수정' : '새 항목 등록' }}</h3>
         <button @click="$emit('closeModal')" class="close-btn">&times;</button>
       </div>
 
-      <form @submit.prevent="handleSubmit">
-        <!--날짜 -->
-        <div class="form-group">
-          <label for="createdAt">날짜</label>
-          <input
-            type="datetime-local"
-            id="createdAt"
-            v-model="form.createdAt"
-            required
-          />
+      <form @submit.prevent="handleSubmit" class="form-container">
+        <div class="form-group type-selector">
+          <div class="radio-wrapper">
+            <input type="radio" id="expense" value="expense" v-model="form.type" required />
+            <label for="expense" class="type-btn expense">지출</label>
+
+            <input type="radio" id="income" value="income" v-model="form.type" required />
+            <label for="income" class="type-btn income">수입</label>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>구분</label>
-          <div>
-            <input type="radio" id="income" value="income" v-model="form.type" required />
-            <label for="income" class="type-label income-label">수입</label>
+        <div class="input-grid">
+          <div class="form-group">
+            <label for="createdAt">날짜</label>
+            <input type="datetime-local" id="createdAt" v-model="form.createdAt" class="underline-input" required />
+          </div>
 
-            <input type="radio" id="expense" value="expense" v-model="form.type" required />
-            <label for="expense" class="type-label expense-label">지출</label>
+          <div class="form-group">
+            <label for="category">카테고리</label>
+            <select id="category" v-model="form.category" class="underline-input select-box" required>
+              <option disabled value="">선택</option>
+              <option v-for="cat in categoryOptions" :key="cat" :value="cat">
+                {{ cat }}
+              </option>
+            </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="category">카테고리</label>
-          <select id="category" v-model="form.category" required>
-            <option disabled value="">카테고리 선택</option>
-            <option v-for="category in categoryOptions" :key="category" :value="category">
-              {{ category }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="content">내용</label>
-          <input type="text" id="content" v-model="form.content" required />
+          <input type="text" id="content" v-model="form.content" class="underline-input" placeholder="내용을 입력하세요"
+            required />
         </div>
 
         <div class="form-group">
           <label for="amount">금액 (원)</label>
-          <input type="number" id="amount" v-model.number="form.amount" required />
+          <input type="number" id="amount" v-model.number="form.amount" class="underline-input amount-input"
+            placeholder="0" required />
         </div>
 
         <div class="form-group">
           <label for="memo">메모</label>
-          <textarea id="memo" v-model="form.memo" rows="3"></textarea>
+          <textarea id="memo" v-model="form.memo" class="underline-input memo-area" rows="2"
+            placeholder="메모를 입력하세요"></textarea>
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">{{ isEditMode ? '수정 완료' : '등록' }}</button>
-          <button type="button" @click="$emit('closeModal')" class="btn btn-secondary">취소</button>
+          <button type="submit" class="btn btn-primary">{{ isEditMode ? '수정 완료' : '등록하기' }}</button>
+          <button type="button" @click="$emit('closeModal')" class="btn btn-ghost">취소</button>
         </div>
       </form>
     </div>
@@ -75,9 +73,6 @@ const props = defineProps({
 const emit = defineEmits(['closeModal'])
 const bookStore = useBookStore()
 
-const isEditMode = computed(() => !!props.entryToEdit && !!props.entryToEdit.id)
-
-//datetime-local 형식으로 변환 (YYYY-MM-DDTHH:mm)
 const toDatetimeLocal = (value) => {
   if (!value) return ''
   const d = value instanceof Date ? value : new Date(value)
@@ -85,34 +80,45 @@ const toDatetimeLocal = (value) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-const initialFormState = {
+const getInitialState = () => ({
   id: null,
-  createdAt: toDatetimeLocal(new Date()), //기본: 지금 시간
+  createdAt: toDatetimeLocal(new Date()),
   category: '',
   content: '',
   type: 'expense',
   amount: 0,
   memo: '',
-}
+})
 
-const form = ref({ ...initialFormState })
+const form = ref(getInitialState())
 
-// 수정 모드일 때 폼 초기화
+const isEditMode = computed(() => !!props.entryToEdit && !!props.entryToEdit.id)
+
+const incomeCategory = ['급여', '용돈', '이자', '기타수입']
+const expenseCategory = ['식비', '교통비', '쇼핑', '경조사/회비', '마트/편의점', '커피', '생활용품', '기타']
+const categoryOptions = computed(() => (form.value.type === 'income' ? incomeCategory : expenseCategory))
+
+// 모달이 열릴 때 데이터를 체크하여 초기화 또는 채우기
 watch(
-  () => props.entryToEdit,
-  (newEntry) => {
-    if (newEntry) {
-      form.value = {
-        ...initialFormState,
-        ...newEntry,
-        // 서버에서 받은 createdAt을 datetime-local로 맞춤
-        createdAt: toDatetimeLocal(newEntry.createdAt),
+  [() => props.isVisible, () => props.entryToEdit],
+  ([newVisible, newEntry]) => {
+    if (newVisible) {
+      if (newEntry) {
+        form.value = {
+          ...newEntry,
+          createdAt: toDatetimeLocal(newEntry.createdAt),
+        }
+      } else {
+        form.value = getInitialState()
       }
-    } else {
-      form.value = { ...initialFormState, createdAt: toDatetimeLocal(new Date()) }
     }
   },
   { immediate: true }
+)
+
+watch(
+  () => form.value.type,
+  () => { if (!isEditMode.value) form.value.category = '' }
 )
 
 const handleSubmit = async () => {
@@ -121,190 +127,179 @@ const handleSubmit = async () => {
     return
   }
 
-  const dataToSend = {
-    createdAt: form.value.createdAt, 
-    category: form.value.category,
-    content: form.value.content,
-    type: form.value.type,
-    amount: form.value.amount,
-    memo: form.value.memo,
-  }
+  const dataToSend = { ...form.value }
 
   try {
     if (isEditMode.value) {
       await bookStore.updateEntry(form.value.id, dataToSend)
     } else {
       await bookStore.createEntry(dataToSend)
-      form.value = { ...initialFormState, createdAt: toDatetimeLocal(new Date()) }
     }
     emit('closeModal')
   } catch (error) {
     console.error('폼 제출 실패:', error)
   }
 }
-
-// 카테고리
-const incomeCategory = ['급여', '용돈', '이자', '기타수입']
-const expenseCategory = ['식비', '교통비', '쇼핑', '경조사/회비', '마트/편의점', '커피', '생활용품', '기타']
-
-const categoryOptions = computed(() => (form.value.type === 'income' ? incomeCategory : expenseCategory))
-
-watch(
-  () => form.value.type,
-  () => {
-    form.value.category = ''
-  }
-)
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1100;
+  backdrop-filter: blur(2px);
 }
 
 .modal-content {
-  background: white;
+  background: #ffffff;
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 20px;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 420px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .modal-title {
-  font-size: 1.5em;
-  color: #333;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0063f8;
+  margin: 0;
 }
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.8em;
+  font-size: 24px;
   cursor: pointer;
-  color: #aaa;
-  line-height: 1;
-}
-.close-btn:hover {
-  color: #333;
+  color: #999;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .form-group label {
   display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0063f8;
   margin-bottom: 8px;
-  font-weight: 600;
-  color: #555;
 }
 
-.form-group input[type='text'],
-.form-group input[type='number'],
-.form-group input[type='datetime-local'],
-.form-group textarea,
-.form-group select {
+.underline-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-  font-size: 1em;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  border-color: #007bff;
+  border: none;
+  border-bottom: 2px solid rgba(0, 99, 248, 0.2);
+  padding: 8px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  background: transparent;
   outline: none;
+  box-sizing: border-box;
 }
 
-.type-label {
-  display: inline-block;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  font-weight: 500;
+.underline-input:focus {
+  border-bottom-color: #0063f8;
 }
 
-input[type='radio'] {
+.input-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 15px;
+}
+
+.type-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.radio-wrapper {
+  display: flex;
+  background: #f0f0f0;
+  padding: 4px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.radio-wrapper input[type="radio"] {
   display: none;
 }
 
-.income-label {
-  background-color: #e6f7ff;
-  color: #007bff;
-  border: 1px solid #91d5ff;
-}
-.expense-label {
-  background-color: #fff1f0;
-  color: #ff4d4f;
-  border: 1px solid #ffa39e;
+.type-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s;
 }
 
-input[type='radio']:checked + .income-label {
-  background-color: #007bff;
-  color: white;
+input[id="expense"]:checked+.expense {
+  background: #f04400;
+  color: #fff;
 }
-input[type='radio']:checked + .expense-label {
-  background-color: #ff4d4f;
-  color: white;
+
+input[id="income"]:checked+.income {
+  background: #029b07;
+  color: #fff;
 }
 
 .modal-footer {
+  margin-top: 30px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 10px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  align-items: center;
 }
 
 .btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s;
+  border: none;
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-.btn-primary:hover {
-  background-color: #0056b3;
+  background: #0063f8;
+  color: #fff;
 }
 
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
+.btn-ghost {
+  background: transparent;
+  color: #666;
+  font-size: 14px;
 }
-.btn-secondary:hover {
-  background-color: #5a6268;
+
+.btn-ghost:hover {
+  text-decoration: underline;
+}
+
+.memo-area {
+  border: 1.5px solid rgba(0, 99, 248, 0.2);
+  border-radius: 8px;
+  padding: 10px;
 }
 </style>
