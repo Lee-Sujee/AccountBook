@@ -74,6 +74,20 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const res = await updateMyPageApi(updateData);
       myPageInfo.value = res.data;
+      if (loginUserInfo.value) {
+        loginUserInfo.value = {
+          ...loginUserInfo.value,
+          name: res.data.name,
+          email: res.data.email,
+        };
+
+        //localStorage 업데이트 -> 바꾸면 헤더에 있는 이름이랑 가계부 메인에 있는 이름도 같이 바뀌게 설정
+        localStorage.setItem(
+          "loginUser",
+          JSON.stringify(loginUserInfo.value)
+        );
+      }
+
       return res;
     } catch (err) {
       console.error("정보 수정 실패:", err);

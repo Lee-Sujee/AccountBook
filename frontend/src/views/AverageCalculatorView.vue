@@ -2,93 +2,93 @@
   <div class="avg-container">
     <h2 class="title">평균계산기</h2>
 
-<div class="form-section">
-  <div class="input-group">
-    <label>상품명 (키워드)</label>
-    <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
-  </div>
-  <div class="input-group">
-    <label>업태</label>
-    <select v-model="category" class="underline-input">
-      <option value="">전체</option>
-      <option value="대형마트">대형마트</option>
-      <option value="백화점">백화점</option>
-      <option value="기업형슈퍼">기업형슈퍼</option>
-      <option value="편의점">편의점</option>
-    </select>
-  </div>
-  <div class="input-group">
-    <label>내가 쓴 금액</label>
-    <div class="price-input-wrapper">
-      <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
-      <span class="currency">원</span>
+    <div class="form-section">
+      <div class="input-group">
+        <label>상품명 (키워드)</label>
+        <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
+      </div>
+      <div class="input-group">
+        <label>업태</label>
+        <select v-model="category" class="underline-input">
+          <option value="">전체</option>
+          <option value="대형마트">대형마트</option>
+          <option value="백화점">백화점</option>
+          <option value="기업형슈퍼">기업형슈퍼</option>
+          <option value="편의점">편의점</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>내가 쓴 금액</label>
+        <div class="price-input-wrapper">
+          <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
+          <span class="currency">원</span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="btn-wrapper">
-  <button @click="search" :disabled="loading" class="btn-search">
-    {{ loading ? '검색 중...' : '검색' }}
-  </button>
-</div>
-
-<div v-if="searched" class="result-card">
-  <div class="search-summary">
-    <p>검색 키워드 : <span class="highlight">{{ submitted.keyword }}</span></p>
-    <p>업태 : <span class="highlight">{{ submitted.category || '전체' }}</span></p>
-    <p>내가 쓴 금액 : <span class="highlight">{{ Number(submitted.userPrice).toLocaleString() }}원</span></p>
-  </div>
-
-  <div v-if="isAiMatched && items.length > 0" class="ai-notice-banner">
-    <span class="search-icon"></span> 검색 결과가 없습니다.
-    <strong>'{{ submitted.keyword }}'</strong> 대신 AI가 🤖 <strong>'{{ items[0].menu }}'</strong>를 찾았습니다!
-  </div>
-
-  <div v-if="filteredItems.length > 0 || gptPrice" class="table-wrapper">
-    <table class="result-table">
-      <thead>
-        <tr>
-          <th>상품명</th>
-          <th>업태</th>
-          <th>조사일</th>
-          <th>평균가</th>
-          <th>판정</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in filteredItems" :key="index">
-          <td class="menu-name">{{ row.menu }}</td>
-          <td>{{ row.category }}</td>
-          <td>{{ row.surveyDate }}</td>
-          <td class="price-text">{{ Number(row.averagePrice).toLocaleString() }}원</td>
-          <td>
-            <span class="judge-text" :class="judgeClass(row.averagePrice)">{{ row.result }}</span>
-          </td>
-        </tr>
-
-        <tr v-if="gptPrice" class="ai-price-row">
-          <td class="ai-menu-cell">{{ submitted.keyword }}</td>
-          <td><span class="ai-badge">AI가 확인한 평균 추정가</span></td>
-          <td class="ai-status">실시간</td>
-          <td class="gpt-price-text">{{ gptPrice }}</td>
-          <td>
-            <span class="judge-text" :class="aiJudgeClass">{{ aiJudgeResult }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div v-if="gptTip" class="gpt-tip-box">
-    <div class="tip-header">
-      <span class="tip-icon">💡</span>
-      <strong>AI 쇼핑 팁</strong>
+    <div class="btn-wrapper">
+      <button @click="search" :disabled="loading" class="btn-search">
+        {{ loading ? '검색 중...' : '검색' }}
+      </button>
     </div>
-    <p class="tip-content">{{ gptTip }}</p>
-  </div>
 
-  <p v-else-if="filteredItems.length === 0" class="muted">결과가 없습니다.</p>
-</div>
+    <div v-if="searched" class="result-card">
+      <div class="search-summary">
+        <p>검색 키워드 : <span class="highlight">{{ submitted.keyword }}</span></p>
+        <p>업태 : <span class="highlight">{{ submitted.category || '전체' }}</span></p>
+        <p>내가 쓴 금액 : <span class="highlight">{{ Number(submitted.userPrice).toLocaleString() }}원</span></p>
+      </div>
+
+      <div v-if="isAiMatched && items.length > 0" class="ai-notice-banner">
+        <span class="search-icon"></span> 검색 결과가 없습니다.
+        <strong>'{{ submitted.keyword }}'</strong> 대신 AI가 🤖 <strong>'{{ items[0].menu }}'</strong>를 찾았습니다!
+      </div>
+
+      <div v-if="filteredItems.length > 0 || gptPrice" class="table-wrapper">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>상품명</th>
+              <th>업태</th>
+              <th>조사일</th>
+              <th>평균가</th>
+              <th>판정</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in filteredItems" :key="index">
+              <td class="menu-name">{{ row.menu }}</td>
+              <td>{{ row.category }}</td>
+              <td>{{ row.surveyDate }}</td>
+              <td class="price-text">{{ Number(row.averagePrice).toLocaleString() }}원</td>
+              <td>
+                <span class="judge-text" :class="judgeClass(row.averagePrice)">{{ row.result }}</span>
+              </td>
+            </tr>
+
+            <tr v-if="gptPrice" class="ai-price-row">
+              <td class="ai-menu-cell">{{ submitted.keyword }}</td>
+              <td><span class="ai-badge">AI가 확인한 평균 추정가</span></td>
+              <td class="ai-status">실시간</td>
+              <td class="gpt-price-text">{{ gptPrice }}</td>
+              <td>
+                <span class="judge-text" :class="aiJudgeClass">{{ aiJudgeResult }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-if="gptTip" class="gpt-tip-box">
+        <div class="tip-header">
+          <span class="tip-icon">💡</span>
+          <strong>AI 쇼핑 팁</strong>
+        </div>
+        <p class="tip-content">{{ gptTip }}</p>
+      </div>
+
+      <p v-else-if="filteredItems.length === 0" class="muted">결과가 없습니다.</p>
+    </div>
   </div>
 </template>
 
@@ -163,23 +163,25 @@ const judgeClass = (avg) => {
 };
 </script>
 
-
 <style scoped>
 /* 전체 컨테이너 및 배경 설정 */
 .avg-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 40px 20px;
   background-color: #ededed;
   min-height: 100vh;
   font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
 }
 
 .title {
   color: #0063f8;
-  font-weight: 800;
+  font-weight: 700;
+  font-size: 15px;
   margin-bottom: 40px;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 /* 입력폼 */
@@ -188,6 +190,7 @@ const judgeClass = (avg) => {
   justify-content: center;
   gap: 60px;
   margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 
 .input-group label {
@@ -213,10 +216,12 @@ const judgeClass = (avg) => {
   display: flex;
   align-items: center;
   border-bottom: 2px solid #0063f8;
+  width: 200px;
 }
 
 .price-input-wrapper .underline-input {
   border-bottom: none;
+  width: 100%;
 }
 
 /* 검색 버튼 */
@@ -239,12 +244,14 @@ const judgeClass = (avg) => {
 
 /* 결과 */
 .result-card {
-  background-color: #f7f4f4;
+  background-color: #ffffff;
   padding: 50px;
   border-radius: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .search-summary {
@@ -273,9 +280,11 @@ const judgeClass = (avg) => {
 /* 결과 테이블 */
 .table-wrapper {
   margin-bottom: 40px;
+  overflow-x: auto;
 }
 
 .result-table {
+  min-width: 600px;
   width: 100%;
   border-collapse: collapse;
 }
@@ -291,13 +300,12 @@ const judgeClass = (avg) => {
 .result-table td {
   padding: 18px 0;
   text-align: center;
-  border-bottom: 1px solid #f1f3f5;
+  border-bottom: 1px solid #ffffff;
   font-size: 14px;
   font-weight: 600;
   color: #333;
 }
 
-/* AI */
 .ai-price-row {
   background-color: #f8fbff;
 }
@@ -315,17 +323,14 @@ const judgeClass = (avg) => {
   color: #f4863b;
 }
 
-/* 비싼 소비 - 주황 */
 .judge-text.cheap {
   color: #44ad47;
 }
 
-/* 합리적 소비 - 초록 */
 .judge-text.ok {
   color: #333;
 }
 
-/* AI 쇼핑 팁*/
 .gpt-tip-box {
   border-top: 1px solid #f1f3f5;
   padding-top: 30px;
@@ -349,5 +354,39 @@ const judgeClass = (avg) => {
 .ai-badge {
   color: #0063f8;
   font-weight: 800;
+}
+
+/* --- 반응형 미디어 쿼리 추가 --- */
+@media (max-width: 768px) {
+  .avg-container {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .form-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .input-group,
+  .underline-input,
+  .price-input-wrapper {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .result-card {
+    padding: 24px;
+  }
+
+  .search-summary p {
+    font-size: 15px;
+  }
 }
 </style>

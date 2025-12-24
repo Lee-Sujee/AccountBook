@@ -108,7 +108,9 @@ const user = computed(() => store.myPageInfo);
   cursor: pointer;
 }
 
-.btn-primary:hover { filter: brightness(0.97); }
+.btn-primary:hover {
+  filter: brightness(0.97);
+}
 
 .loading {
   margin-top: 30px;

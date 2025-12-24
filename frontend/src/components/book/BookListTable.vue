@@ -14,14 +14,14 @@
 
       <tbody>
         <tr v-for="entry in entries" :key="entry.id" class="entry-row" @click="selectEntry(entry)">
-          <td class="date-cell">{{ formatDateSimple(entry.createdAt) }}</td>
-          <td :class="entry.type === 'income' ? 'text-income' : 'text-expense'" class="type-cell">
+          <td data-label="날짜" class="date-cell">{{ formatDateSimple(entry.createdAt) }}</td>
+          <td data-label="구분" :class="entry.type === 'income' ? 'text-income' : 'text-expense'" class="type-cell">
             {{ entry.type === 'income' ? '수입' : '지출' }}
           </td>
-          <td>{{ entry.category }}</td>
-          <td class="content-cell">{{ entry.content }}</td>
-          <td class="memo-cell">{{ entry.memo }}</td>
-          <td class="amount-col">{{ formatAmount(entry.amount) }}</td>
+          <td data-label="카테고리">{{ entry.category }}</td>
+          <td data-label="내용" class="content-cell">{{ entry.content }}</td>
+          <td data-label="메모" class="memo-cell">{{ entry.memo }}</td>
+          <td data-label="금액" class="amount-col">{{ formatAmount(entry.amount) }}</td>
         </tr>
 
         <tr v-if="entries.length === 0">
@@ -50,6 +50,7 @@
 </template>
 
 <script setup>
+// 기존 로직 유지
 import { defineProps, defineEmits, computed, ref } from 'vue'
 import instance from '@/api/axiosInstance'
 
@@ -173,13 +174,67 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
 
 .text-balance-positive {
   color: #029b07;
-  /* 잔액이 플러스면 초록 */
   font-weight: bold;
 }
 
 .text-balance-negative {
   color: #f4863b;
-  /* 잔액이 마이너스면 주황 */
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .book-table thead {
+    display: none;
+  }
+
+  .book-table,
+  .book-table tbody,
+  .book-table tr,
+  .book-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .book-table tr.entry-row {
+    margin-bottom: 16px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 12px;
+    border: 1px solid #d1d1d1;
+  }
+
+  .book-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+  }
+
+  .book-table td:last-child {
+    border-bottom: none;
+  }
+
+  .book-table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 700;
+    color: #0063f8;
+    margin-right: 10px;
+  }
+
+  .amount-col {
+    padding-right: 0 !important;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 20px;
+    background: transparent;
+    border: none;
+  }
 }
 </style>

@@ -7,36 +7,22 @@
     <form class="post-form" @submit.prevent="submit">
       <div class="form-group">
         <label for="title">제목</label>
-        <input
-          id="title"
-          type="text"
-          v-model="title"
-          placeholder="제목을 입력하세요"
-        />
+        <input id="title" type="text" v-model="title" placeholder="제목을 입력하세요" />
       </div>
 
       <div class="form-group">
         <label for="content">내용</label>
-        <textarea
-          id="content"
-          v-model="content"
-          placeholder="내용을 입력하세요"
-        ></textarea>
+        <textarea id="content" v-model="content" placeholder="내용을 입력하세요"></textarea>
       </div>
 
       <div class="form-actions">
-        <button
-          type="submit"
-          class="submit-btn"
-          :disabled="!isValid"
-        >
+        <button type="submit" class="submit-btn" :disabled="!isValid">
           저장
         </button>
       </div>
     </form>
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, watch } from "vue";
@@ -83,9 +69,11 @@ const submit = () => {
 <style scoped>
 .form-wrapper {
   max-width: 800px;
+  width: 100%;
   margin: 40px auto;
   padding: 24px;
   background-color: #EDEDED;
+  box-sizing: border-box;
 }
 
 .form-title {
@@ -116,18 +104,19 @@ const submit = () => {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px;
   font-size: 14px;
   border: none;
-  border-top: 1.5px solid #0063f8; 
-  border-bottom: 1.5px solid #0063f8; 
+  border-top: 1.5px solid #0063f8;
+  border-bottom: 1.5px solid #0063f8;
   background-color: #EDEDED;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #0063f8;
+  border-color: #0056d6;
 }
 
 .form-group textarea {
@@ -142,17 +131,19 @@ const submit = () => {
 }
 
 .submit-btn {
-  padding: 8px 30px;
+  padding: 10px 40px;
   background-color: #0063f8;
   color: #fff;
   border: none;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .submit-btn:hover {
-  background-color: #0063f8;
+  background-color: #0052cc;
 }
 
 .submit-btn:disabled {
@@ -160,4 +151,25 @@ const submit = () => {
   cursor: not-allowed;
 }
 
+/* 반응형 미디어 쿼리 */
+@media (max-width: 768px) {
+  .form-wrapper {
+    margin: 20px auto;
+    padding: 16px;
+  }
+
+  .form-title {
+    font-size: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .form-group textarea {
+    min-height: 200px;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+}
 </style>
