@@ -73,6 +73,7 @@ const user = computed(() => store.myPageInfo);
   gap: 18px;
   padding: 14px 0;
   border-bottom: 2px solid rgba(0, 99, 248, 0.6);
+  margin-bottom: 15px;
 }
 
 .label {
