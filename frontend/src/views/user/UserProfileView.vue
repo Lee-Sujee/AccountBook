@@ -1,18 +1,11 @@
 <template>
   <div class="mypage-container">
-    <h1>마이페이지</h1>
 
     <!-- 보기 화면 -->
-    <UserInfo 
-      v-if="mode === 'view'" 
-      @edit="mode = 'edit'"
-    />
+    <UserInfo v-if="mode === 'view'" @edit="mode = 'edit'" />
 
     <!-- 수정 화면 -->
-    <UserEditForm
-      v-else
-      @cancel="mode = 'view'"
-    />
+    <UserEditForm v-else @cancel="mode = 'view'" />
   </div>
 </template>
 
@@ -30,6 +23,14 @@ onMounted(() => {
 });
 </script>
 
-<style>
-    
+<style scoped>
+.mypage-container {
+  min-height: 700px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+  box-sizing: border-box;
+
+}
 </style>

@@ -10,12 +10,11 @@
     <table class="community-table">
       <thead>
         <tr>
-          <th>No</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일</th>
-          <th>조회수</th>
-          <th>좋아요</th>
+          <th width="10%">No</th>
+          <th width="45%">제목</th>
+          <th width="15%">작성자</th>
+          <th width="20%">작성일</th>
+          <th width="10%">조회/좋아요</th>
         </tr>
       </thead>
 
@@ -34,10 +33,11 @@
             </router-link>
           </td>
 
-          <td>{{ post.writerName }}</td>
-          <td>{{ post.createdAt }}</td>
-          <td>{{ post.views }}</td>
-          <td>{{ post.likes }}</td>
+          <td data-label="작성자">{{ post.writerName }}</td>
+          <td data-label="작성일">{{ post.createdAt }}</td>
+          <td data-label="반응">
+            <span class="mobile-stat">조회 {{ post.views }} · 좋아요 {{ post.likes }}</span>
+          </td>
         </tr>
 
         <tr v-if="communityList.length === 0">
@@ -170,6 +170,7 @@ watch(
   font-size: 22px;
   font-weight: 700;
   color: #0063f8;
+  margin: 0;
 }
 
 .write-btn {
@@ -180,6 +181,7 @@ watch(
   border-radius: 20px;
   font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .community-table {
@@ -198,6 +200,7 @@ watch(
   color: #0063f8;
   border-bottom: 2px solid #0063f8;
   background-color: #EDEDED;
+  text-align: center;
 }
 
 .community-table tbody td {
@@ -213,13 +216,15 @@ watch(
 }
 
 .title-cell {
-  text-align: left;
+  text-align: left !important;
 }
 
 .title-link {
   color: #111827;
   font-weight: 500;
   text-decoration: none;
+  display: block;
+  /* 링크 영역 확장 */
 }
 
 .title-link:hover {

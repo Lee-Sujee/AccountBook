@@ -62,6 +62,7 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
 .home-container {
     max-width: 1000px;
     width: 100%;
+    margin: 0 auto;
 }
 
 /* 상단 헤더 */
@@ -70,17 +71,20 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .user-greeting {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #0063f8;
+    margin: 0;
 }
 
 .header-buttons {
     display: flex;
-    gap: 20px;
+    gap: 12px;
 }
 
 .user-name {
@@ -97,6 +101,7 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s;
+    white-space: nowrap;
 }
 
 .btn-add-entry:hover {
@@ -118,9 +123,27 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     display: inline-flex;
     align-items: center;
     transition: opacity 0.2s;
+    white-space: nowrap;
 }
 
 .btn-summary:hover {
     opacity: 0.9;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 768px) {
+    .home-wrapper {
+        padding: 30px 16px;
+    }
+
+    .user-greeting {
+        font-size: 18px;
+    }
+
+    .btn-add-entry,
+    .btn-summary {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
 }
 </style>

@@ -71,6 +71,7 @@ watch([year, month], async ([y, m]) => {
 
 const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 </script>
+
 <style scoped>
 .stats-container {
   max-width: 1100px;

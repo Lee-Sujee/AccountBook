@@ -1,34 +1,33 @@
 <template>
   <form @submit.prevent="handleSubmit" class="signup-form">
-
     <div class="form-group">
       <label for="email">이메일</label>
-      <input id="email" type="email" v-model="user.email" />
+      <input id="email" type="email" v-model="user.email" class="underline-input" />
     </div>
 
     <div class="form-group">
       <label for="password">비밀번호</label>
-      <input id="password" type="password" v-model="user.password" />
+      <input id="password" type="password" v-model="user.password" class="underline-input" />
     </div>
 
     <div class="form-group">
       <label for="passwordCheck">비밀번호 확인</label>
-      <input id="passwordCheck" type="password" v-model="user.passwordCheck" />
+      <input id="passwordCheck" type="password" v-model="user.passwordCheck" class="underline-input" />
     </div>
 
     <div class="form-group">
       <label for="name">이름</label>
-      <input id="name" type="text" v-model="user.name" />
+      <input id="name" type="text" v-model="user.name" class="underline-input" />
     </div>
 
     <div class="form-group">
       <label for="age">나이</label>
-      <input id="age" type="number" v-model.number="user.age" />
+      <input id="age" type="number" v-model.number="user.age" class="underline-input" />
     </div>
 
     <div class="form-group">
       <label for="job">직업</label>
-      <input id="job" type="text" v-model="user.job" />
+      <input id="job" type="text" v-model="user.job" class="underline-input" />
     </div>
 
     <button type="submit" class="submit-btn">회원가입</button>
@@ -46,7 +45,7 @@ const user = ref({
   password: "",
   passwordCheck: "",
   name: "",
-  age: 0,
+  age: null,
   job: "",
 });
 
@@ -59,6 +58,7 @@ const handleSubmit = () => {
   if (!user.value.passwordCheck.trim()) return alert("비밀번호 확인을 입력해주세요.");
   if (!user.value.name.trim()) return alert("이름을 입력해주세요.");
   if (!user.value.age) return alert("나이를 입력해주세요.");
+
   const payload = {
     email: user.value.email,
     password: user.value.password,
@@ -74,24 +74,57 @@ const handleSubmit = () => {
 
 <style scoped>
 .signup-form {
-  margin-top: 20px;
+  margin-top: 30px;
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 22px;
+  margin-bottom: 25px;
 }
+
 label {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #1C2A3A;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #0063f8;
+  text-align: left;
 }
-input {
-  padding: 12px 14px;
+
+.underline-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  padding: 10px 4px;
   font-size: 15px;
-  border: 1px solid #D6DEE6;
-  border-radius: 6px;
-  background-color: #F8FAFC;
+  font-weight: 700;
+  color: #333;
+  transition: border-color 0.2s;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: #0063f8;
+  color: #ffffff;
+  border: none;
+  padding: 16px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0, 99, 248, 0.2);
+}
+
+/* 자동 완성 시의 스타일 조정 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ededed inset !important;
+  -webkit-text-fill-color: #333 !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 </style>

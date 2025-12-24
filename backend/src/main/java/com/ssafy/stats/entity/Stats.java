@@ -10,6 +10,6 @@ public class Stats {
     private String menu;      // 상품명
     private int price;        // 평균판매가격
     private String category;  // 업태
-    private LocalDate surveyDate; //조사일 추가 최근거로 잘라야 되니까
+    private LocalDate surveyDate; //조사일 추가 (최근 데이터 기준으로)
 }
 

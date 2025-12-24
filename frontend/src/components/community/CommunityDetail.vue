@@ -7,6 +7,7 @@
         <div class="write-info">
           <span class="writer">{{ communityDetail.writerName }}</span>
           <span class="date">{{ communityDetail.createdAt }}</span>
+
         </div>
 
         <!-- ✅ 등록일(두번째 줄)과 같은 라인에 조회/좋아요 배치 -->
@@ -43,6 +44,7 @@
 </template>
 
 <script setup>
+// 기존 스크립트 로직 유지
 import { watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -65,7 +67,6 @@ const { loginUserInfo } = storeToRefs(authStore);
 const { communityDetail } = storeToRefs(store);
 
 const loginUserId = computed(() => loginUserInfo.value?.id);
-
 const isAuthor = computed(() => {
   return (
     loginUserId.value !== undefined &&
@@ -96,6 +97,7 @@ watch(
 </script>
 
 <style scoped>
+
 .detail-wrapper {
   max-width: 1100px;
   width: 100%;
@@ -124,6 +126,7 @@ watch(
   grid-template-rows: auto auto;
   column-gap: 12px;
   row-gap: 6px;
+
   width: 100%;
   font-size: 14px;
   padding: 10px 0;
@@ -215,6 +218,7 @@ watch(
   color: #fff;
 }
 
+
 .post-content {
   font-size: 16px;
   line-height: 1.6;
@@ -233,7 +237,7 @@ watch(
 }
 
 .post-actions button {
-  padding: 8px 14px;
+  padding: 8px 18px;
   font-size: 14px;
   cursor: pointer;
   background-color: #ededed;
