@@ -1,4 +1,5 @@
 <template>
+  <div class="page-wrap">
     <div v-if="!currentChallenge" class="empty-message">
       아직 등록된 챌린지가 없습니다!
     </div>
@@ -6,12 +7,23 @@
     <div v-else class="challenge-container">
       <ChallengeCard :challenge="currentChallenge" @edit="goEdit" @delete="deleteChallenge"/>
     </div>
-    <button class="create-btn" @click="router.push({ name: 'ChallengeCreate' })">챌린지 만들기</button>
-    <ChallengePagination :page-numbers="pageNumbers" :current-page="currentPage" :is-first-group="currentGroup === 0"
-        :is-last-group="(currentGroup + 1) * pageSize >= totalPage" @change-page="currentPage = $event"
-        @prev-group="prevGroup" @next-group="nextGroup"/>
 
+    <button class="create-btn" @click="router.push({ name: 'ChallengeCreate' })">
+      챌린지 만들기
+    </button>
+
+    <ChallengePagination
+      :page-numbers="pageNumbers"
+      :current-page="currentPage"
+      :is-first-group="currentGroup === 0"
+      :is-last-group="(currentGroup + 1) * pageSize >= totalPage"
+      @change-page="currentPage = $event"
+      @prev-group="prevGroup"
+      @next-group="nextGroup"
+    />
+  </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
@@ -78,7 +90,15 @@ const deleteChallenge = async () => {
 
 </script>
 
+
 <style scoped>
+.page-wrap {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
 /* 비어 있을 때 메시지 */
 .empty-message {
   text-align: center;
@@ -89,7 +109,8 @@ const deleteChallenge = async () => {
 
 /* 챌린지 카드 영역 정렬 */
 .challenge-container {
-  
+  width: 100%;
+  display: flex;       /* ✅ 가운데 정렬하려면 flex가 필요 */
   justify-content: center;
   margin-top: 16px;
 }
@@ -100,17 +121,34 @@ const deleteChallenge = async () => {
   width: 200px;
   margin: 20px auto 12px;
   padding: 10px;
-  background-color: #0063f8;
+  background-color: #0069f8;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 40px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .create-btn:hover {
-  background-color: #0063f8;
+  opacity: 0.8;
 }
+
+
+
+
+
+/* 반응형(선택): 더 작은 화면에서 여백/버튼 폭 조절 */
+@media (max-width: 480px) {
+  .page-wrap {
+    padding: 0 12px;
+  }
+
+  .create-btn {
+    width: 100%;
+    max-width: 260px;  /* 버튼 너무 커 보이면 제한 */
+  }
+}
+
 
 </style>

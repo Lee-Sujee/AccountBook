@@ -34,8 +34,13 @@ public class ChallengeServiceImpl implements ChallengeService {
 		// status 정하기
 		LocalDate today = LocalDate.now();
 
-		ChallengeStatus status = request.getStartDate().isAfter(today) ? ChallengeStatus.READY
-				: ChallengeStatus.ONGOING;
+		ChallengeStatus status;
+		if (request.getStartDate().isAfter(today)) {
+		    status = ChallengeStatus.READY;     // 내일부터(미래)
+		} else {
+		    status = ChallengeStatus.ONGOING;   // 오늘 포함 과거
+		}
+
 
 		ChallengeEntity challenge = new ChallengeEntity();
 		challenge.setUserId(userId);

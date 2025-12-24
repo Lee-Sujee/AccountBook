@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import BookListView from '@/views/book/BookListView.vue'
 import UserLoginView from '@/views/user/UserLoginView.vue'
 import UserPasswordView from '@/views/user/UserPasswordView.vue'
 import UserProfileView from '@/views/user/UserProfileView.vue'
@@ -22,8 +23,19 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/book',
+      name: 'book',
+      component: BookListView,
       meta: { requiresAuth: true }
     },
+    {
+      path: '/user/login',
+      name: 'login',
+      component: UserLoginView,
+    },
+
     {
       path: '/user/login',
       name: 'login',

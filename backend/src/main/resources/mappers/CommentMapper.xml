@@ -9,7 +9,7 @@
 		FROM community_comment c
 		LEFT JOIN users u ON c.user_id = u.id
 		WHERE c.board_id = #{boardId}
-		ORDER BY c.created_at ASC
+		ORDER BY c.created_at DESC
 	</select>
 	
 	<select id="getOneComment" resultType="CommentResponseDto">

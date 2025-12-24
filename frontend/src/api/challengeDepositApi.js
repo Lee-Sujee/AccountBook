@@ -14,3 +14,7 @@ export const getDepositListApi = (challengeId) => {
 export const getDepositSummaryApi = (challengeId) => {
     return instance.get(`/challenge/${challengeId}/deposit/summary`)
 }
+
+export const updateDepositApi = (depositId, challengeId, amount) => {
+    return instance.put(`/challenge/${challengeId}/deposit/${depositId}`, {amount})
+}

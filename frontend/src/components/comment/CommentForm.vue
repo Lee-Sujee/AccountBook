@@ -96,7 +96,7 @@ watch(
 }
 
 .form-group textarea:focus {
-  border-color: #2563eb;
+  border-color: #0063f8;
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
 }
 
@@ -110,7 +110,7 @@ watch(
   font-size: 14px;
   font-weight: 600;
   color: white;
-  background-color: #2563eb;
+  background-color: #0063f8;
   border: none;
   border-radius: 6px;
   cursor: pointer;

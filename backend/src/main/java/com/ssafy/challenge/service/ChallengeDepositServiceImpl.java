@@ -18,39 +18,40 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ChallengeDepositServiceImpl implements ChallengeDepositService {
-	
+
 	private final ChallengeService challengeService;
 	private final ChallengeRepository challengeRepository;
 	private final ChallengeDepositRepository challengeDepositRepository;
-	
+
 	@Override
 	@Transactional
 	public void createDeposit(int challengeId, String userId, ChallengeDepositRequestDto request) {
 		challengeService.getOneChallenge(challengeId, userId);
-		
-		if(request.getAmount() <= 0)
+
+		if (request.getAmount() <= 0)
 			throw new IllegalArgumentException("입금 금액은 0보다 커야 합니다.");
 		ChallengeResponseDto challenge = challengeService.getOneChallenge(challengeId, userId);
 
 		LocalDate today = LocalDate.now();
 		if (today.isBefore(challenge.getStartDate())) {
-		    throw new IllegalStateException("아직 챌린지 시작 전입니다! 시작일을 먼저 수정해주세요.");
+			throw new IllegalStateException("아직 챌린지 시작 전입니다! 시작일을 먼저 수정해주세요.");
 		}
 		int res = challengeDepositRepository.createDeposit(challengeId, request.getAmount());
-		if(res != 1) throw new RuntimeException("입금 실패");
-		
+		if (res != 1)
+			throw new RuntimeException("입금 실패");
+
 		int totalAmount = getDepositSummary(challengeId, userId).getTotalAmount();
-	    int target = challenge.getTarget();
-	    if (totalAmount >= target) {
-	        challengeRepository.updateStatusToSuccess(challengeId);
-	    }
+		int target = challenge.getTarget();
+		if (totalAmount >= target) {
+			challengeRepository.updateStatusToSuccess(challengeId);
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<ChallengeDepositResponseDto> getDepositList(int challengeId, String userId) {
 		challengeService.getOneChallenge(challengeId, userId);
-		
+
 		return challengeDepositRepository.getDepositList(challengeId);
 	}
 
@@ -60,5 +61,25 @@ public class ChallengeDepositServiceImpl implements ChallengeDepositService {
 		challengeService.getOneChallenge(challengeId, userId);
 		return challengeDepositRepository.getDepositSummary(challengeId);
 	}
-	
+
+	@Override
+	public void updateDeposit(int depositId, int challengeId, String userId, ChallengeDepositRequestDto request) {
+		challengeService.getOneChallenge(challengeId, userId);
+
+		if (request.getAmount() <= 0)
+			throw new IllegalArgumentException("입금 금액은 0보다 커야 합니다.");
+		ChallengeResponseDto challenge = challengeService.getOneChallenge(challengeId, userId);
+
+		int res = challengeDepositRepository.updateDeposit(depositId, challengeId, request.getAmount());
+		if (res != 1)
+			throw new RuntimeException("입금 실패");
+
+		int totalAmount = getDepositSummary(challengeId, userId).getTotalAmount();
+		int target = challenge.getTarget();
+		if (totalAmount >= target) {
+			challengeRepository.updateStatusToSuccess(challengeId);
+		}
+
+	}
+
 }

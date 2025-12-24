@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,4 +47,13 @@ public class ChallengeDepositController {
 		ChallengeDepositSummaryResponseDto res = challengeDepositService.getDepositSummary(challengeId, user.getUserId());
 		return ResponseEntity.ok(res);
 	}
+	
+	@PutMapping("/{challengeId}/deposit/{depositId}")
+	public ResponseEntity<Void> updateDeposit(@PathVariable int depositId, @PathVariable int challengeId, @AuthenticationPrincipal CustomUserDetails user, 
+	@RequestBody ChallengeDepositRequestDto request) {
+		challengeDepositService.updateDeposit(depositId, challengeId, user.getUserId(), request);
+		return ResponseEntity.noContent().build();
+	}
+	
+	
 }

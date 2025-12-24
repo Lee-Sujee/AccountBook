@@ -3,7 +3,7 @@
     <header class="navbar">
       <div class="logo">
         <router-link :to="{ name: 'home' }" class="logo-text"><img class="logo-img" src="@/assets/img/logo.png"></router-link>
-        <router-link :to="{ name: 'home' }" class="nav-link">가계부</router-link>
+        <router-link :to="{ name: 'book' }" class="nav-link">가계부</router-link>
         <router-link :to="{ name: 'ChallengeList' }" class="nav-link">챌린지</router-link>
         <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
         <router-link :to="{name: 'AverageCalculator'}" class="nav-link">평균계산기</router-link>
@@ -40,19 +40,19 @@ const store = useAuthStore();
   padding: 14px 32px;
   display: flex;
   justify-content: space-between;
-  align-items: center;          
+  align-items: center;
   box-sizing: border-box;
 }
 
 /* 왼쪽 로고 + 메뉴 */
 .logo {
   font-size: 14px;
-  font-weight: 700; 
+  font-weight: 700;
   display: flex;
   align-items: center;          /* 로고/텍스트 같은 줄 */
   gap: 20px;                    /* 메뉴 사이 간격 */
-  
-  
+
+
 }
 
 /* 로고 이미지 */
@@ -65,7 +65,7 @@ const store = useAuthStore();
 /* 공통 네비 링크 */
 .nav-link {
   text-decoration: none;
-  line-height: 1;  
+  line-height: 1;
   color: #0063f8;            /* 세로 흔들림 제거 */
 }
 
@@ -106,7 +106,7 @@ const store = useAuthStore();
   align-items: center;
   box-sizing: border-box;
 
-  flex-wrap: wrap;          
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -115,7 +115,7 @@ const store = useAuthStore();
   display: flex;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;         
+  flex-wrap: wrap;
   min-width: 0;
 }
 
@@ -124,7 +124,7 @@ const store = useAuthStore();
   display: flex;
   align-items: center;
   gap: 18px;
-  flex-wrap: wrap;          
+  flex-wrap: wrap;
   justify-content: flex-end;
 }
 
@@ -135,7 +135,7 @@ const store = useAuthStore();
   }
 
   .logo-img {
-    width: 130px;          
+    width: 130px;
   }
 
   .logo {
@@ -143,7 +143,7 @@ const store = useAuthStore();
   }
 
   .nav-right {
-    width: 100%;           
+    width: 100%;
     justify-content: flex-start;
     gap: 12px;
   }

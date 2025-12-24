@@ -13,7 +13,7 @@
 	SELECT id, amount, created_at AS createdAt
 	FROM challenge_deposit
 	WHERE challenge_id = #{challengeId}
-	ORDER BY created_at DESC, id DESC
+	ORDER BY created_at, id
 </select>
 
 <select id="getDepositSummary" resultType="ChallengeDepositSummaryResponseDto">
@@ -23,10 +23,10 @@
 	WHERE challenge_id = #{challengeId}
 </select>
 
+
+<update id="updateDeposit">
+	UPDATE challenge_deposit
+	SET challenge_id = #{challengeId}, amount = #{amount}
+	WHERE id = #{depositId}
+</update>
 </mapper>
-
-<!-- 	int createDeposit(int challengeId, int amount);
-
-	List<ChallengeDepositResponseDto> getDepositList(int challengeId);
-
-	ChallengeDepositSummaryResponseDto getDepositSummary(int challengeId); -->

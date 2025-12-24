@@ -3,7 +3,11 @@
 
     <h3>{{ challenge.description }}</h3>
     <div class="progress-box">
-  <!-- 상단 금액 요약 -->
+    <!-- 상단 금액 요약 -->
+    <div class="summary">
+      <p>{{ challenge.startDate }} ~ {{ challenge.endDate }}</p>
+      <p class="status">{{ statusKo }}</p>
+    </div>
   <div class="amount-summary">
     <div class="amount-item">
       <span class="badge gray">목표 금액</span>
@@ -14,47 +18,62 @@
       <strong>{{ depositSummary.totalAmount.toLocaleString() }}</strong>
     </div>
   </div>
-
   <!-- 원형 그래프 -->
   <div class="circle-progress">
-    <svg width="140" height="140">
-      <circle cx="70" cy="70" :r="radius" class="circle-bg" />
-      <circle
-        cx="70"
-        cy="70"
-        :r="radius"
-        class="circle-progress-bar"
-        :stroke-dasharray="circumference"
-        :stroke-dashoffset="strokeDashoffset"
-      />
-    </svg>
-    <div class="circle-text">
-      {{ progressPercent }}%
-    </div>
+  <svg width="140" height="140" viewBox="0 0 140 140">
+    <circle cx="70" cy="70" :r="radius" class="circle-bg" />
+    <circle
+      cx="70"
+      cy="70"
+      :r="radius"
+      class="circle-progress-bar"
+      :stroke-dasharray="circumference"
+      :stroke-dashoffset="strokeDashoffset"
+    />
+    <!-- ✅ 가운데 흰색 채우기 -->
+    <circle cx="70" cy="70" :r="innerRadius" class="circle-inner" />
+  </svg>
+
+  <div class="circle-text">
+    {{ progressPercent }}%
   </div>
+</div>
 
   <!-- 하단 설명 -->
   <p class="progress-desc">
     목표금액의 {{ progressPercent }}%를 저축하였습니다.
   </p>
 </div>
-  
 
-    <p>목표기간: {{ challenge.startDate }} ~ {{ challenge.endDate }}</p>
-    <p>상태: {{ challenge.status }}</p>
+
+
     <div class="deposit">
-    <input type="number" v-model.number="depositAmount" placeholder="저축 금액" min="1" />
-    <button @click="submitDeposit" :disabled="depositAmount <= 0" > 저축하기 </button>
-    <DepositList :challenge-id="challenge.id"/>
-</div>
+  <div class="deposit-row">
+    <input
+      type="number"
+      v-model.number="depositAmount"
+      placeholder="저축 금액"
+      min="1"
+    />
+    <button class="deposit-btn" @click="submitDeposit" :disabled="depositAmount <= 0">
+      저축하기
+    </button>
+  </div>
 
-<hr>
 
-    <div class="actions">
+  <div class="actions">
       <button @click="$emit('edit')">수정</button>
       <button @click="$emit('delete')">삭제</button>
     </div>
   </div>
+  <DepositList
+  :challenge-id="challenge.id"
+  @edit-deposit="handleEditDeposit"
+/>
+</div>
+
+
+
 </template>
 
 <script setup>
@@ -100,39 +119,91 @@ watch(() => props.challenge.id, () => {
   depositStore.getDepositList(props.challenge.id)
 })
 
+const statusKo = computed(() => {
+  const map = {
+    READY: '준비중',
+    ONGOING: '진행중',
+    SUCCESS: '성공',
+  }
+  return map[props.challenge.status] ?? props.challenge.status
+})
+
+
+const strokeWidth = 18
+const radius = 52
+const innerRadius = radius - strokeWidth / 2 - 2
+const circumference = 2 * Math.PI * radius
+
 const progressPercent = computed(() => {
   if (!props.challenge.target) return 0
-  const percent = (depositSummary.value.totalAmount / props.challenge.target) * 100
-  return percent
+  const raw = (depositSummary.value.totalAmount / props.challenge.target) * 100
+  const safe = Number.isFinite(raw) ? raw : 0
+  return Math.min(100, Math.max(0, Math.floor(safe))) // ✅ 0~100 정수
 })
-const radius = 36
-const circumference = 2 * Math.PI * radius
 
 const strokeDashoffset = computed(() => {
   return circumference * (1 - progressPercent.value / 100)
 })
+
+
+const handleEditDeposit = async ({ depositId, amount }) => {
+  await depositStore.updateDeposit(depositId, props.challenge.id, amount)
+
+  await depositStore.getDepositSummary(props.challenge.id)
+  await challengeStore.getChallengeList()
+  await depositStore.getDepositList(props.challenge.id)
+}
 </script>
 
 
 <style scoped>
 .challenge-card {
+  width: 100%;
   border-radius: 8px;
-  padding: 16px;
   background-color: #EDEDED;
-  max-width: 700px;
   margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden; /* 카드 안에서 삐져나오는 것 방지 */
 }
 
 .challenge-card h3 {
+  width: 100%;
   margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0063f8;
+  border-bottom: 2px solid #0063f8;
+  padding: 10px;
 }
 
 .challenge-card p {
   margin: 4px 0;
   font-size: 14px;
   color: #333;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.summary p {
+  margin: 0;
+}
+
+/* ✅ 오른쪽 상태가 잘리지 않게 */
+.summary .status {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-left: 12px;
+  color:#0063f8
 }
 
 .deposit {
@@ -168,32 +239,53 @@ const strokeDashoffset = computed(() => {
   margin: 16px 0;
 }
 
+.challenge-card,
+.actions {
+  box-sizing: border-box;
+}
+
 .actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
   margin-top: 12px;
+  padding: 0;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
+/* 버튼 공통 */
 .actions button {
-  width: 48%;
-  padding: 8px;
-  border-radius: 4px;
+  width: 90px;
+  padding: 8px 0;
+  border-radius: 40px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.2s, transform 0.05s;
 }
 
+/* hover / active */
+.actions button:hover {
+  opacity: 0.8;
+}
+.actions button:active {
+  transform: scale(0.99);
+}
+
+/* 수정(아웃라인) */
 .actions button:first-child {
-  background-color: #FFFFFF;
-  color: black;
-  border: none;
+  background-color: #fff;
+  color: #0063f8;
+  border: 1px solid #0063f8;
 }
 
+/* 삭제(채움) */
 .actions button:last-child {
   background-color: #0063f8;
-  color: white;
-  border: none;
+  color: #fff;
+  border: 1px solid #0063f8;
 }
-
 .progress-box {
   margin: 20px 0;
   text-align: center;
@@ -233,7 +325,6 @@ const strokeDashoffset = computed(() => {
   background-color: #b0bec5;
 }
 
-/* 원형 그래프 */
 .circle-progress {
   position: relative;
   width: 140px;
@@ -243,18 +334,22 @@ const strokeDashoffset = computed(() => {
 
 .circle-bg {
   fill: none;
-  stroke: #e6eaf0;
-  stroke-width: 14;
+  stroke: #bdbdbd;     /* ✅ 회색 링 */
+  stroke-width: 18;    /* ✅ 두껍게 */
 }
 
 .circle-progress-bar {
   fill: none;
-  stroke: #1e88e5;
-  stroke-width: 14;
+  stroke: #0063f8;     /* ✅ 파란색 */
+  stroke-width: 18;    /* ✅ 두껍게 */
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   transition: stroke-dashoffset 0.5s ease;
+}
+
+.circle-inner {
+  fill: #ededed;       /* ✅ 가운데 흰색 */
 }
 
 .circle-text {
@@ -262,15 +357,53 @@ const strokeDashoffset = computed(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 22px;
-  font-weight: 700;
-  color: #1e88e5;
+  font-size: 28px;     /* ✅ 더 크게 */
+  font-weight: 800;
+  color: #0063f8;
 }
-
 /* 하단 설명 */
 .progress-desc {
   font-size: 14px;
-  color: #555;
+  font-weight: 500;
+}
+
+.deposit {
+  margin-top: 12px;
+}
+
+.deposit-row {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가운데로 모으기 */
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.deposit-row input {
+  width: 180px;
+  padding: 8px;
+  background-color: #ededed;
+  border: none;
+  border-bottom: 2px solid #0063f8;
+  border-radius: 0px;
+  font-size: 14px;
+  margin-bottom: 0;    /* 기존 마진 제거 */
+}
+
+.deposit-row .deposit-btn {
+  width: 120px;        /* 원하는 길이로 조절 */
+  padding: 10px;
+  background-color: #0063f8;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.deposit-row .deposit-btn:disabled {
+  background-color: #81b1f8;
+  cursor: not-allowed;
 }
 
 </style>

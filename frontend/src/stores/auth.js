@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       localStorage.setItem("showStats", "false");
 
-      router.push({ name: "home" });
+      router.push({ name: "book" });
     } catch (err) {
       console.error("로그인 실패:", err);
       alert("아이디 또는 비밀번호가 올바르지 않습니다.");

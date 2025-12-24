@@ -42,7 +42,9 @@ public class SecurityConfig {
                             "/admin/product-price/init",
                             "/api/v1/comparison/**"
                     ).permitAll()
+                    .requestMatchers(HttpMethod.GET, "/community/**").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/community/*/view").permitAll()
                     .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

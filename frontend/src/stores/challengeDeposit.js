@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { createDepositApi, getDepositListApi, getDepositSummaryApi } from "@/api/challengeDepositApi";
+import { createDepositApi, getDepositListApi, getDepositSummaryApi, updateDepositApi } from "@/api/challengeDepositApi";
 
 export const useChallengeDepositStore = defineStore("challengeDeposit", () => { 
 
@@ -38,11 +38,22 @@ export const useChallengeDepositStore = defineStore("challengeDeposit", () => {
             throw err;
         })
     }
+
+    const updateDeposit = (depositId, challengeId, amount) => {
+  return updateDepositApi(depositId, challengeId, amount)
+    .then(() => alert("저축 금액이 수정되었습니다."))
+    .catch((err) => {
+      console.error("저축목록 수정 실패: ", err);
+      throw err;
+    })
+}
+
     return {
         depositList,
         depositSummary,
         createDeposit,
         getDepositList,
         getDepositSummary,
+        updateDeposit,
     }
 });

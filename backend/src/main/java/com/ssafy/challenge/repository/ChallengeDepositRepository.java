@@ -16,5 +16,7 @@ public interface ChallengeDepositRepository {
 
 	ChallengeDepositSummaryResponseDto getDepositSummary(int challengeId);
 
+	int updateDeposit(int depositId, int challengeId, int amount);
+
 	
 }

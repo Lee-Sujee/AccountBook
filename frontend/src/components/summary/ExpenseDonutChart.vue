@@ -27,7 +27,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onUnmounted, watch, nextTick } from 'vue'
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js'
@@ -112,7 +111,6 @@ const loadChart = async (type: 'expense' | 'income' = currentType.value) => {
   }
 }
 
-// 헬퍼 함수: 데이터 초기화
 const clearData = () => {
   summary.value = []
   totalAmount.value = 0
@@ -170,14 +168,11 @@ watch(
   { immediate: true }
 )
 
+
 onUnmounted(() => {
   chartInstance?.destroy()
 })
 </script>
-
-
-
-
 <style scoped>
 .stats-detail-container {
   background: #EDEDED;
@@ -193,7 +188,7 @@ onUnmounted(() => {
 .type-selector button {
   padding: 8px 24px;
   border-radius: 20px;
-  border: 1.5px solid #0063f8;
+  border: 2px solid #0063f8;
   background: transparent;
   color: #0063f8;
   font-size: 13px;
@@ -221,8 +216,8 @@ onUnmounted(() => {
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1.5px solid #0063f8; /* 게시판 헤더 선 스타일 */
-  border-bottom: 1.5px solid #0063f8; /* 게시판 헤더 선 스타일 */
+  border-top: 2px solid #0063f8; /* 게시판 헤더 선 스타일 */
+  border-bottom: 2px solid #0063f8; /* 게시판 헤더 선 스타일 */
 }
 
 .list-item {
@@ -230,11 +225,11 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px; /* 게시판 td 패딩과 유사하게 */
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d1d1d1;
 }
 
 .list-item:hover {
-  background-color: #e5e7eb; /* 게시판 hover 효과 */
+  background-color: #d1d1d1; /* 게시판 hover 효과 */
 }
 
 .cat-left {

@@ -26,15 +26,15 @@ public interface CommunityRepository {
 
 
 	int selectBoardLikeCount(int boardId);
+	
 	boolean existsBoardLike(int boardId, String userId);
+	
 	void insertBoardLike(int boardId, String userId);
+	
 	void increaseBoardLikeCount(int boardId);
+	
 	void deleteBoardLike(int boardId, String userId);
+	
 	void decreaseBoardLikeCount(int boardId);
 
-
-
-
-
-	
 }

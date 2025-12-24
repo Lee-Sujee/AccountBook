@@ -37,7 +37,7 @@ public class OpenAIService {
                         new Message("system", "You are a helpful and friendly financial assistant."),
                         new Message("user", prompt)
                 ),
-                300 // 글자 제한하려면 토큰 조금 넉넉히
+                1200 // 글자 제한하려면 토큰 조금 넉넉히
         );
 
         try {

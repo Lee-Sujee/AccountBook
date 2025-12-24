@@ -2,7 +2,7 @@
   <article class="comment-card">
     <div class="comment-content">
       <span class="writer">{{ comment.writerName }}</span>
-      {{ comment.content }} | 
+      {{ comment.content }}
     </div>
 
     <div v-if="isAuthor" class="comment-actions">
@@ -15,8 +15,6 @@
 <script setup>
 import { defineProps, defineEmits, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useCommunityStore } from '@/stores/community';
-const communityStore = useCommunityStore();
 const props = defineProps({
   comment: Object
 });
@@ -25,7 +23,7 @@ const emit = defineEmits(['edit-comment', 'delete-comment']);
 
 const authStore = useAuthStore();
 
-const loginUserId = computed(() => authStore.loginUserInfo.id ?? null);
+const loginUserId = computed(() => authStore.loginUserInfo?.id ?? null);
 
 const isAuthor = computed(() => {
   return (
@@ -45,7 +43,7 @@ const onDelete = () => {
 <style scoped>
 .comment-card {
   padding: 14px 16px;
-  border-bottom: 1px solid #0063f8;
+  border-bottom: 1px solid #e1e1e1;
   display: flex;
   flex-direction: column;
   gap: 6px;

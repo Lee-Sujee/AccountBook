@@ -31,9 +31,6 @@ public class CommentController {
 	@GetMapping("/{boardId}/comments")
 	public ResponseEntity<List<CommentResponseDto>> getCommentList(@PathVariable int boardId){
 		List<CommentResponseDto> res = commentService.getCommentList(boardId);
-		if(res.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}
 		return ResponseEntity.ok(res);
 	}
 	

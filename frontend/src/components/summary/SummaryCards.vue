@@ -71,16 +71,12 @@ watch([year, month], async ([y, m]) => {
 
 const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 </script>
-
-
-
 <style scoped>
 .stats-container {
   max-width: 1100px;
   margin: 40px auto;
   padding: 24px;
   background: #EDEDED;
-  border-radius: 12px;
    flex-direction: column;
 }
 
@@ -95,8 +91,8 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
   display: flex;
   align-items: center;
   gap: 20px; /* 간격을 살짝 넓혀 시원하게 배치 */
-  font-size: 20px; /* 날짜 폰트 크기 소폭 상향 */
-  font-weight: 800;
+  font-size: 22px; /* 날짜 폰트 크기 소폭 상향 */
+  font-weight: 700;
   color: #374151;
 }
 
@@ -120,12 +116,13 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
   display: flex;
   justify-content: space-around;
   padding: 24px 0;
-  border-top: 1.5px solid #0063f8;
-  border-bottom: 1.5px solid #0063f8;
+  border-top: 2px solid #0063f8;
+  border-bottom: 2px solid #0063f8;
   margin-bottom: 30px;
 }
 
 .item {
+  font-weight: 700;
   text-align: center;
   min-width: 0;
 }
@@ -183,7 +180,6 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
     margin-top: 0;
   }
 }
-
 /* 모바일 */
 @media (max-width: 420px) {
   .month-selector {

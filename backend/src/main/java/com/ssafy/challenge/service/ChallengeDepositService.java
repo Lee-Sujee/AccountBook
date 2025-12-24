@@ -13,5 +13,7 @@ public interface ChallengeDepositService{
 	List<ChallengeDepositResponseDto> getDepositList(int challengeId, String userId);
 
 	ChallengeDepositSummaryResponseDto getDepositSummary(int challengeId, String userId);
+
+	void updateDeposit(int depositId, int challengeId, String userId, ChallengeDepositRequestDto request);
 	
 }
