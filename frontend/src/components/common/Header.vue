@@ -1,29 +1,30 @@
 <template>
   <div class="home-container">
     <header class="navbar">
-      <div class="logo">
-        <router-link :to="{ name: 'home' }" class="logo-text"><img class="logo-img" src="@/assets/img/logo.png"></router-link>
-        <router-link :to="{ name: 'book' }" class="nav-link">가계부</router-link>
-        <router-link :to="{ name: 'ChallengeList' }" class="nav-link">챌린지</router-link>
-        <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
-        <router-link :to="{name: 'AverageCalculator'}" class="nav-link">평균계산기</router-link>
-      </div>
+  <router-link :to="{ name: 'home' }" class="logo-text">
+    <img class="logo-img" src="@/assets/img/logo.png">
+  </router-link>
 
-      <nav class="nav-right">
-        <!--로그인 성공적으로 됐을 경우-->
-        <template v-if="store.loginUserInfo">
-          <span class="welcome">{{ store.loginUserInfo.name }}님 안녕하세요!</span>
-          <router-link :to="{name: 'myPage'}" class="nav-link">마이페이지</router-link>
-          <button class="logout-btn" @click="store.logout">로그아웃</button>
-        </template>
+  <nav class="nav-center">
+    <router-link :to="{ name: 'book' }" class="nav-link">가계부</router-link>
+    <router-link :to="{ name: 'ChallengeList' }" class="nav-link">챌린지</router-link>
+    <router-link :to="{name: 'CommunityList'}" class="nav-link">게시판</router-link>
+    <router-link :to="{name: 'AverageCalculator'}" class="nav-link">평균계산기</router-link>
+  </nav>
 
-        <!--로그인하지 않은 경우-->
-        <template v-else>
-          <router-link :to="{ name: 'login' }" class="nav-link">로그인</router-link>
-          <router-link :to="{ name: 'signUp' }" class="nav-link">회원가입</router-link>
-        </template>
-      </nav>
-    </header>
+  <nav class="nav-right">
+    <template v-if="store.loginUserInfo">
+      <span class="welcome">{{ store.loginUserInfo.name }}님 안녕하세요!</span>
+      <router-link :to="{name: 'myPage'}" class="nav-link">마이페이지</router-link>
+      <button class="logout-btn" @click="store.logout">로그아웃</button>
+    </template>
+    <template v-else>
+      <router-link :to="{ name: 'login' }" class="nav-link">로그인</router-link>
+      <router-link :to="{ name: 'signUp' }" class="nav-link">회원가입</router-link>
+    </template>
+  </nav>
+</header>
+
   </div>
 </template>
 
@@ -38,58 +39,57 @@ const store = useAuthStore();
 .navbar {
   width: 100%;
   padding: 14px 32px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* 로고 / 가운데 / 오른쪽 */
   align-items: center;
   box-sizing: border-box;
+  gap: 16px;
 }
 
-/* 왼쪽 로고 + 메뉴 */
-.logo {
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;          /* 로고/텍스트 같은 줄 */
-  gap: 20px;                    /* 메뉴 사이 간격 */
-
-
-}
-
-/* 로고 이미지 */
+/* 로고 */
 .logo-img {
   width: 180px;
   height: auto;
-  vertical-align: middle;       /* 이미지 baseline 보정 */
+  vertical-align: middle;
 }
 
-/* 공통 네비 링크 */
+/* 가운데 링크 목록 */
+.nav-center {
+  display: flex;
+  justify-content: center;   /* ✅ 가운데 정렬 */
+  align-items: center;
+  gap: 34px;                 /* ✅ 간격 넓힘 */
+  flex-wrap: wrap;
+}
+
+/* 공통 링크 */
 .nav-link {
   text-decoration: none;
+  color: #0063f8;
   line-height: 1;
-  color: #0063f8;            /* 세로 흔들림 제거 */
+  font-size: 16px;           /* ✅ 글씨 크기 키움 */
+  font-weight: 700;
 }
 
 /* 오른쪽 영역 */
 .nav-right {
-  font-size: 12px;
-  font-weight: 700;
   display: flex;
-  align-items: center;          /* 텍스트/버튼 중앙 */
-  gap: 18px;
+  align-items: center;
+  gap: 20px;                 /* ✅ 간격 넓힘 */
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
-/* 환영 문구 */
 .welcome {
-  font-size: 12px;
+  font-size: 14px;           /* 조금 키움 */
   font-weight: 700;
   color: #0063f8;
   white-space: nowrap;
 }
 
-/* 로그아웃 버튼 */
 .logout-btn {
   padding: 6px 14px;
-  font-size: 12px;
+  font-size: 14px;           /* 조금 키움 */
   font-weight: 700;
   border: none;
   border-radius: 6px;
@@ -97,64 +97,26 @@ const store = useAuthStore();
   cursor: pointer;
 }
 
-/* 전체 navbar */
-.navbar {
-  width: 100%;
-  padding: 14px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* 왼쪽 로고+메뉴: 줄바꿈 허용 */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-/* 오른쪽 영역: 필요시 다음 줄로 */
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
 /* 모바일 대응 */
 @media (max-width: 768px) {
   .navbar {
+    grid-template-columns: 1fr; /* 한 줄로 */
+    gap: 12px;
     padding: 12px 16px;
+  }
+
+  .nav-center {
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .nav-right {
+    justify-content: flex-start;
+    gap: 12px;
   }
 
   .logo-img {
     width: 130px;
-  }
-
-  .logo {
-    gap: 12px;
-  }
-
-  .nav-right {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 420px) {
-  .logo-img {
-    width: 110px;
-  }
-  .nav-link {
-    font-size: 13px;
   }
 }
 

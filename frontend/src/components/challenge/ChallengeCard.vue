@@ -47,25 +47,26 @@
 
 
 
-    <div class="deposit">
-  <div class="deposit-row">
+<div class="deposit">
+  <!-- ✅ Enter = submit 실행 -->
+  <form class="deposit-row" @submit.prevent="submitDeposit">
     <input
-      type="number"
       v-model.number="depositAmount"
-      placeholder="저축 금액"
-      min="1"
+      type="number"
+      class="underline-input"
+      placeholder="금액 입력"
     />
-    <button class="deposit-btn" @click="submitDeposit" :disabled="depositAmount <= 0">
-      저축하기
-    </button>
-  </div>
 
+    <button type="submit" class="deposit-btn">
+      입금
+    </button>
+  </form>
 
   <div class="actions">
-      <button @click="$emit('edit')">수정</button>
-      <button @click="$emit('delete')">삭제</button>
-    </div>
+    <button @click="$emit('edit')">수정</button>
+    <button @click="$emit('delete')">삭제</button>
   </div>
+</div>
   <DepositList
   :challenge-id="challenge.id"
   @edit-deposit="handleEditDeposit"
@@ -97,6 +98,12 @@ const depositStore = useChallengeDepositStore()
 const { depositSummary } = storeToRefs(depositStore)
 
 const depositAmount = ref(0)
+
+
+const onDeposit = () => {
+  deposit();
+}
+
 
 const submitDeposit = async () => {
   const today = new Date().toISOString().split('T')[0]

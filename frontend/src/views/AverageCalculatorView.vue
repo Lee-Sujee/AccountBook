@@ -2,35 +2,40 @@
   <div class="avg-container">
     <h2 class="title">평균계산기</h2>
 
-    <div class="form-section">
-      <div class="input-group">
-        <label>상품명 (키워드)</label>
-        <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
-      </div>
-      <div class="input-group">
-        <label>업태</label>
-        <select v-model="category" class="underline-input">
-          <option value="">전체</option>
-          <option value="대형마트">대형마트</option>
-          <option value="백화점">백화점</option>
-          <option value="기업형슈퍼">기업형슈퍼</option>
-          <option value="편의점">편의점</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>내가 쓴 금액</label>
-        <div class="price-input-wrapper">
-          <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
-          <span class="currency">원</span>
-        </div>
-      </div>
+    <form @submit.prevent="search">
+  <div class="form-section">
+    <div class="input-group">
+      <label>상품명 (키워드)</label>
+      <input v-model="keyword" placeholder="상품명을 입력하세요" class="underline-input" />
     </div>
 
-    <div class="btn-wrapper">
-      <button @click="search" :disabled="loading" class="btn-search">
-        {{ loading ? '검색 중...' : '검색' }}
-      </button>
+    <div class="input-group">
+      <label>업태</label>
+      <select v-model="category" class="underline-input">
+        <option value="">전체</option>
+        <option value="대형마트">대형마트</option>
+        <option value="백화점">백화점</option>
+        <option value="기업형슈퍼">기업형슈퍼</option>
+        <option value="편의점">편의점</option>
+      </select>
     </div>
+
+    <div class="input-group">
+      <label>내가 쓴 금액</label>
+      <div class="price-input-wrapper">
+        <input type="number" v-model.number="userPrice" placeholder="0" class="underline-input" />
+        <span class="currency">원</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-wrapper">
+    <button type="submit" :disabled="loading" class="btn-search">
+      {{ loading ? '검색 중...' : '검색' }}
+    </button>
+  </div>
+</form>
+
 
     <div v-if="searched" class="result-card">
       <div class="search-summary">
