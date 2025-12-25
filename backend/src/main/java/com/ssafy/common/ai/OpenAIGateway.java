@@ -31,18 +31,18 @@ public class OpenAIGateway {
 
     /** book 등 기존 코드 호환용(temperature 기본값) */
     public String chat(String systemPrompt, String userPrompt, Integer maxTokens) {
-        return chat(systemPrompt, userPrompt, maxTokens, 0.2); // 기본값 적당히
+        return chat(systemPrompt, userPrompt, 0.2); // 기본값 적당히
     }
 
     /** stats에서 쓰는 temperature 지원 버전 */
-    public String chat(String systemPrompt, String userPrompt, Integer maxTokens, Double temperature) {
+    public String chat(String systemPrompt, String userPrompt, Double temperature) {
         ChatRequest body = new ChatRequest(
                 model,
                 List.of(
                         new Message("system", systemPrompt),
                         new Message("user", userPrompt)
                 ),
-                maxTokens,
+                
                 temperature
         );
 
@@ -84,7 +84,6 @@ public class OpenAIGateway {
     static class ChatRequest {
         private String model;
         private List<Message> messages;
-        private Integer max_tokens;
         private Double temperature;
     }
 }

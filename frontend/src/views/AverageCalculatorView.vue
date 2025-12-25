@@ -39,12 +39,6 @@
         <p>내가 쓴 금액 : <span class="highlight">{{ Number(submitted.userPrice).toLocaleString() }}원</span></p>
       </div>
 
-      <div v-if="isAiMatched && items.length > 0" class="ai-notice-banner">
-        검색 결과가 없습니다.
-        <strong>'{{ submitted.keyword }}'</strong> 대신 AI가 🤖
-        <strong>'{{ items[0].menu }}'</strong>를 찾았습니다!
-      </div>
-
       <div v-if="filteredItems.length > 0 || gptPrice" class="table-wrapper">
         <table class="result-table">
           <thead>
@@ -69,6 +63,7 @@
               </td>
             </tr>
 
+            <!-- ✅ AI 평균 추정가 (문자열 표시 + 범위 판정 정확하게) -->
             <tr v-if="gptPrice" class="ai-price-row">
               <td>{{ submitted.keyword }}</td>
               <td><span class="ai-badge">AI 평균 추정가</span></td>
@@ -85,7 +80,6 @@
       </div>
 
       <div v-if="gptTip" class="ai-tip-container">
-        <div class="ai-avatar">🤖</div>
         <div class="ai-speech-bubble">
           <div class="tip-header">
             <strong>AI 쇼핑 어드바이저의 팁</strong>
@@ -116,35 +110,56 @@ const submitted = ref({})
 const gptPrice = ref('')
 const gptTip = ref('')
 
+
 const isAiMatched = computed(() =>
   items.value.length > 0 &&
+  submitted.value.keyword &&
   !items.value[0].menu.includes(submitted.value.keyword)
 )
 
-const aiJudgeResult = computed(() => {
-  if (!gptPrice.value) return '분석불가'
-  const avg = parseInt(gptPrice.value.replace(/[^0-9]/g, ''))
-  const user = submitted.value.userPrice
-  if (user > avg * 1.1) return '비싼 소비예요'
-  if (user < avg * 0.9) return '아주 합리적인 소비예요'
-  return '적정한 소비예요'
-})
-
-const aiJudgeClass = computed(() => {
-  if (!gptPrice.value) return 'ok'
-  const avg = parseInt(gptPrice.value.replace(/[^0-9]/g, ''))
-  const user = submitted.value.userPrice
-  if (user > avg * 1.1) return 'expensive'
-  if (user < avg * 0.9) return 'cheap'
-  return 'ok'
-})
-
+// 업태 필터링
 const filteredItems = computed(() => {
   if (!items.value.length) return []
   if (!submitted.value.category || submitted.value.category === '전체') return items.value
   return items.value.filter(item => item.category === submitted.value.category)
 })
 
+
+ // AI 가격 문자열 파싱
+
+const parseMinMaxWon = (text) => {
+  if (!text) return null
+  const matches = text.match(/\d[\d,]*/g) || []
+  const nums = matches
+    .map(v => parseInt(v.replace(/,/g, ''), 10))
+    .filter(n => !isNaN(n))
+
+  if (nums.length === 0) return null
+  if (nums.length === 1) return { min: nums[0], max: nums[0] }
+  return { min: Math.min(nums[0], nums[1]), max: Math.max(nums[0], nums[1]) }
+}
+
+//  AI 판정
+const aiJudgeResult = computed(() => {
+  if (!gptPrice.value) return '분석불가'
+  const mm = parseMinMaxWon(gptPrice.value)
+  if (!mm) return '분석불가'
+  const user = submitted.value.userPrice
+
+  if (user < mm.min) return '아주 합리적인 소비예요'
+  if (user <= mm.max) return '적정한 소비예요'
+  return '비싼 소비예요'
+})
+
+// AI 판정 클래스
+const aiJudgeClass = computed(() => {
+  const j = aiJudgeResult.value
+  if (j.includes('비싼')) return 'expensive'
+  if (j.includes('합리')) return 'cheap'
+  return 'ok'
+})
+
+// 입력 변경 시 검색 결과 숨김
 watch([keyword, category, userPrice], () => {
   searched.value = false
 })
@@ -169,7 +184,7 @@ const search = async () => {
     const res = await instance.get('/api/v1/comparison/price', {
       params: {
         menu: keyword.value,
-        category: '전체',
+        category: category.value || '전체',
         userPrice: userPrice.value
       }
     })
@@ -177,17 +192,24 @@ const search = async () => {
     items.value = res.data.dbResults || []
     const fullAdvice = res.data.gptAdvice || ''
 
+    // [가격: ...] 파싱
     if (fullAdvice.includes('[가격:')) {
       try {
         gptPrice.value = fullAdvice.split('[가격:')[1].split(']')[0].trim()
+        if (gptPrice.value && !gptPrice.value.includes('원')) {
+          gptPrice.value = `${gptPrice.value}원`
+        }
       } catch {
         gptPrice.value = ''
       }
     }
 
-    if (fullAdvice.includes('[팁:]')) {
+    if (fullAdvice.includes('[팁]')) {
+      gptTip.value = fullAdvice.split('[팁]')[1].trim()
+    } else if (fullAdvice.includes('[팁:]')) {
       gptTip.value = fullAdvice.split('[팁:]')[1].trim()
     } else {
+      // 포맷 깨지면 전체 표시
       gptTip.value = fullAdvice
     }
 
@@ -199,6 +221,7 @@ const search = async () => {
   }
 }
 
+// DB 판정
 const judgeClass = (avg) => {
   const user = submitted.value.userPrice
   if (user > avg * 1.1) return 'expensive'
@@ -265,6 +288,12 @@ const judgeClass = (avg) => {
   width: 100%;
 }
 
+.currency {
+  margin-left: 8px;
+  font-weight: 700;
+  color: #0063f8;
+}
+
 .btn-wrapper {
   display: flex;
   justify-content: center;
@@ -283,10 +312,10 @@ const judgeClass = (avg) => {
 }
 
 .result-card {
-  background-color: #ffffff;
+  background-color: #ededed;
   padding: 50px;
   border-radius: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #0063f8;
   max-width: 1000px;
   width: 100%;
   margin: 0 auto;
@@ -307,6 +336,16 @@ const judgeClass = (avg) => {
 .search-summary .highlight {
   color: #333;
   margin-left: 10px;
+}
+
+.ai-notice-banner {
+  background: #f8fbff;
+  border: 1px solid #d0e1ff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #333;
 }
 
 .table-wrapper {
@@ -365,20 +404,23 @@ const judgeClass = (avg) => {
   padding-top: 30px;
   border-top: 1px solid #f1f3f5;
   align-items: flex-start;
-  white-space: pre-line;
+  white-space: pre-line; /* 줄바꿈 유지 */
 }
 
 .ai-avatar {
   width: 45px;
   height: 45px;
-  background-color: #eef4ff;
-  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
   flex-shrink: 0;
-  border: 1px solid #d0e1ff;
+}
+
+.ai-avatar img {
+  width: 100px;
+  object-fit: contain;
+  display: block;
 }
 
 .ai-speech-bubble {
@@ -431,6 +473,11 @@ const judgeClass = (avg) => {
 .ai-badge {
   color: #0063f8;
   font-weight: 800;
+}
+
+.muted {
+  color: #6b7280;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {
