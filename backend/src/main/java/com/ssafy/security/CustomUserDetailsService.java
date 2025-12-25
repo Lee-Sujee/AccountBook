@@ -17,7 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    // Security가 기본적으로 사용하는 메서드 (이메일 로그인 용)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.selectUserByEmail(email);
@@ -29,7 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
-    // 우리가 JWT 인증에서 "id 기반"으로 사용할 메서드
     public UserDetails loadUserById(String userId) throws UsernameNotFoundException {
         User user = userRepository.selectUserById(userId);
 

@@ -99,7 +99,6 @@ const deleteChallenge = async () => {
   padding: 0 16px;
 }
 
-/* 비어 있을 때 메시지 */
 .empty-message {
   text-align: center;
   margin-top: 40px;
@@ -107,15 +106,13 @@ const deleteChallenge = async () => {
   color: #777;
 }
 
-/* 챌린지 카드 영역 정렬 */
 .challenge-container {
   width: 100%;
-  display: flex;       /* ✅ 가운데 정렬하려면 flex가 필요 */
+  display: flex;       
   justify-content: center;
   margin-top: 16px;
 }
 
-/* 챌린지 생성 버튼 */
 .create-btn {
   display: block;
   width: 200px;
@@ -138,7 +135,7 @@ const deleteChallenge = async () => {
 
 
 
-/* 반응형(선택): 더 작은 화면에서 여백/버튼 폭 조절 */
+/* 모바일 대응 */
 @media (max-width: 480px) {
   .page-wrap {
     padding: 0 12px;
@@ -146,7 +143,7 @@ const deleteChallenge = async () => {
 
   .create-btn {
     width: 100%;
-    max-width: 260px;  /* 버튼 너무 커 보이면 제한 */
+    max-width: 260px; 
   }
 }
 

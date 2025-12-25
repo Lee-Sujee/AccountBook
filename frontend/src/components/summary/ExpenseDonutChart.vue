@@ -39,7 +39,6 @@ const props = defineProps<{
   month: number
 }>()
 
-// Emit 정의 (월 변경 시 부모의 상태를 바꾸기 위함)
 const emit = defineEmits(['change-month'])
 
 Chart.register(DoughnutController, ArcElement, Tooltip)
@@ -89,7 +88,6 @@ const loadChart = async (type: 'expense' | 'income' = currentType.value) => {
   if (!ok || !chartCanvas.value) return
 
   try {
-    // 부모로부터 받은 props.year와 props.month를 API 파라미터로 사용
     const { data } = await instance.get<CategorySummary[]>(
       `/book/summary?type=${type}&year=${props.year}&month=${props.month}`
     )
@@ -120,7 +118,6 @@ const clearData = () => {
   chartInstance = null
 }
 
-// 헬퍼 함수: 차트 렌더링
 const renderChart = (data: CategorySummary[]) => {
   chartInstance?.destroy()
   if (!chartCanvas.value) return
@@ -140,7 +137,7 @@ const renderChart = (data: CategorySummary[]) => {
   })
 }
 
-// 헬퍼 함수: 데이터 없을 때 회색 차트
+// 데이터 없을 때 회색 차트
 const renderNoDataChart = () => {
   if (!chartCanvas.value) return
   chartInstance = new Chart(chartCanvas.value, {
@@ -158,7 +155,7 @@ const renderNoDataChart = () => {
   })
 }
 
-// 감시자 설정: visible, year, month 중 하나라도 변경되면 loadChart 실행
+// visible, year, month 중 하나라도 변경되면 loadChart 실행
 watch(
   [() => props.visible, () => props.year, () => props.month],
   ([newVisible]) => {
@@ -202,35 +199,33 @@ onUnmounted(() => {
   color: #fff;
 }
 
-/* 차트 영역: 중앙에 크게 배치 */
 .chart-section {
   position: relative;
-  height: 350px; /* 차트 크기를 더 키움 */
+  height: 350px;
   width: 100%;
   margin-bottom: 50px;
   display: flex;
   justify-content: center;
 }
 
-/* 리스트 영역: 게시판 테이블처럼 넓게 사용 */
 .category-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 2px solid #0063f8; /* 게시판 헤더 선 스타일 */
-  border-bottom: 2px solid #0063f8; /* 게시판 헤더 선 스타일 */
+  border-top: 2px solid #0063f8; 
+  border-bottom: 2px solid #0063f8;
 }
 
 .list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px; /* 게시판 td 패딩과 유사하게 */
+  padding: 16px 20px; 
   border-bottom: 1px solid #d1d1d1;
 }
 
 .list-item:hover {
-  background-color: #d1d1d1; /* 게시판 hover 효과 */
+  background-color: #d1d1d1;
 }
 
 .cat-left {

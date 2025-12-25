@@ -29,10 +29,9 @@ public class StatsCompareService {
 
         String inputMenu = normalizeInput(menu);
 
-        // 1) DB 조회
+        // DB 조회
         List<Stats> targetList = repository.findAllByMenuLike(inputMenu);
 
-        // "상위개념"이면 DB가 1개라도 잡혀도 확장 검색 수행
         boolean shouldExpand = targetList.isEmpty() || isBroadTerm(inputMenu);
 
         if (shouldExpand && !inputMenu.isEmpty()) {
@@ -51,7 +50,6 @@ public class StatsCompareService {
 
             String userPrompt = "상품 리스트: " + allMenus + "\n사용자 입력: " + inputMenu;
 
-            // ✅ 변경: openAiGateway 사용 (temperature=0.0)
             String aiKeywordRaw = openAIGateway.chat(systemRole, userPrompt, 0.0);
             String aiKeyword = cleanGptText(aiKeywordRaw);
 
@@ -118,7 +116,6 @@ public class StatsCompareService {
                 inputMenu
         );
 
-        // ✅ 변경: openAiGateway 사용 (temperature=0.2)
         String gptAdvice = openAIGateway.chat(marketSystemRole, marketPrompt, 0.2);
 
         Map<String, Object> response = new HashMap<>();
@@ -131,9 +128,8 @@ public class StatsCompareService {
         String trimmed = (keyword == null) ? "" : keyword.trim();
         return trimmed.isEmpty() ? new ArrayList<>() : repository.findAllByMenuLike(trimmed);
     }
-
-    // ---------------- helpers ----------------
-
+    
+    // helper
     private String uniqueKey(Stats s) {
         return s.getMenu() + s.getCategory() + s.getSurveyDate();
     }

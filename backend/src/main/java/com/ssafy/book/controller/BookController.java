@@ -30,8 +30,6 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-
-    //예외 처리는 다 service 쪽으로
     //전체 조회 (GET /book)
     @GetMapping
     public ResponseEntity<?> getBookList(
@@ -61,7 +59,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.select(id, userDetails.getUserId()));
     }
 
-    // 등록 (POST /book) - DTO로 받기
+    // 등록 (POST /book)
     @PostMapping
     public ResponseEntity<Void> insert(@AuthenticationPrincipal CustomUserDetails userDetails,
                                     @RequestBody BookRequestDto dto) {
@@ -70,7 +68,7 @@ public class BookController {
     	return ResponseEntity.ok().build();
     }
 
-    // 수정 (PUT /book/{id}) - DTO로 받기
+    // 수정 (PUT /book/{id})
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@AuthenticationPrincipal CustomUserDetails userDetails,
                                     @PathVariable("id") int id,

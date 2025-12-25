@@ -80,13 +80,12 @@ watch(
   font-size: 22px;
   font-weight: 700;
   color: #0063f8;
-  /* 게시판 포인트 블루 */
 }
 
 .ai-result-box {
   background-color: #EDEDED;
   padding: 24px 0;
-  border-top: 2px solid #0063f8; /* 게시판 테이블 헤더 선 스타일 */
+  border-top: 2px solid #0063f8;
   border-bottom: 2px solid #0063f8;
 }
 
@@ -103,7 +102,6 @@ watch(
   line-height: 1.8;
   color: #374151;
   white-space: pre-wrap;
-  /* AI 답변의 줄바꿈 유지 */
 }
 
 .loading-state,

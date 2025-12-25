@@ -43,7 +43,6 @@ defineEmits(["change-page", "prev-group", "next-group"]);
 </script>
 
 <style scoped>
-/* ✅ deposit 페이지네이션과 동일 */
 .pagination {
   margin-top: 12px;
   display: flex;
@@ -56,8 +55,8 @@ defineEmits(["change-page", "prev-group", "next-group"]);
   min-width: 34px;
   height: 34px;
   padding: 0 10px;
-  border-radius: 999px;      /* pill */
-  border: 1px solid #d7def0; /* 동일 테두리 */
+  border-radius: 999px;      
+  border: 1px solid #d7def0; 
   background: #ededed;
   color: #0063f8;
   font-weight: 700;
@@ -75,7 +74,7 @@ defineEmits(["change-page", "prev-group", "next-group"]);
   cursor: not-allowed;
 }
 
-/* 모바일 */
+/* 모바일 대응 */
 @media (max-width: 480px) {
   .page-btn {
     min-width: 30px;

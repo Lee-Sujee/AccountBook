@@ -68,7 +68,7 @@
               </td>
             </tr>
 
-            <!-- ✅ AI 평균 추정가 (문자열 표시 + 범위 판정 정확하게) -->
+            <!-- AI 평균 추정가 -->
             <tr v-if="gptPrice" class="ai-price-row">
               <td>{{ submitted.keyword }}</td>
               <td><span class="ai-badge">AI 평균 추정가</span></td>
@@ -401,7 +401,6 @@ const judgeClass = (avg) => {
   color: #333;
 }
 
-/* AI 쇼핑팁 */
 .ai-tip-container {
   display: flex;
   gap: 15px;
@@ -409,7 +408,7 @@ const judgeClass = (avg) => {
   padding-top: 30px;
   border-top: 1px solid #f1f3f5;
   align-items: flex-start;
-  white-space: pre-line; /* 줄바꿈 유지 */
+  white-space: pre-line;
 }
 
 .ai-avatar {

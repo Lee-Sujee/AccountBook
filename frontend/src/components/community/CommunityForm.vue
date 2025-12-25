@@ -151,7 +151,7 @@ const submit = () => {
   cursor: not-allowed;
 }
 
-/* 반응형 미디어 쿼리 */
+/* 모바일 대응 */
 @media (max-width: 768px) {
   .form-wrapper {
     margin: 20px auto;

@@ -53,9 +53,5 @@
 		WHERE status = 'ONGOING'
 			AND id = #{challengeId}
 	</update>
-	<!-- <update id="updateStatusToEnd">
-		UPDATE challenge
-		
-	</update> -->
 
 </mapper>

@@ -95,7 +95,6 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
-/* overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -108,7 +107,6 @@ const formatDate = (dateString) => {
   z-index: 9999;
 }
 
-/* modal card */
 .modal-content {
   width: min(560px, 100%);
   background: #ededed;
@@ -118,7 +116,6 @@ const formatDate = (dateString) => {
   border: 1px solid rgba(0, 99, 248, 0.12);
 }
 
-/* header */
 .modal-header {
   padding: 18px 20px;
   background: #ededed;
@@ -133,23 +130,21 @@ const formatDate = (dateString) => {
   letter-spacing: 0.2px;
 }
 
-/* body */
 .detail-body {
   padding: 16px 20px 6px;
 }
 
-/* ✅ table: 배경 없이 회색 라인 + 라벨(th)만 연회색 */
 .detail-table {
   width: 100%;
-  border-collapse: collapse; /* 라인 깔끔 */
+  border-collapse: collapse; 
   background: transparent;
 }
 
 .detail-table th,
 .detail-table td {
-  padding: 10px 10px; /* 조금 더 촘촘 */
+  padding: 10px 10px; 
   font-size: 14px;
-  border-bottom: 1px solid #d6d6d6; /* 회색 줄 */
+  border-bottom: 1px solid #d6d6d6; 
   vertical-align: middle;
 }
 
@@ -158,16 +153,14 @@ const formatDate = (dateString) => {
   border-bottom: none;
 }
 
-/* ✅ 왼쪽 라벨만 살짝 회색 */
 .detail-table th {
   width: 28%;
   text-align: left;
   font-weight: 800;
   color: #374151;
-  background: rgba(0, 0, 0, 0.04); /* 아주 옅은 회색 */
+  background: rgba(0, 0, 0, 0.04); 
 }
 
-/* 값 칸은 투명(배경 없음) */
 .detail-table td {
   background: transparent;
   color: #111827;
@@ -180,7 +173,6 @@ const formatDate = (dateString) => {
   font-weight: 500;
 }
 
-/* badges */
 .type-badge {
   display: inline-flex;
   align-items: center;
@@ -203,7 +195,6 @@ const formatDate = (dateString) => {
   border: 1px solid rgba(239, 68, 68, 0.28);
 }
 
-/* amount 강조 */
 .amount-cell {
   font-size: 16px;
 }
@@ -218,7 +209,6 @@ const formatDate = (dateString) => {
   font-weight: 900;
 }
 
-/* ✅ footer buttons: 사이즈 줄임 */
 .modal-footer {
   padding: 10px 16px 14px;
   display: flex;
@@ -231,8 +221,8 @@ const formatDate = (dateString) => {
   border: none;
   cursor: pointer;
   border-radius: 9999px;
-  padding: 7px 12px;      /* 작게 */
-  font-size: 12px;        /* 작게 */
+  padding: 7px 12px;      
+  font-size: 12px;        
   font-weight: 800;
   white-space: nowrap;
   line-height: 1;
@@ -279,8 +269,8 @@ const formatDate = (dateString) => {
   }
 
   .btn {
-    flex: 0 0 auto;     /* 꽉 채우지 않게 */
-    min-width: 72px;    /* 너무 작지 않게 */
+    flex: 0 0 auto;    
+    min-width: 72px;   
   }
 }
 </style>

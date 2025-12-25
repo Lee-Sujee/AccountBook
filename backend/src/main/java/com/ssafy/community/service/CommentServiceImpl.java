@@ -67,9 +67,6 @@ public class CommentServiceImpl implements CommentService {
 	@Transactional
 	public void updateComment(int commentId, String userId, CommentRequestDto dto) {
 		CommentResponseDto comment = getOneComment(commentId);
-		System.out.println("=================");
-		System.out.println(userId);
-		System.out.println(comment);
 		if(comment == null) throw new CommentNotFoundException();
 		
 		if(!userId.equals(comment.getWriterId())) throw new ForbiddenException();

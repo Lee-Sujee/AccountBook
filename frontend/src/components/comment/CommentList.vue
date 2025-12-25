@@ -17,7 +17,7 @@
         @delete-comment="startDelete"
       />
 
-      <!-- ✅ 페이지네이션 -->
+      <!-- 페이지네이션 -->
       <div v-if="totalPages > 1" class="pagination">
         <button class="page-btn" :disabled="currentPage === 1" @click="goPage(1)">«</button>
         <button class="page-btn" :disabled="currentPage === 1" @click="goPage(currentPage - 1)">‹</button>
@@ -59,8 +59,8 @@ const commentList = computed(() => store.commentList ?? []);
 
 const editingComment = ref(null);
 
-/* ✅ 페이지네이션 설정 */
-const pageSize = 5;        // 한 페이지 댓글 개수 (원하면 10 등으로 변경)
+/* 페이지네이션 설정 */
+const pageSize = 5;        // 한 페이지에 댓글은 5개
 const pageGroupSize = 5;   // 페이지 버튼은 항상 5개씩
 const currentPage = ref(1);
 
@@ -93,7 +93,7 @@ onMounted(() => {
   store.getCommentList(props.boardId);
 });
 
-/* ✅ 게시글이 바뀌면 댓글 다시 불러오고 페이지 초기화 */
+/* 게시글이 바뀌면 댓글 다시 불러오고 페이지 초기화 */
 watch(
   () => props.boardId,
   (newId) => {
@@ -104,7 +104,6 @@ watch(
   }
 );
 
-/* ✅ 댓글 수가 변하면(추가/삭제) 현재 페이지가 튀지 않게 보정 */
 watch(
   () => commentList.value.length,
   () => {
@@ -120,9 +119,6 @@ const startEdit = (comment) => {
 const startDelete = async (comment) => {
   if (!confirm("정말 이 댓글을 삭제하시겠습니까?")) return;
   await store.deleteComment(props.boardId, comment.id);
-
-  // 삭제 후 목록 갱신(스토어에서 이미 갱신 안하면 이거 필요)
-  // await store.getCommentList(props.boardId);
 };
 </script>
 
@@ -133,7 +129,6 @@ const startDelete = async (comment) => {
   margin-bottom: 12px;
 }
 
-/* ✅ 페이지네이션 스타일 (게시판이랑 톤 맞춤) */
 .pagination {
   margin-top: 14px;
   display: flex;

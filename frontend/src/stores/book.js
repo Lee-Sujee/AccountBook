@@ -58,7 +58,7 @@ export const useBookStore = defineStore("book", () => {
     alert(message);
     closeModal();
 
-    // CRUD 후에도 마지막 조건으로 다시 로드
+    // CRUD 후에 마지막 조건으로 다시 로드
     if (typeof lastFilterYear.value === "number" && typeof lastFilterMonth.value === "number") {
       await loadBookList(lastFilterYear.value, lastFilterMonth.value);
     } else {

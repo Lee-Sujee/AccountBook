@@ -10,7 +10,6 @@
 
         </div>
 
-        <!-- ✅ 등록일(두번째 줄)과 같은 라인에 조회/좋아요 배치 -->
         <div class="post-stats">
           <span class="stat">
             <span class="icon">조회수</span>
@@ -119,7 +118,6 @@ watch(
   word-break: keep-all;
 }
 
-/* ✅ 2줄 그리드로 만들어서 조회/좋아요를 등록일 라인으로 내림 */
 .post-meta {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -157,7 +155,7 @@ watch(
 
 .post-stats {
   grid-column: 2;
-  grid-row: 2; /* ✅ 등록일 줄과 같은 라인 */
+  grid-row: 2;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -165,7 +163,6 @@ watch(
   flex-wrap: wrap;
 }
 
-/* 조회수 pill */
 .stat {
   display: inline-flex;
   align-items: center;
@@ -188,7 +185,6 @@ watch(
   line-height: 1;
 }
 
-/* 좋아요 pill 버튼 */
 .like-btn {
   display: inline-flex;
   align-items: center;
@@ -246,7 +242,7 @@ watch(
   white-space: nowrap;
 }
 
-/* ✅ 태블릿 이하 */
+/* 태블릿 이하 */
 @media (max-width: 768px) {
   .detail-wrapper {
     margin: 24px auto;
@@ -278,7 +274,7 @@ watch(
   }
 }
 
-/* ✅ 모바일 */
+/* 모바일 */
 @media (max-width: 480px) {
   .post-title {
     font-size: 18px;

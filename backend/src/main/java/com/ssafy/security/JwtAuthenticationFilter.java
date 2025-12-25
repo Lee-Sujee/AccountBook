@@ -31,19 +31,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        // Authorization 헤더가 없거나 Bearer 토큰이 아니면 다음 필터로
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = header.substring(7); // "Bearer " 제거
+        String token = header.substring(7);
         if (token == null || token.trim().isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // userId 꺼내기
         String userId = null;
 
         try {
@@ -72,7 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 다음 필터로
         filterChain.doFilter(request, response);
     }
 }

@@ -104,7 +104,7 @@ public class BookServiceImpl implements BookService{
 	        return "분석할 내역이 없습니다.";
 	    }
 
-	    // 1) 합계 계산
+	    // 합계 계산
 	    int income = req.getHistory().stream()
 	            .filter(h -> "income".equals(h.getType()))
 	            .mapToInt(h -> h.getAmount() == null ? 0 : h.getAmount())
@@ -118,7 +118,7 @@ public class BookServiceImpl implements BookService{
 	    int balance = income - expense;
 	    int ratio = income == 0 ? 0 : (int) Math.round((expense * 100.0) / income);
 
-	    // 2) 지출 카테고리 TOP 5
+	    // 지출 카테고리 TOP 5
 	    Map<String, Integer> expenseByCategory = req.getHistory().stream()
 	            .filter(h -> "expense".equals(h.getType()))
 	            .collect(Collectors.groupingBy(
@@ -136,7 +136,7 @@ public class BookServiceImpl implements BookService{
 	            ? req.getYear() + "년 " + req.getMonth() + "월"
 	            : "이번 기간";
 
-	    // 3) AI에게 줄 요약 텍스트(=프롬프트)
+	    // 프롬프트
 	    String prompt = """
 	            너는 개인 가계부를 분석하는 재무 코치야.
 	            기간: %s
@@ -154,15 +154,12 @@ public class BookServiceImpl implements BookService{
 	            다음달에는 장보기를 늘리고 식비 지출을 줄인다면 더 건강한 소비습관을 가질 수 있을거에요!
 	            """.formatted(period, income, expense, balance, ratio, top5.isBlank() ? "없음" : top5);
 
-	    // ✅ 변경된 부분: OpenAiGateway 사용
 	    String systemPrompt = "You are a helpful and friendly financial assistant.";
 
-	    // openAiGateway는 @Autowired 또는 생성자 주입으로 주입되어 있어야 함
 	    return openAIGateway.chat(systemPrompt, prompt, 1200);
 	}
 
-	
-	//dto -> db에 저장할 수 있는 엔티티로 바꿈
+
 	private Book convertToEntity(String userId, BookRequestDto dto) {
 		Book book = new Book();
 		
@@ -175,8 +172,7 @@ public class BookServiceImpl implements BookService{
 		book.setCreatedAt(parseToLocalDateTime(dto.getCreatedAt()));
 		return book;
 	}
-	
-	//날짜 형식 변환
+
 	private LocalDateTime parseToLocalDateTime(String s) {
         if (s == null || s.isBlank()) return LocalDateTime.now();
         return LocalDateTime.parse(s);

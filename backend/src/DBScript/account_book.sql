@@ -95,9 +95,3 @@ CREATE TABLE `stats` (
     PRIMARY KEY (id)
 );
 
-
-select * from users;
-select * from board;
-select * from community_comment;
-select * from challenge;
-

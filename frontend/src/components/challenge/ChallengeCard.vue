@@ -30,7 +30,6 @@
       :stroke-dasharray="circumference"
       :stroke-dashoffset="strokeDashoffset"
     />
-    <!-- ✅ 가운데 흰색 채우기 -->
     <circle cx="70" cy="70" :r="innerRadius" class="circle-inner" />
   </svg>
 
@@ -48,7 +47,6 @@
 
 
 <div class="deposit">
-  <!-- ✅ Enter = submit 실행 -->
   <form class="deposit-row" @submit.prevent="submitDeposit">
     <input
       v-model.number="depositAmount"
@@ -170,7 +168,7 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   background-color: #EDEDED;
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden; /* 카드 안에서 삐져나오는 것 방지 */
+  overflow-x: hidden; 
 }
 
 .challenge-card h3 {
@@ -205,7 +203,6 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   margin: 0;
 }
 
-/* ✅ 오른쪽 상태가 잘리지 않게 */
 .summary .status {
   white-space: nowrap;
   flex-shrink: 0;
@@ -261,7 +258,6 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   margin-bottom: 10px;
 }
 
-/* 버튼 공통 */
 .actions button {
   width: 90px;
   padding: 8px 0;
@@ -272,7 +268,6 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   transition: opacity 0.2s, transform 0.05s;
 }
 
-/* hover / active */
 .actions button:hover {
   opacity: 0.8;
 }
@@ -280,14 +275,12 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   transform: scale(0.99);
 }
 
-/* 수정(아웃라인) */
 .actions button:first-child {
   background-color: #fff;
   color: #0063f8;
   border: 1px solid #0063f8;
 }
 
-/* 삭제(채움) */
 .actions button:last-child {
   background-color: #0063f8;
   color: #fff;
@@ -298,7 +291,6 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   text-align: center;
 }
 
-/* 상단 금액 */
 .amount-summary {
   display: flex;
   justify-content: center;
@@ -317,7 +309,6 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   font-weight: 700;
 }
 
-/* pill badge */
 .badge {
   display: inline-block;
   padding: 4px 12px;
@@ -341,14 +332,14 @@ const handleEditDeposit = async ({ depositId, amount }) => {
 
 .circle-bg {
   fill: none;
-  stroke: #bdbdbd;     /* ✅ 회색 링 */
-  stroke-width: 18;    /* ✅ 두껍게 */
+  stroke: #bdbdbd;  
+  stroke-width: 18; 
 }
 
 .circle-progress-bar {
   fill: none;
-  stroke: #0063f8;     /* ✅ 파란색 */
-  stroke-width: 18;    /* ✅ 두껍게 */
+  stroke: #0063f8;
+  stroke-width: 18; 
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
@@ -356,7 +347,7 @@ const handleEditDeposit = async ({ depositId, amount }) => {
 }
 
 .circle-inner {
-  fill: #ededed;       /* ✅ 가운데 흰색 */
+  fill: #ededed;   
 }
 
 .circle-text {
@@ -364,11 +355,10 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 28px;     /* ✅ 더 크게 */
+  font-size: 28px;    
   font-weight: 800;
   color: #0063f8;
 }
-/* 하단 설명 */
 .progress-desc {
   font-size: 14px;
   font-weight: 500;
@@ -381,7 +371,7 @@ const handleEditDeposit = async ({ depositId, amount }) => {
 .deposit-row {
   display: flex;
   align-items: center;
-  justify-content: center; /* 가운데로 모으기 */
+  justify-content: center;
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -394,11 +384,11 @@ const handleEditDeposit = async ({ depositId, amount }) => {
   border-bottom: 2px solid #0063f8;
   border-radius: 0px;
   font-size: 14px;
-  margin-bottom: 0;    /* 기존 마진 제거 */
+  margin-bottom: 0; 
 }
 
 .deposit-row .deposit-btn {
-  width: 120px;        /* 원하는 길이로 조절 */
+  width: 120px;       
   padding: 10px;
   background-color: #0063f8;
   color: white;

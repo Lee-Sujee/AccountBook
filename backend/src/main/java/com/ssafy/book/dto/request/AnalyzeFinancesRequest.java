@@ -14,10 +14,10 @@ public class AnalyzeFinancesRequest {
 
     @Getter @Setter
     public static class HistoryItem {
-        private String date;     // LocalDate로 바꿔도 됨
+        private String date;     
         private String category;
         private Integer amount;
-        private String type;     // entry 자체 타입
+        private String type; 
         private String memo;
     }
 }

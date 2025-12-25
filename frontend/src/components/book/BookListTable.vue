@@ -77,9 +77,9 @@ const props = defineProps({
 const emit = defineEmits(['selectEntry'])
 const selectEntry = (entry) => emit('selectEntry', entry)
 
-/* 페이지네이션 로직 */
+/* 페이지네이션 */
 const currentPage = ref(1)
-const itemsPerPage = 16 // 한 페이지에 표시할 항목 개수
+const itemsPerPage = 16 // 한 페이지에 16개 까지 표시
 
 // 전체 페이지 수 계산
 const totalPages = computed(() => {
@@ -179,7 +179,6 @@ const balance = computed(() => totalIncome.value - totalExpense.value)
   padding-right: 20px !important;
 }
 
-/* 페이지네이션 디자인 */
 .pagination-container {
   display: flex;
   justify-content: center;

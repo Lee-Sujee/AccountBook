@@ -17,6 +17,3 @@ export const deleteBookEntry = (bookId) => instance.delete(`/book/${bookId}`);
 
 // 재정관리
 export const analyzeFinancesApi = (data) => instance.post(`/book/analyze-finances`, data);
-
-// export const getIntegratedAnalysisApi = (data) => 
-//   instance.post(`/book/integrated-analysis`, data);

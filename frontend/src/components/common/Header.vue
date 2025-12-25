@@ -35,53 +35,49 @@ const store = useAuthStore();
 </script>
 
 <style scoped>
-/* 전체 navbar */
 .navbar {
   width: 100%;
   padding: 14px 32px;
   display: grid;
-  grid-template-columns: auto 1fr auto; /* 로고 / 가운데 / 오른쪽 */
+  grid-template-columns: auto 1fr auto; 
   align-items: center;
   box-sizing: border-box;
   gap: 16px;
 }
 
-/* 로고 */
 .logo-img {
   width: 180px;
   height: auto;
   vertical-align: middle;
 }
 
-/* 가운데 링크 목록 */
 .nav-center {
   display: flex;
-  justify-content: center;   /* ✅ 가운데 정렬 */
+  justify-content: center;  
   align-items: center;
-  gap: 34px;                 /* ✅ 간격 넓힘 */
+  gap: 34px;               
   flex-wrap: wrap;
 }
 
-/* 공통 링크 */
 .nav-link {
   text-decoration: none;
   color: #0063f8;
   line-height: 1;
-  font-size: 16px;           /* ✅ 글씨 크기 키움 */
+  font-size: 16px;           
   font-weight: 700;
 }
 
-/* 오른쪽 영역 */
+
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 20px;                 /* ✅ 간격 넓힘 */
+  gap: 20px;                
   justify-content: flex-end;
   flex-wrap: wrap;
 }
 
 .welcome {
-  font-size: 14px;           /* 조금 키움 */
+  font-size: 14px;         
   font-weight: 700;
   color: #0063f8;
   white-space: nowrap;
@@ -89,7 +85,7 @@ const store = useAuthStore();
 
 .logout-btn {
   padding: 6px 14px;
-  font-size: 14px;           /* 조금 키움 */
+  font-size: 14px;         
   font-weight: 700;
   border: none;
   border-radius: 6px;
@@ -100,7 +96,7 @@ const store = useAuthStore();
 /* 모바일 대응 */
 @media (max-width: 768px) {
   .navbar {
-    grid-template-columns: 1fr; /* 한 줄로 */
+    grid-template-columns: 1fr; 
     gap: 12px;
     padding: 12px 16px;
   }

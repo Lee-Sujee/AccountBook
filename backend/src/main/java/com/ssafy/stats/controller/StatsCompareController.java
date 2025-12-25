@@ -18,7 +18,6 @@ public class StatsCompareController {
 
     /**
      * 평균 가격 비교 API
-     * GET /api/v1/comparison/price?menu=...&category=...&userPrice=...
      */
     @GetMapping("/price")
     public ResponseEntity<?> comparePrice(
@@ -26,13 +25,11 @@ public class StatsCompareController {
             @RequestParam String category,
             @RequestParam int userPrice
     ) {
-    	//gpt 답변까지 포함
         return ResponseEntity.ok(compareService.getCombinedResult(menu, category, userPrice));
     }
 
     /**
      * 키워드로 최신 데이터 검색 API
-     * GET /api/v1/comparison/latest/search?keyword=비타500
      */
     @GetMapping("/latest/search")
     public ResponseEntity<?> searchLatestList(@RequestParam String keyword) {

@@ -118,7 +118,6 @@ label {
   box-shadow: 0 4px 10px rgba(0, 99, 248, 0.2);
 }
 
-/* 자동 완성 시의 스타일 조정 */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

@@ -28,7 +28,6 @@
         </tbody>
       </table>
 
-      <!-- ✅ 페이지네이션 -->
       <div class="pagination" v-if="totalPages > 1">
         <button
           class="page-btn"
@@ -100,11 +99,9 @@ onMounted(async () => {
   await depositStore.getDepositList(props.challengeId);
 });
 
-/* ---- format ---- */
 const formatDate = (dateTime) => (dateTime ? dateTime.split("T")[0] : "");
 const formatAmount = (amount) => Number(amount).toLocaleString() + "원";
 
-/* ---- modal edit ---- */
 const isEditOpen = ref(false);
 const selectedDeposit = ref(null);
 const editAmount = ref(0);
@@ -136,9 +133,8 @@ const emitEdit = () => {
   closeEdit();
 };
 
-/* ---- pagination ---- */
-const pageSize = 8;          // ✅ 한 페이지에 보여줄 행 개수 (원하면 5/10 등으로 변경)
-const pageGroupSize = 5;     // ✅ 페이지 버튼은 항상 5개씩
+const pageSize = 8;          //  한 페이지에 8개 행씩 보여줌
+const pageGroupSize = 5;     // 페이지 버튼은 항상 5개씩
 
 const currentPage = ref(1);
 
@@ -210,7 +206,6 @@ watch(
   background: #f4f8ff;
 }
 
-/* ✅ pagination */
 .pagination {
   margin-top: 12px;
   display: flex;
@@ -242,7 +237,6 @@ watch(
   cursor: not-allowed;
 }
 
-/* modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;

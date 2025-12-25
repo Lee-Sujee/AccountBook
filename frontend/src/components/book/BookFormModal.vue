@@ -143,7 +143,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-/* overlay (상세조회 모달과 동일 톤) */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -156,7 +155,6 @@ const handleSubmit = async () => {
   z-index: 1100;
 }
 
-/* modal card */
 .modal-content {
   width: min(520px, 100%);
   background: #ededed;
@@ -166,7 +164,6 @@ const handleSubmit = async () => {
   border: 1px solid rgba(0, 99, 248, 0.12);
 }
 
-/* header */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -203,12 +200,10 @@ const handleSubmit = async () => {
   filter: brightness(0.97);
 }
 
-/* form container */
 .form-container {
   padding: 16px 20px 12px;
 }
 
-/* label */
 .form-group {
   margin-bottom: 16px;
 }
@@ -221,11 +216,10 @@ const handleSubmit = async () => {
   margin-bottom: 8px;
 }
 
-/* inputs: 깔끔한 언더라인 스타일 */
 .underline-input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid #d6d6d6; /* 회색 라인 */
+  border-bottom: 1px solid #d6d6d6;
   padding: 10px 6px;
   font-size: 14px;
   font-weight: 600;
@@ -247,7 +241,6 @@ textarea {
   font-weight: 600;
 }
 
-/* 특히 datetime-local 강제 */
 input[type="datetime-local"] {
   font-family: inherit !important;
   font-size: 14px !important;
@@ -258,7 +251,6 @@ input[type="datetime-local"] {
   appearance: none;
 }
 
-/* textarea는 약간만 박스로 */
 .memo-area {
   border: 1px solid #d6d6d6;
   border-radius: 10px;
@@ -272,14 +264,12 @@ input[type="datetime-local"] {
   background: rgba(255, 255, 255, 0.7);
 }
 
-/* grid */
 .input-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 14px;
 }
 
-/* type selector (지출/수입) */
 .type-selector {
   display: flex;
   justify-content: center;
@@ -317,7 +307,6 @@ input[type="datetime-local"] {
   transform: translateY(1px);
 }
 
-/* 선택 전: 살짝 톤 */
 .type-btn.expense {
   background: rgba(239, 68, 68, 0.10);
 }
@@ -326,7 +315,6 @@ input[type="datetime-local"] {
   background: rgba(16, 185, 129, 0.12);
 }
 
-/* 선택 후 */
 input#expense:checked + .expense {
   background: #ef4444;
   color: #fff;
@@ -337,7 +325,6 @@ input#income:checked + .income {
   color: #fff;
 }
 
-/* footer buttons (상세조회 모달처럼 작고 pill) */
 .modal-footer {
   margin-top: 10px;
   padding: 0 0 6px;
@@ -350,7 +337,7 @@ input#income:checked + .income {
   border: none;
   cursor: pointer;
   border-radius: 9999px;
-  padding: 7px 12px; /* ✅ 작게 */
+  padding: 7px 12px; 
   font-size: 12px;
   font-weight: 800;
   line-height: 1;

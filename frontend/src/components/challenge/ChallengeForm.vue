@@ -71,7 +71,6 @@ const submit = async () => {
 </script>
 
 <style scoped>
-/* 전체 컨테이너(다른 페이지들과 톤 맞춤) */
 .form-wrapper {
   max-width: 550px;
   margin: 40px auto;
@@ -86,7 +85,6 @@ const submit = async () => {
   margin-bottom: 14px;
 }
 
-/* 카드 */
 .post-form {
   background: #ededed;
   border-radius: 12px;
@@ -94,7 +92,6 @@ const submit = async () => {
   box-sizing: border-box;
 }
 
-/* 입력 영역을 그리드로 */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -117,7 +114,6 @@ const submit = async () => {
   color: #0063f8;
 }
 
-/* 인풋: 밑줄 포인트 스타일 */
 .form-group input {
   width: 100%;
   padding: 10px 10px;
@@ -139,7 +135,6 @@ const submit = async () => {
   border-bottom-color: #004fc7;
 }
 
-/* 버튼 영역 */
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -152,7 +147,7 @@ const submit = async () => {
   background-color: #0063f8;
   color: #fff;
   border: 1.5px solid #0063f8;
-  border-radius: 999px; /* pill */
+  border-radius: 999px; 
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
@@ -164,7 +159,7 @@ const submit = async () => {
   cursor: not-allowed;
 }
 
-/* 반응형 */
+/* 모바일 대응 */
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;

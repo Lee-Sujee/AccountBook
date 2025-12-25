@@ -11,7 +11,7 @@ import {
 } from "@/api/communityApi";
 
 import{getCommentListApi, createCommentApi, updateCommentApi, deleteCommentApi,} from "@/api/commentApi"
-// # 게시판 #
+// 게시판
 export const useCommunityStore = defineStore("community", () => {
   const router = useRouter();
 
@@ -64,12 +64,11 @@ export const useCommunityStore = defineStore("community", () => {
       });
   };
 
-  // 좋아요 토글 (서버 기준 값만 사용)
+  // 좋아요 토글 
   const toggleLike = (boardId) => {
     return toggleBoardLikeApi(boardId)
       .then((res) => {
-        const result = res.data; // { liked: boolean, likes: number }
-
+        const result = res.data; 
         liked.value = result.liked;
         likes.value = result.likes;
 
@@ -107,7 +106,7 @@ export const useCommunityStore = defineStore("community", () => {
       });
   };
 
-  // # 댓글 #
+  // 댓글 
   // 전체 댓글 조회
   const commentList = ref([])
   const getCommentList = (boardId) => {

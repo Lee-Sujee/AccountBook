@@ -50,7 +50,6 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
 </script>
 
 <style scoped>
-/* 전체 배경 설정 */
 .home-wrapper {
     background-color: #ededed;
     min-height: 100vh;
@@ -65,7 +64,6 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     margin: 0 auto;
 }
 
-/* 상단 헤더 */
 .user-header {
     display: flex;
     justify-content: space-between;
@@ -91,7 +89,6 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     color: #0063f8;
 }
 
-/* 새 항목 등록 버튼 */
 .btn-add-entry {
     background-color: #0063f8;
     color: #ffffff;
@@ -109,7 +106,6 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
 }
 
 
-/* 통계 보기 버튼 */
 .btn-summary {
     background-color: #0063f8;
     color: #ffffff;
@@ -130,7 +126,7 @@ const showStats = ref(localStorage.getItem("showStats") === "true")
     opacity: 0.9;
 }
 
-/* 반응형 미디어 쿼리 */
+/* 모바일 대응 */
 @media (max-width: 768px) {
     .home-wrapper {
         padding: 30px 16px;

@@ -74,7 +74,6 @@ label {
   border-bottom-color: #0063f8;
 }
 
-/* 브라우저 자동 완성 시 파란 배경 제거 */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

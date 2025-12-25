@@ -27,7 +27,6 @@ public class GlobalExceptionHandler {
 
 	//그 외-서버 오류 @ExceptionHandler(Exception.class)
 	public ResponseEntity<Void> handleException(Exception e) {
-        e.printStackTrace(); // 로그용
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

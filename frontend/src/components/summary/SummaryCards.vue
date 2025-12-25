@@ -83,16 +83,16 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 
 .header-row {
   display: flex;
-  justify-content: center; /* space-between에서 center로 변경 */
+  justify-content: center; 
   align-items: center;
-  margin-bottom: 30px; /* 아래 요약 바와의 간격을 조금 더 넓힘 */
+  margin-bottom: 30px;
 }
 
 .month-selector {
   display: flex;
   align-items: center;
-  gap: 20px; /* 간격을 살짝 넓혀 시원하게 배치 */
-  font-size: 22px; /* 날짜 폰트 크기 소폭 상향 */
+  gap: 20px; 
+  font-size: 22px;
   font-weight: 700;
   color: #374151;
 }
@@ -101,7 +101,7 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
   background: none;
   border: none;
   color: #0063f8;
-  font-size: 24px; /* 아이콘 크기 소폭 상향 */
+  font-size: 24px; 
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -109,10 +109,10 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 }
 
 .month-selector button:hover {
-  transform: scale(1.1); /* 호버 시 살짝 커지는 효과 */
+  transform: scale(1.1); 
 }
 
-/* 게시판 스타일의 요약 바 */
+
 .summary-bar {
   display: flex;
   justify-content: space-around;
@@ -167,13 +167,13 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
 
   .summary-bar {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2열 */
+    grid-template-columns: 1fr 1fr; 
     gap: 12px;
     padding: 16px 0;
   }
 
   .content-area {
-    grid-template-columns: 1fr; /* 1열 */
+    grid-template-columns: 1fr;
   }
 
   .ai-summary {
@@ -188,7 +188,7 @@ const showStats = computed(() => (bookStore.bookEntries || []).length > 0)
   }
 
   .summary-bar {
-    grid-template-columns: 1fr; /* 1열 */
+    grid-template-columns: 1fr; 
     text-align: left;
     padding: 12px 0;
   }

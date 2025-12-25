@@ -238,7 +238,6 @@ const goDetail = (id) => {
   font-weight: 500;
   text-decoration: none;
   display: block;
-  /* 링크 영역 확장 */
 }
 
 .title-link:hover {
@@ -252,7 +251,6 @@ const goDetail = (id) => {
   color: #666;
 }
 
-/* ✅ 페이지네이션 */
 .pagination {
   margin-top: 18px;
   display: flex;

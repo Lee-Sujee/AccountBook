@@ -9,7 +9,6 @@
         DELETE FROM stats
     </delete>
 
-    <!-- (menu, category) UNIQUE 기반: 최신이면 UPDATE, 아니면 무시 -->
     <insert id="upsertLatest" parameterType="com.ssafy.stats.entity.Stats">
         INSERT INTO stats (menu, price, category, survey_date)
         VALUES (#{menu}, #{price}, #{category}, #{surveyDate})
@@ -18,7 +17,6 @@
             survey_date = GREATEST(survey_date, VALUES(survey_date))
     </insert>
 
-    <!-- 비교용: menu+category 1건 -->
     <select id="findByMenuAndCategory" resultType="com.ssafy.stats.entity.Stats">
         SELECT *
         FROM stats

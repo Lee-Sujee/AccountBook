@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class BookResponseDto {
-	//id로 조회
 	private Long id;
 	private String category;
 	private String content;

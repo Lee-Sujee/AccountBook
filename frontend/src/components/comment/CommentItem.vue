@@ -50,7 +50,6 @@ const onDelete = () => {
   background-color: #EDEDED;
 }
 
-/* 댓글 내용 */
 .comment-content {
   font-size: 14px;
   color: #111827;
@@ -58,7 +57,6 @@ const onDelete = () => {
   word-break: break-word;
 }
 
-/* 작성자 */
 .comment-content .writer {
   display: block;
   margin-top: 4px;
@@ -67,10 +65,9 @@ const onDelete = () => {
   color: #6b7280;
 }
 
-/* 수정 / 삭제 영역 */
 .comment-actions {
   display: flex;
-  justify-content: flex-end; /* 버튼도 오른쪽 */
+  justify-content: flex-end;
   gap: 6px;
   margin-top: 4px;
 }

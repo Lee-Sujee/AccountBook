@@ -29,13 +29,11 @@
       AND user_id = #{userId}
   </select>
 
-  <!-- ✅ 추가: created_at 포함 -->
   <insert id="insert" parameterType="Book">
     INSERT INTO book (user_id, category, content, type, amount, memo, created_at)
     VALUES (#{userId}, #{category}, #{content}, #{type}, #{amount}, #{memo}, #{createdAt})
   </insert>
 
-  <!-- ✅ 수정: created_at 포함 -->
   <update id="update" parameterType="Book">
     UPDATE book
     SET category   = #{category},

@@ -48,7 +48,7 @@ const submit = (() => {
 })
 
 watch(
-  () => props.initialData, // 감시대상
+  () => props.initialData,
   (newVal) => {
     if (newVal) {
       content.value = newVal.content;
